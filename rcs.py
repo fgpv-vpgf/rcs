@@ -56,6 +56,14 @@ def get_feature_service( data ):
     data['datagrid'] = make_data_grid( svc_data )
     return ''
 
+def make_symbology( json_data, data ):
+    def get_sym_url(symname='defaultSymbol'):
+        return data['ServiceURL'] + '/images/' + json_data['drawingInfo']['renderer'][symname]['url']
+    renderer = json_data['drawingInfo']['renderer']['type']
+    symb = { 'type':renderer }
+    data 
+
+
 class Doc(Resource):
     def get(self, smallkey):
         doc = get_doc( smallkey )
