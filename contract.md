@@ -1,0 +1,70 @@
+# RCS Service Contract
+
+This is the current draft of the RCS service contract.  It outlines the expected
+endpoints and payloads but it is far from finalized.
+
+## GET ``/doc/[lang]/[smallkey]``
+
+Success Code: 200
+
+Request Body: Empty
+
+Response Body: JSON Object
+
+The response will have a JSON configuration fragment to be merged into the RAMP
+configuration.
+
+Error conditions:
+- invalid language code: 400 Bad Request, response body empty
+- smallkey not found: 404 Not Found, response body empty
+
+## GET ``/docs/[lang]/[smallkey]{,[smallkey]}``
+
+Success Code: 200
+
+Request Body: Empty
+
+Response Body: JSON Array
+
+The response will be an array of JSON objects, each object will be a JSON
+configuration fragment to be merged into the RAMP config.
+
+Error conditions:
+- invalid language code: 400 Bad Request, response body empty
+- smallkey not found: 200 normal response, the corresponding fragment will be
+  structured as follows:
+  > ``{"error_code":404,"smallkey":"[smallkey]"}``
+
+## PUT ``/register/[smallkey]``
+
+Success Code: 201
+
+Request Body: JSON Object
+
+Response Body: Empty
+
+Error Conditions:
+- payload does not conform to schema: 400 Bad Request, body contains:
+  > `{"error_message":"Note on validation failure"}`
+- exception in processing: 500 Internal Server Error, empty body
+
+The body of the request should conform to:
+> ``{"version":"1.0.0","payload_type":("feature","wms"),"en":(payload),"fr":(payload) }``
+
+### Payload Type ``feature``
+
+The feature payload should conform to:
+> ``{"ServiceURL":(URL to ESRI REST Service),"ServiceName":"Layer Name","DisplayField":"Layer Attribute"}``
+
+- the service URL should not have any query string component
+- `DisplayField` and `ServiceName` are optional
+
+### Payload Type ``wms``
+
+The feature payload should conform to:
+> ``{"ServiceURL":(URL to WMS Service),"LAYER":"Layer Identifier","legendSupport":true,"featureInfoType":(?)}`
+
+- the service URL should not have any query string component
+- `LAYER` is required and must match the a layer identifier specified in the WMS
+- `legendSupport` is a boolean value indicating if GetLegendGraphic should be used
+- `featureInfoType` is an optional field and its
