@@ -54,6 +54,7 @@ def get_feature_service( data ):
     if data['DisplayField'] is None:
         data['DisplayField'] = svc_data['displayField']
     data['datagrid'] = make_data_grid( svc_data )
+    data['symbology'] = make_symbology( svc_data, data )
     return ''
 
 def make_symbology( json_data, data ):
@@ -61,7 +62,33 @@ def make_symbology( json_data, data ):
         return data['ServiceURL'] + '/images/' + json_data['drawingInfo']['renderer'][symname]['url']
     renderer = json_data['drawingInfo']['renderer']['type']
     symb = { 'type':renderer }
-    data 
+    if renderer == 'simple':
+        symb['imageUrl'] = get_sym_url( 'symbol' )
+
+    elif renderer == 'uniqueValue':
+        default_symbol = json_data['drawingInfo']['renderer']['url']
+        symb['defaultImageUrl'] = ''
+        if default_symbol is not None:
+            symb['defaultImageUrl'] = get_sym_url()
+        symb['field1'] = json_data['drawingInfo']['renderer']['field1']
+        symb['field2'] = json_data['drawingInfo']['renderer']['field2']
+        symb['field3'] = json_data['drawingInfo']['renderer']['field3']
+        val_maps = [ dict(value=u['value'], imageUrl=data['ServiceURL'] + '/images/' + u['symbol']['url'])
+                     for u in json_data['drawingInfo']['renderer']['uniqueValueInfos'] ]
+        symb['valueMaps'] = val_maps
+
+    elif renderer == 'classBreaks':
+        symb['defaultImageUrl'] = ''
+        if json_data['currentVersion'] >= 10.1:
+            default_symbol = json_data['drawingInfo']['renderer']['url']
+            if default_symbol is not None:
+                symb['defaultImageUrl'] = get_sym_url()
+        symb['field'] = json_data['drawingInfo']['renderer']['field']
+        symb['minValue'] = json_data['drawingInfo']['renderer']['minValue']
+        range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=data['ServiceURL'] + '/images/' + u['symbol']['url'])
+                     for u in json_data['drawingInfo']['renderer']['classBreakInfos'] ]
+        symb['valueMaps'] = range_maps
+    return symb
 
 
 class Doc(Resource):
