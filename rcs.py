@@ -44,6 +44,18 @@ def get_feature_parser():
     parser.add_argument('DisplayField', type=str, location='json')
     return parser
 
+def get_legend_url( feature_service_url ):
+    if feature_service_url.endswith('/'):
+        feature_service_url = feature_service_url[:-1]
+    return feature_service_url[:feature_service_url.rfind('/')] + '/legend?f=json'
+
+def get_legend_mapping( data, layer_id ):
+    legend_json = requests.get( get_legend_url( data['ServiceURL'] ) ).json()
+    for layer in legend_json['layers']:
+        if layer['layerId'] == layer_id:
+            break
+    return { x['label']:x['url'] for x in layer['legend'] }
+
 def get_feature_service( data ):
     r = requests.get( data['ServiceURL'] + '?f=json' )
     svc_data = r.json()
@@ -58,35 +70,33 @@ def get_feature_service( data ):
     return ''
 
 def make_symbology( json_data, data ):
-    def get_sym_url(symname='defaultSymbol'):
-        return data['ServiceURL'] + '/images/' + json_data['drawingInfo']['renderer'][symname]['url']
-    renderer = json_data['drawingInfo']['renderer']['type']
-    symb = { 'type':renderer }
-    if renderer == 'simple':
-        symb['imageUrl'] = get_sym_url( 'symbol' )
+    images_url_prefix = data['ServiceURL'] + '/images/'
+    render_json = json_data['drawingInfo']['renderer']
+    symb = { 'type':render_json['type'] }
+    label_map = get_legend_mapping( data, json_data['id'] )
 
-    elif renderer == 'uniqueValue':
-        default_symbol = json_data['drawingInfo']['renderer']['url']
-        symb['defaultImageUrl'] = ''
-        if default_symbol is not None:
-            symb['defaultImageUrl'] = get_sym_url()
-        symb['field1'] = json_data['drawingInfo']['renderer']['field1']
-        symb['field2'] = json_data['drawingInfo']['renderer']['field2']
-        symb['field3'] = json_data['drawingInfo']['renderer']['field3']
-        val_maps = [ dict(value=u['value'], imageUrl=data['ServiceURL'] + '/images/' + u['symbol']['url'])
-                     for u in json_data['drawingInfo']['renderer']['uniqueValueInfos'] ]
+    if render_json['type'] == 'simple':
+        symb['imageUrl'] = images_url_prefix + label_map[render_json['label']]
+
+    elif render_json['type'] == 'uniqueValue':
+        if render_json['defaultLabel']:
+            symb['defaultImageUrl'] = images_url_prefix + label_map[render_json['defaultLabel']]
+        for field in 'field1 field2 field3'.split():
+            symb[field] = render_json[field]
+        val_maps = [ dict( value= u['value'], imageUrl= images_url_prefix+label_map[u['label']] )
+                     for u in render_json['uniqueValueInfos'] ]
         symb['valueMaps'] = val_maps
 
-    elif renderer == 'classBreaks':
+    elif render_json['type'] == 'classBreaks':
         symb['defaultImageUrl'] = ''
         if json_data['currentVersion'] >= 10.1:
-            default_symbol = json_data['drawingInfo']['renderer']['url']
+            default_symbol = render_json['url']
             if default_symbol is not None:
                 symb['defaultImageUrl'] = get_sym_url()
-        symb['field'] = json_data['drawingInfo']['renderer']['field']
-        symb['minValue'] = json_data['drawingInfo']['renderer']['minValue']
-        range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=data['ServiceURL'] + '/images/' + u['symbol']['url'])
-                     for u in json_data['drawingInfo']['renderer']['classBreakInfos'] ]
+        symb['field'] = render_json['field']
+        symb['minValue'] = render_json['minValue']
+        range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=images_url_prefix+label_map[u['label']])
+                       for u in render_json['classBreakInfos'] ]
         symb['valueMaps'] = range_maps
     return symb
 
