@@ -88,11 +88,8 @@ def make_symbology( json_data, data ):
         symb['valueMaps'] = val_maps
 
     elif render_json['type'] == 'classBreaks':
-        symb['defaultImageUrl'] = ''
-        if json_data['currentVersion'] >= 10.1:
-            default_symbol = render_json['url']
-            if default_symbol is not None:
-                symb['defaultImageUrl'] = get_sym_url()
+        if render_json['defaultLabel']:
+            symb['defaultImageUrl'] = images_url_prefix + label_map[render_json['defaultLabel']]
         symb['field'] = render_json['field']
         symb['minValue'] = render_json['minValue']
         range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=images_url_prefix+label_map[u['label']])
