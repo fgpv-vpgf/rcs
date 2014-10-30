@@ -62,9 +62,22 @@ The feature payload should conform to:
 ### Payload Type ``wms``
 
 The feature payload should conform to:
-> ``{"ServiceURL":(URL to WMS Service),"LAYER":"Layer Identifier","legendSupport":true,"featureInfoType":(?)}`
+> ``{"ServiceURL":(URL to WMS Service),"LAYER":"Layer Identifier","legendFormat":"MIME type","featureInfoType":(?)}`
 
 - the service URL should not have any query string component
 - `LAYER` is required and must match the a layer identifier specified in the WMS
-- `legendSupport` is a boolean value indicating if GetLegendGraphic should be used
-- `featureInfoType` is an optional field and its
+- `legendFormat` is an optional string, if present it indicates legend support on the WMS and specifies the image MIME type to request from the server
+- `featureInfoType` is an optional field, if present it indicates feature info support on the WMS
+
+## DELETE ``/register/[smallkey]``
+
+Success Code: 204
+
+Request Body: Empty
+
+Response Body: Empty
+
+Error Conditions:
+- smallkey not found: 404 Not Found
+- exception in processing: 500 Internal Server Error, empty body
+

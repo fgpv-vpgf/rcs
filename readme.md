@@ -20,13 +20,15 @@ Endpoint | Description
 GET /doc/[lang]/[smallkey] | Retrieves a single configuration fragment
 GET /docs/[lang]/[smallkey]{,[smallkey]} | Retrieves multiple configuration fragments
 PUT /register/[smallkey] | Stores a configuration fragment
+DELETE /register/[smallkey] | Deletes a configuration fragment
 
 The RAMP client is intended to call the GET driven endpoints for dynamically
 loading layers.  These functions are intended to be extensible and also allow
 for the retrieval of generic configuration as well.
 
-The data catalogue is intended to call the PUT endpoint for storing data.  Currently
-it will accept ESRI feature service endpoints and WMS endpoints.
+The data catalogue is intended to call the PUT and DELETE endpoints for storing
+data.  Currently registration will accept ESRI feature service endpoints and WMS
+endpoints.
 
 Full specifications of the service are still in development please see the
 [current draft specification](https://github.com/RAMP-PCAR/RCS/blob/master/contract.md)
