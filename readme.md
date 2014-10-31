@@ -1,7 +1,7 @@
 # RAMP Configuration Service
 
 The RAMP Configuration Service (RCS) is a web service designed to work with the
-Reusable Accessible Mapping Platform [(RAMP)](ramp-pcar.github.io) to support
+Reusable Accessible Mapping Platform [(RAMP)](http://ramp-pcar.github.io) to support
 loading of map layers from data catalogues.
 
 ## Background
