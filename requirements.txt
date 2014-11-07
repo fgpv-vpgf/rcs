@@ -1,0 +1,5 @@
+Flask==0.10.1
+Flask-RESTful==0.2.12 
+jsonschema==2.4.0
+pymongo==2.7.2
+requests==2.4.3
