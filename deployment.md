@@ -54,5 +54,14 @@ security:
 1. Create a website in IIS and point it to the Python virtual environment
 1. Go to the website | Handler Mappings | Add Module Mapping ...
 ```
-
+Request Path: *
+Module: FastCgiModule
+Executable: C:\inetpub\rcs\Scripts\python.exe|C:\inetpub\rcs\wfastcgi.py
+Name: (name)
+```
+1. Go back to the server settings | FastCgi Settings | Right click Edit
+1. Select Environment variables and add the following:
+```
+PYTHONPATH: C:\inetpub\rcs\
+WSGI_HANDLER: rcs.app
 ```
