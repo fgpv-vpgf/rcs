@@ -46,8 +46,8 @@
     var sampleWMS = {
         version: "1.0.0",
         payload_type: "wms",
-        en: { ServiceURL: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", LAYER: "limits" },
-        fr: { ServiceURL: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", LAYER: "limits" },
+        en: { service_url: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", layer: "limits" },
+        fr: { service_url: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", layer: "limits" },
     }
 
     function log_info(s) {
@@ -77,7 +77,7 @@
         });
 
         $('.sampledata').click( function(e) {
-            $('#data').val( '{ "ServiceURL": "'+$(e.target).data('url')+'", "ServiceType": "feature" }' );
+            $('#data').val('{ "ServiceURL": "' + $(e.target).data('url') + '", "ServiceType": "feature" }');
         });
 
         $('.samplejson').click(function (e) {
