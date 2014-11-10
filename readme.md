@@ -1,3 +1,6 @@
+> *NOTE* The RCS code published to the github repository does not reflect the latest
+> version of the contract.
+
 # RAMP Configuration Service
 
 The RAMP Configuration Service (RCS) is a web service designed to work with the
