@@ -63,7 +63,7 @@
             $.ajax({
                 type: "PUT",
                 contentType: "application/json; charset=utf-8",
-                url: '/doc/' + $('#smallkey').val(),
+                url: '/register/' + $('#smallkey').val(),
                 data: $('#data').val(),
                 dataType: "text",
             }).done(function (data) {
