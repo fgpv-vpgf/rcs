@@ -51,7 +51,7 @@ class Register(Resource):
         data = parser.make_feature_node()
         data = get_feature_parser().parse_args()
         print( data )
-        get_feature_service( data )
+        data = parser.get_feature_service( data )
         print( data )
         jsonset.remove( { 'smallkey':smallkey } )
         jsonset.insert( { 'smallkey':smallkey, 'data':data } )
