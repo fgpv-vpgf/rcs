@@ -1,6 +1,6 @@
 from __future__ import division, print_function, unicode_literals
 
-import json, pymongo, requests, parser, db
+import json, pymongo, requests, parser, db, config, os
 
 from flask import Flask, Response
 from flask.ext.restful import reqparse, request, abort, Api, Resource
@@ -9,6 +9,9 @@ client = pymongo.MongoClient()
 jsonset = client.jsontest.json
 
 app = Flask(__name__)
+app.config.from_object(config)
+if os.environ.get('RCS_CONFIG'):
+    app.config.from_envvar('RCS_CONFIG')
 api = Api(app)
 
 def get_doc( smallkey ):
