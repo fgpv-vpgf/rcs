@@ -26,6 +26,12 @@
     <div class="row"><div class="form-group col-md-12">
         <button class="btn" id='puttest'>PUT</button>
         <button class="btn" id='gettest'>GET</button>
+        <input type="button" class="btn sampledata" value="Unique with Default"
+               data-url="http://devmap.on.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer/0" />
+        <input type="button" class="btn sampledata" value="Class Breaks"
+               data-url="http://devmap.on.ec.gc.ca/ArcGIS/rest/services/ClassBreaks/MapServer/0" />
+        <input type="button" class="btn sampledata" value="JOSM Unique"
+               data-url="http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/0" />
     </div></div>
 
     <div class="row"><div id="log" class="form-group col-md-12">
@@ -60,6 +66,10 @@
                 console.log(err);
             });
 
+        });
+
+        $('.sampledata').click( function(e) {
+            $('#data').val( '{ "ServiceURL": "'+$(e.target).data('url')+'", "ServiceType": "feature" }' );
         });
 
         $('#gettest').click( function() {
