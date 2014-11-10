@@ -32,6 +32,7 @@
                data-url="http://devmap.on.ec.gc.ca/ArcGIS/rest/services/ClassBreaks/MapServer/0" />
         <input type="button" class="btn sampledata" value="JOSM Unique"
                data-url="http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/0" />
+        <input type="button" class="btn samplejson" value="WMS" data-obj="sampleWMS" />
     </div></div>
 
     <div class="row"><div id="log" class="form-group col-md-12">
@@ -42,6 +43,13 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script>
+    var sampleWMS = {
+        version: "1.0.0",
+        payload_type: "wms",
+        en: { ServiceURL: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", LAYER: "limits" },
+        fr: { ServiceURL: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", LAYER: "limits" },
+    }
+
     function log_info(s) {
         console.log(s);
         $('#log').append('<p class="bg-info">'+s+'</p>');
@@ -70,6 +78,10 @@
 
         $('.sampledata').click( function(e) {
             $('#data').val( '{ "ServiceURL": "'+$(e.target).data('url')+'", "ServiceType": "feature" }' );
+        });
+
+        $('.samplejson').click(function (e) {
+            $('#data').val(JSON.stringify(window[$(e.target).data('obj')]));
         });
 
         $('#gettest').click( function() {
