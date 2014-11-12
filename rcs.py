@@ -50,7 +50,7 @@ class Register(Resource):
         except:
             return 'Unparsable body',400
         if not validator.is_valid( s ):
-            return Response(json.dumps( [x.message for x in validator.iter_errors(s)] ),  mimetype='application/json')
+            return Response(json.dumps({ 'errors': [x.message for x in validator.iter_errors(s)] }),  mimetype='application/json'), 400
         data = parser.make_feature_node()
         print( data )
         data = parser.get_feature_service( data )
