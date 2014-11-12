@@ -15,12 +15,7 @@
     </div>
 
     <div class="row"><div class="form-group col-md-12">
-        <textarea id="data" rows=7 class="form-control">{
-  "ServiceURL": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0", 
-  "DisplayField": "Research_Centre_en", 
-  "ServiceName": "EC Research Centers", 
-  "ServiceType": "feature" 
-}</textarea>
+        <textarea id="data" rows=7 class="form-control"></textarea>
     </div></div>
 
     <div class="row"><div class="form-group col-md-12">
@@ -33,6 +28,7 @@
         <input type="button" class="btn sampledata" value="JOSM Unique"
                data-url="http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/0" />
         <input type="button" class="btn samplejson" value="WMS" data-obj="sampleWMS" />
+        <input type="button" class="btn samplejson" value="WMS" data-obj="sampleFeature" />
     </div></div>
 
     <div class="row"><div id="log" class="form-group col-md-12">
@@ -44,11 +40,18 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script>
     var sampleWMS = {
-        version: "1.0.0",
-        payload_type: "wms",
-        en: { service_url: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", layer: "limits" },
-        fr: { service_url: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", layer: "limits" },
-    }
+            version: "1.0.0",
+            payload_type: "wms",
+            en: { service_url: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", layer: "limits" },
+            fr: { service_url: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", layer: "limits" },
+        },
+        sampleFeature = {
+            version: "1.0.0",
+            payload_type: "feature",
+            en: { service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" },
+            fr: { service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" },
+        }
+
 
     function log_info(s) {
         console.log(s);
@@ -59,6 +62,8 @@
         $('#log').append('<p class="bg-danger">'+s+'</p>');
     }
     $(document).ready(function () {
+        $('#data').val(JSON.stringify(sampleFeature));
+
         $('#puttest').click( function() {
             $.ajax({
                 type: "PUT",
@@ -77,7 +82,10 @@
         });
 
         $('.sampledata').click( function(e) {
-            $('#data').val('{ "ServiceURL": "' + $(e.target).data('url') + '", "ServiceType": "feature" }');
+            var sample = { version: "1.0.0", payload_type: 'feature', en: {}, fr: {} }
+            sample.en.service_url = $(e.target).data('url');
+            sample.fr.service_url = $(e.target).data('url');
+            $('#data').val(JSON.stringify(sample));
         });
 
         $('.samplejson').click(function (e) {

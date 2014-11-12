@@ -1,6 +1,6 @@
 from __future__ import division, print_function, unicode_literals
 
-import json, pymongo, requests, jsonschema, parser, db, config, os
+import json, pymongo, requests, jsonschema, regparse.esri_feature, db, config, os
 
 from flask import Flask, Response
 from flask.ext.restful import reqparse, request, abort, Api, Resource
@@ -47,13 +47,19 @@ class Register(Resource):
     def put(self, smallkey):
         try:
             s = json.loads( request.data )
-        except:
-            return 'Unparsable body',400
+        except Exception:
+            return '{"errors":""}',400
         if not validator.is_valid( s ):
             return Response(json.dumps({ 'errors': [x.message for x in validator.iter_errors(s)] }),  mimetype='application/json'), 400
-        data = parser.make_feature_node()
-        print( data )
-        data = parser.get_feature_service( data )
+
+        data = dict( smallkey=smallkey )
+        if s['payload_type'] == 'wms':
+            data['en'] = regparse.wms.make_node( s['en'] )
+            data['fr'] = regparse.wms.make_node( s['fr'] )
+        else:
+            data['en'] = regparse.esri_feature.make_node( s['en'] )
+            data['fr'] = regparse.esri_feature.make_node( s['fr'] )
+
         print( data )
         jsonset.remove( { 'smallkey':smallkey } )
         jsonset.insert( { 'smallkey':smallkey, 'data':data } )
