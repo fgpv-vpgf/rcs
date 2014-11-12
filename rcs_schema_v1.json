@@ -11,7 +11,7 @@
             "properties": {
                 "service_url": { "type": "string" },
                 "service_name": { "type": "string" },
-                "display_name": { "type": "string" }
+                "display_field": { "type": "string" }
             },
             "required": [ "service_url" ],
             "additionalProperties": false
