@@ -33,6 +33,7 @@
     <div class="row"><div class="form-group col-md-12">
         <button class="btn" id='puttest'>PUT</button>
         <button class="btn" id='gettest'>GET</button>
+        <button class="btn" id='deltest'>DELETE</button>
         <input type="button" class="btn sampledata" value="Unique with Default"
                data-url="http://devmap.on.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer/0" />
         <input type="button" class="btn sampledata" value="Class Breaks"
@@ -83,11 +84,24 @@
                 url: '/register/' + $('#smallkey').val(),
                 data: $('#data').val(),
                 dataType: "text",
-            }).done(function (data) {
-                log_info('put done');
+            }).done(function (data, status, xhr) {
+                log_info('put done '+xhr.status);
                 log_info(data);
             }).fail(function (err) {
                 log_err('put failed '+err.status);
+                console.log(err);
+            });
+
+        });
+        $('#deltest').click( function() {
+            $.ajax({
+                type: "DELETE",
+                url: '/register/' + $('#smallkey').val(),
+                dataType: "text",
+            }).done(function (data, status, xhr) {
+                log_info('del done '+xhr.status);
+            }).fail(function (err) {
+                log_err('del failed '+err.status);
                 console.log(err);
             });
 
