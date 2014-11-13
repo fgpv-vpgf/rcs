@@ -1,25 +1,22 @@
 from __future__ import division, print_function, unicode_literals
 
-import json, pymongo, requests, parser, db
+import json, pymongo, requests, jsonschema, regparse, db, config, os
 
 from flask import Flask, Response
 from flask.ext.restful import reqparse, request, abort, Api, Resource
 
-client = pymongo.MongoClient()
-jsonset = client.jsontest.json
-
 app = Flask(__name__)
+app.config.from_object(config)
+if os.environ.get('RCS_CONFIG'):
+    app.config.from_envvar('RCS_CONFIG')
 api = Api(app)
+
+client = pymongo.MongoClient( host=app.config['DB_HOST'], port=app.config['DB_PORT'] )
+jsonset = client[app.config['DB_NAME']].json
+validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
 
 def get_doc( smallkey ):
     return jsonset.find_one({'smallkey':smallkey})
-
-def make_feature_parser():
-    parser = reqparse.RequestParser()
-    parser.add_argument('ServiceURL', type=str, required=True, location='json')
-    parser.add_argument('ServiceName', type=str, location='json')
-    parser.add_argument('DisplayField', type=str, location='json')
-    return parser
 
 
 class Doc(Resource):
@@ -48,10 +45,21 @@ class Docs(Resource):
 
 class Register(Resource):
     def put(self, smallkey):
-        data = parser.make_feature_node()
-        data = get_feature_parser().parse_args()
-        print( data )
-        data = parser.get_feature_service( data )
+        try:
+            s = json.loads( request.data )
+        except Exception:
+            return '{"errors":""}',400
+        if not validator.is_valid( s ):
+            return Response(json.dumps({ 'errors': [x.message for x in validator.iter_errors(s)] }),  mimetype='application/json'), 400
+
+        data = dict( smallkey=smallkey )
+        if s['payload_type'] == 'wms':
+            data['en'] = regparse.wms.make_node( s['en'] )
+            data['fr'] = regparse.wms.make_node( s['fr'] )
+        else:
+            data['en'] = regparse.esri_feature.make_node( s['en'] )
+            data['fr'] = regparse.esri_feature.make_node( s['fr'] )
+
         print( data )
         jsonset.remove( { 'smallkey':smallkey } )
         jsonset.insert( { 'smallkey':smallkey, 'data':data } )

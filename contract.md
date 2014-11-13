@@ -45,7 +45,7 @@ Response Body: Empty
 
 Error Conditions:
 - payload does not conform to schema: 400 Bad Request, body contains:
-  > `{"error_message":"Note on validation failure"}`
+  > `{"errors":["message 1","message 2"]}`
 - exception in processing: 500 Internal Server Error, empty body
 
 The body of the request should conform to:
@@ -54,20 +54,20 @@ The body of the request should conform to:
 ### Payload Type ``feature``
 
 The feature payload should conform to:
-> ``{"ServiceURL":(URL to ESRI REST Service),"ServiceName":"Layer Name","DisplayField":"Layer Attribute"}``
+> ``{"service_url":(URL to ESRI REST Service),"service_name":"Layer Name","display_field":"Layer Attribute"}``
 
 - the service URL should not have any query string component
-- `DisplayField` and `ServiceName` are optional
+- `display_field` and `service_name` are optional
 
 ### Payload Type ``wms``
 
 The feature payload should conform to:
-> ``{"ServiceURL":(URL to WMS Service),"LAYER":"Layer Identifier","legendFormat":"MIME type","featureInfoType":(?)}`
+> ``{"service_url":(URL to WMS Service),"layer":"Layer Identifier","legend_format":"MIME type","feature_info_type":(?)}`
 
 - the service URL should not have any query string component
-- `LAYER` is required and must match the a layer identifier specified in the WMS
-- `legendFormat` is an optional string, if present it indicates legend support on the WMS and specifies the image MIME type to request from the server
-- `featureInfoType` is an optional field, if present it indicates feature info support on the WMS
+- `layer` is required and must match the a layer identifier specified in the WMS
+- `legend_format` is an optional string, if present it indicates legend support on the WMS and specifies the image MIME type to request from the server
+- `feature_info_type` is an optional field, if present it indicates feature info support on the WMS
 
 ## DELETE ``/register/[smallkey]``
 
@@ -80,4 +80,3 @@ Response Body: Empty
 Error Conditions:
 - smallkey not found: 404 Not Found
 - exception in processing: 500 Internal Server Error, empty body
-

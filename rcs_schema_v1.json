@@ -1,0 +1,58 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "RCS Schema",
+    "description": "An RCS request object",
+
+    "defs": {
+
+        "featureNode": {
+            "type": "object",
+            "properties": {
+                "service_url": { "type": "string" },
+                "service_name": { "type": "string" },
+                "display_field": { "type": "string" }
+            },
+            "required": [ "service_url" ],
+            "additionalProperties": false
+        },
+
+        "wmsNode": {
+            "type": "object",
+            "properties": {
+                "service_url": { "type": "string" },
+                "layer": { "type": "string" },
+                "legend_format": { "type": "string" },
+                "feature_info_type": { "type": "string" }
+            },
+            "required": [ "service_url", "layer" ],
+            "additionalProperties": false
+        },
+
+        "f": {
+            "type": "object",
+            "properties": {
+                "payload_type": { "type": "string", "enum": [ "feature" ] },
+                "en": {"$ref": "#/defs/featureNode"},
+                "fr": {"$ref": "#/defs/featureNode"}
+            }
+        },
+
+        "w": {
+            "type": "object",
+            "properties": {
+                "payload_type": { "type": "string", "enum": [ "wms" ] },
+                "en": {"$ref": "#/defs/wmsNode"},
+                "fr": {"$ref": "#/defs/wmsNode"}
+            }
+        }
+
+    },
+
+    "properties": {
+        "version": { "type": "string", "enum": [ "1.0.0" ] },
+        "payload_type": { "type": "string", "enum": ["feature","wms"] }
+    },
+
+    "oneOf": [ { "$ref": "#/defs/f" }, { "$ref": "#/defs/w" } ]
+}
