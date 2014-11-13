@@ -13,10 +13,14 @@ api = Api(app)
 
 client = pymongo.MongoClient( host=app.config['DB_HOST'], port=app.config['DB_PORT'] )
 jsonset = client[app.config['DB_NAME']].json
+client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
 
-def get_doc( smallkey ):
-    return jsonset.find_one({'smallkey':smallkey})
+def get_doc( smallkey, lang ):
+    o = jsonset.find_one({'smallkey':smallkey})
+    if o is not None:
+        return o.get('data',{}).get(lang,None)
+    return None
 
 
 class Doc(Resource):
@@ -25,22 +29,12 @@ class Doc(Resource):
         print( doc )
         if doc is None:
             return None,404
-        return Response(json.dumps(doc['data']),  mimetype='application/json')
-
-    def put(self, smallkey):
-        data = parser.make_feature_node()
-        data = make_feature_parser().parse_args()
-        print( data )
-        get_feature_service( data )
-        print( data )
-        jsonset.remove( { 'smallkey':smallkey } )
-        jsonset.insert( { 'smallkey':smallkey, 'data':data } )
-        return smallkey, 201
+        return Response(json.dumps(doc),  mimetype='application/json')
 
 class Docs(Resource):
     def get(self, lang, smallkeylist):
         keys = [ x.strip() for x in smallkeylist.split(',') ]
-        docs = [ get_doc(smallkey,lang)['data'] for smallkey in keys ]
+        docs = [ get_doc(smallkey,lang) for smallkey in keys ]
         return Response(json.dumps(docs),  mimetype='application/json')
 
 class Register(Resource):
@@ -48,7 +42,7 @@ class Register(Resource):
         try:
             s = json.loads( request.data )
         except Exception:
-            return '{"errors":""}',400
+            return '{"errors":["Unparsable json"]}',400
         if not validator.is_valid( s ):
             return Response(json.dumps({ 'errors': [x.message for x in validator.iter_errors(s)] }),  mimetype='application/json'), 400
 

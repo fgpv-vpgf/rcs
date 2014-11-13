@@ -8,9 +8,21 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
             <label>Small Key</label>
-            <input class="form-control" type="text" id="smallkey" />
+            <input class="form-control" type="text" id="smallkey" value="0" />
+        </div>
+        <div class="form-group col-md-6">
+            <label>Get Method Language</label>
+            <br />
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default active">
+                    <input type="radio" name="lang" id="lang-en" value="en" checked /> English
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="lang" id="lang-fr" value="fr" /> French
+                </label>
+            </div>
         </div>
     </div>
 
@@ -37,7 +49,7 @@
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <script>
     var sampleWMS = {
             version: "1.0.0",
@@ -93,9 +105,11 @@
         });
 
         $('#gettest').click( function() {
+            var u = '/doc/' + $('[name=lang]:checked').val() + '/' + $('#smallkey').val();
+            log_info('GET URL: '+u);
             $.ajax({
                 type: "GET",
-                url: '/doc/' + $('#smallkey').val(),
+                url: u,
                 dataType: "json",
             }).done(function (data) {
                 log_info('get done');
@@ -103,7 +117,7 @@
                 $('#data').val(JSON.stringify(data));
             }).fail(function (err) {
                 log_err('get failed '+err.status);
-                log_err(JSON.stringify(data));
+                log_err(JSON.stringify(err));
                 console.log(err);
             });
         });

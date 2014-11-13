@@ -37,25 +37,25 @@ def make_symbology( json_data, data ):
     label_map = get_legend_mapping( data, json_data['id'] )
 
     if render_json['type'] == 'simple':
-        symb['imageUrl'] = images_url_prefix + label_map[render_json['label']]
+        symb['imageUrl'] = label_map[render_json['label']]
 
     elif render_json['type'] == 'uniqueValue':
         if render_json.get('defaultLabel',None):
-            symb['defaultImageUrl'] = images_url_prefix + label_map[render_json['defaultLabel']]
+            symb['defaultImageUrl'] = label_map[render_json['defaultLabel']]
         for field in 'field1 field2 field3'.split():
             symb[field] = render_json[field]
-        val_maps = [ dict( value= u['value'], imageUrl= images_url_prefix+label_map[u['label']] )
+        val_maps = [ dict( value= u['value'], imageUrl= label_map[u['label']] )
                      for u in render_json['uniqueValueInfos'] ]
         symb['valueMaps'] = val_maps
 
     elif render_json['type'] == 'classBreaks':
         if render_json.get('defaultLabel',None):
-            symb['defaultImageUrl'] = images_url_prefix + label_map[render_json['defaultLabel']]
+            symb['defaultImageUrl'] = label_map[render_json['defaultLabel']]
         symb['field'] = render_json['field']
         symb['minValue'] = render_json['minValue']
-        range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=images_url_prefix+label_map[u['label']])
+        range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=label_map[u['label']])
                        for u in render_json['classBreakInfos'] ]
-        symb['valueMaps'] = range_maps
+        symb['rangeMaps'] = range_maps
     return symb
 
 def make_node( data ):
