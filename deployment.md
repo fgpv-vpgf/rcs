@@ -12,13 +12,13 @@ tested with 2008r2 and 2012).
 3. Create a configuration file for the DB (e.g. `c:\mongo\mongod.cfg`)
 ```yaml
 systemLog:
-  destination: file
-  path: "c:\\mongo\\logs\\mongodb.log"
-  quiet: true
-  logAppend: true
+    destination: file
+    path: "c:\\mongo\\logs\\mongodb.log"
+    quiet: true
+    logAppend: true
 storage:
-  dbPath: "c:\\mongo\\data"
-  directoryPerDB: true
+    dbPath: "c:\\mongo\\data"
+    directoryPerDB: true
 ```
 4. Install MongoDB as a service:
    `"c:\Program Files\MongoDB 2.6 Standard\bin\mongod.exe" --config "c:\mongo\mongod.cfg" --install`
@@ -33,7 +33,7 @@ db.createUser({user:"rcs",pwd:"changeme",roles:[{role:"readWrite"}]})
 7. Enable authentication in the config by adding the following:
 ```yaml
 security:
-  authorization: enabled
+    authorization: enabled
 ```
 8. Restart the MongoDB service `net stop mongodb`, `net start mongodb`
 
