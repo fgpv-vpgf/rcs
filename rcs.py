@@ -17,11 +17,14 @@ client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['D
 validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
 
 def get_doc( smallkey, lang ):
-    o = jsonset.find_one({'smallkey':smallkey})
+    o = jsonset.find_one({'key':smallkey})
     if o is not None:
-        return o.get('data',{}).get(lang,None)
+        fragment = o.get('data',{}).get(lang,None)
+        if fragment is not None:
+            result = { 'layers': {} }
+            result['layers'][ o['type'] ] = [ fragment ]
+            return result
     return None
-
 
 class Doc(Resource):
     def get(self, lang, smallkey):
@@ -46,7 +49,7 @@ class Register(Resource):
         if not validator.is_valid( s ):
             return Response(json.dumps({ 'errors': [x.message for x in validator.iter_errors(s)] }),  mimetype='application/json'), 400
 
-        data = dict( smallkey=smallkey )
+        data = dict( key=smallkey )
         if s['payload_type'] == 'wms':
             data['en'] = regparse.wms.make_node( s['en'] )
             data['fr'] = regparse.wms.make_node( s['fr'] )
@@ -55,12 +58,12 @@ class Register(Resource):
             data['fr'] = regparse.esri_feature.make_node( s['fr'] )
 
         print( data )
-        jsonset.remove( { 'smallkey':smallkey } )
-        jsonset.insert( { 'smallkey':smallkey, 'data':data } )
+        jsonset.remove( { 'key':smallkey } )
+        jsonset.insert( { 'key':smallkey, 'type':s['payload_type'], 'data':data } )
         return smallkey, 201
 
     def delete(self, smallkey):
-        jsonset.remove( { 'smallkey':smallkey } )
+        jsonset.remove( { 'key':smallkey } )
         return '', 204
 
 
