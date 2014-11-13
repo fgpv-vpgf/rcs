@@ -2,7 +2,8 @@ from __future__ import division, print_function, unicode_literals
 
 import json, pymongo, requests, jsonschema, regparse, db, config, os
 
-from flask import Flask, Response
+from functools import wraps
+from flask import Flask, Response, current_app
 from flask.ext.restful import reqparse, request, abort, Api, Resource
 
 app = Flask(__name__)
@@ -15,6 +16,20 @@ client = pymongo.MongoClient( host=app.config['DB_HOST'], port=app.config['DB_PO
 jsonset = client[app.config['DB_NAME']].json
 client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
+
+def jsonp(func):
+    """Wraps JSONified output for JSONP requests."""
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        callback = request.args.get('callback', False)
+        if callback:
+            data = str(func(*args, **kwargs).data)
+            content = str(callback) + '(' + data + ')'
+            mimetype = 'application/javascript'
+            return current_app.response_class(content, mimetype=mimetype)
+        else:
+            return func(*args, **kwargs)
+    return decorated_function
 
 def get_doc( smallkey, lang ):
     o = jsonset.find_one({'key':smallkey})
@@ -35,9 +50,11 @@ class Doc(Resource):
         return Response(json.dumps(doc),  mimetype='application/json')
 
 class Docs(Resource):
+    @jsonp
     def get(self, lang, smallkeylist):
         keys = [ x.strip() for x in smallkeylist.split(',') ]
         docs = [ get_doc(smallkey,lang) for smallkey in keys ]
+        print( docs )
         return Response(json.dumps(docs),  mimetype='application/json')
 
 class Register(Resource):
