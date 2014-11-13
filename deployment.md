@@ -28,7 +28,7 @@ storage:
 use admin
 db.createUser({user:"admin",pwd:"changeme",roles:["root"]})
 use rcs
-db.createUser({user:"rcs",pwd:"changeme",roles:[{role:"readWrite"}]})
+db.createUser({user:"rcs",pwd:"changeme",roles:["readWrite"]})
 ```
 7. Enable authentication in the config by adding the following:
 ```yaml
@@ -44,13 +44,13 @@ security:
 1. Install virtualenv `pip install virtualenv`
 1. Create python virtual environment `virtualenv c:\inetpub\rcs`
 1. Activate the virtualenv `scripts\activate`
-1. Extract the deployment package (or for dev environments clone this repo)
+1. Extract the deployment package (or for dev environments clone this repo) to `c:\inetpub\rcs`
 1. Install the project dependencies `pip install -r requirements.txt`
 1. Test the installation `python rcs.py`
 
 ### IIS Integration
 
-1. Ensure IIS has CGI support
+1. Ensure IIS has CGI support (http://www.iis.net/configreference/system.webserver/cgi)
 1. Create a website in IIS and point it to the Python virtual environment
 1. Go to the website | Handler Mappings | Add Module Mapping ...
 ```
