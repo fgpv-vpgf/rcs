@@ -1,6 +1,6 @@
 from __future__ import division, print_function, unicode_literals
 
-import json, pymongo, requests, jsonschema, regparse.esri_feature, db, config, os
+import json, pymongo, requests, jsonschema, regparse, db, config, os
 
 from flask import Flask, Response
 from flask.ext.restful import reqparse, request, abort, Api, Resource
