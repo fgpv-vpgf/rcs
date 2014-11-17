@@ -45,6 +45,7 @@ security:
 1. Create python virtual environment `virtualenv c:\inetpub\rcs`
 1. Activate the virtualenv `scripts\activate`
 1. Extract the deployment package (or for dev environments clone this repo) to `c:\inetpub\rcs`
+1. Ensure the account names and passwords in config.py match the rcs account defined in mongodb above
 1. Install the project dependencies `pip install -r requirements.txt`
 1. Update the configuration in `config.py` or set the environment variable `RCS_CONFIG`
    to point to a config which overrides the defaults set in `config.py`
