@@ -10,9 +10,9 @@ def make_feature_info( data ):
         return { 'mimeType':fi_type, 'parser':'stringParse.js' }
     return None
 
-def make_node( data ):
-    wms_node = {}
-    wms_node['service_url'] = data['service_url']
+def make_node( data, id ):
+    wms_node = { 'id': id }
+    wms_node['url'] = data['service_url']
     wms_node['layerName'] = data['layer']
     wms_node['displayName'] = data['layer']
     wms_node['format'] = 'image/png'

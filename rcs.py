@@ -31,6 +31,9 @@ def jsonp(func):
             return func(*args, **kwargs)
     return decorated_function
 
+def make_id( key, lang ):
+    return "{0}.{1}.{2}".format('rcs',key,lang)
+
 def get_doc( smallkey, lang ):
     o = jsonset.find_one({'key':smallkey})
     if o is not None:
@@ -68,11 +71,11 @@ class Register(Resource):
 
         data = dict( key=smallkey )
         if s['payload_type'] == 'wms':
-            data['en'] = regparse.wms.make_node( s['en'] )
-            data['fr'] = regparse.wms.make_node( s['fr'] )
+            data['en'] = regparse.wms.make_node( s['en'], make_id(smallkey,'en') )
+            data['fr'] = regparse.wms.make_node( s['fr'], make_id(smallkey,'fr') )
         else:
-            data['en'] = regparse.esri_feature.make_node( s['en'] )
-            data['fr'] = regparse.esri_feature.make_node( s['fr'] )
+            data['en'] = regparse.esri_feature.make_node( s['en'], make_id(smallkey,'en') )
+            data['fr'] = regparse.esri_feature.make_node( s['fr'], make_id(smallkey,'fr') )
 
         print( data )
         jsonset.remove( { 'key':smallkey } )

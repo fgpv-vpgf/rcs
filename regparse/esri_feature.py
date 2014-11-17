@@ -58,8 +58,8 @@ def make_symbology( json_data, data ):
         symb['rangeMaps'] = range_maps
     return symb
 
-def make_node( data ):
-    node = make_feature_node()
+def make_node( data, id ):
+    node = { 'id': id }
     r = requests.get( data['service_url'] + '?f=json' )
     svc_data = r.json()
     print( svc_data  )
