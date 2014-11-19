@@ -67,7 +67,9 @@ class Register(Resource):
         except Exception:
             return '{"errors":["Unparsable json"]}',400
         if not validator.is_valid( s ):
-            return Response(json.dumps({ 'errors': [x.message for x in validator.iter_errors(s)] }),  mimetype='application/json'), 400
+            resp = { 'errors': [x.message for x in validator.iter_errors(s)] }
+            print( resp )
+            return Response(json.dumps(resp),  mimetype='application/json', status=400)
 
         data = dict( key=smallkey )
         if s['payload_type'] == 'wms':
