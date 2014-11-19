@@ -41,6 +41,7 @@
         <input type="button" class="btn sampledata" value="JOSM Unique"
                data-url="http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/0" />
         <input type="button" class="btn samplejson" value="WMS" data-obj="sampleWMS" />
+        <input type="button" class="btn samplejson" value="Full WMS" data-obj="fullWMS" />
         <input type="button" class="btn samplejson" value="Feature" data-obj="sampleFeature" />
     </div></div>
 
@@ -63,7 +64,13 @@
             payload_type: "feature",
             en: { service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" },
             fr: { service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" },
-        }
+        },
+        fullWMS = {
+            version: "1.0.0",
+            payload_type: "wms",
+            en: { service_url: "http://sedac.ciesin.org/geoserver/ows", layer: "aglands:aglands-pastures-2000", legend_format: "image/jpeg", feature_info_type: "text/plain" },
+            fr: { service_url: "http://sedac.ciesin.org/geoserver/ows", layer: "aglands:aglands-pastures-2000" },
+        };
 
 
     function log_info(s) {
@@ -89,6 +96,7 @@
                 log_info(data);
             }).fail(function (err) {
                 log_err('put failed '+err.status);
+                log_err(err.responseText);
                 console.log(err);
             });
 
