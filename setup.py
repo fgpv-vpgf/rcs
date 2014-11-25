@@ -9,4 +9,5 @@ setup(
     url="https://github.com/RAMP-PCAR/RCS",
     py_modules=['rcs','wfastcgi'],
     packages=['db','regparse'],
+    license='MIT',
 )
