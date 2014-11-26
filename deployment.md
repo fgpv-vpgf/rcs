@@ -49,6 +49,8 @@ security:
 1. Install the project dependencies `pip install -r requirements.txt`
 1. Update the configuration in `config.py` or set the environment variable `RCS_CONFIG`
    to point to a config which overrides the defaults set in `config.py`
+1. Update the configuration variable for `REG_SCHEMA` to an absolute path (e.g. `c:\\inetpub\\rcs`
+   -- use double backslashes to avoid string escape codes)
 1. Test the installation `python rcs.py` (this will run a test server on localhost)
 
 ### IIS Integration
