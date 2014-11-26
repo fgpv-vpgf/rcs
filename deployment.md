@@ -1,6 +1,6 @@
 # Deployment
 
-RCS uses Python and MongoDB and should be deployable on any platform that
+RCS uses Python and CouchDB and should be deployable on any platform that
 supports both.  Currently deployment notes are provided only for Windows (and
 tested with 2008r2 and 2012).
 
