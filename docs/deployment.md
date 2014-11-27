@@ -32,15 +32,19 @@ tested with 2008r2 and 2012).
 
 1. Ensure python is a 2.7.x release
 1. Get an RCS release package `rcs-X.Y.Z.zip`
-1. Get prepackaged dependencies if necessary (should be a directory full of `.whl` files)
+1. Extract the release package, it should be somewhere IIS can be configured to read from `c:\inetpub\rcs-1.0.0`
+1. [Optional] Get prepackaged dependencies (should be a directory full of `.whl` files)
 1. Install pip (https://pip.pypa.io/en/latest/installing.html)
 1. Install virtualenv `pip install virtualenv`
-1. Create python virtual environment `virtualenv c:\inetpub\rcs`
-1. Activate the virtualenv `scripts\activate`
-1. Extract the deployment package to `c:\inetpub\rcs`
+1. Create python virtual environment in the release location and activate it
+```
+cd c:\inetpub\rcs-1.0.0
+virtualenv .
+scripts\activate
+```
 1. Install the project dependencies:
     * via internet `pip install -r requirements.txt`
-    * via wheel `pip install --use-wheel --no-index --find-links=c:\path\to\wheel\dir -r requirements.txt`
+    * via local wheel cache `pip install --use-wheel --no-index --find-links=c:\path\to\wheel\dir -r requirements.txt`
 1. Update the configuration in `config.py` or set the environment variable `RCS_CONFIG`
    to point to a config which overrides the defaults set in `config.py`
 1. Update the configuration variable for `REG_SCHEMA` to an absolute path (e.g. `c:\\inetpub\\rcs`
