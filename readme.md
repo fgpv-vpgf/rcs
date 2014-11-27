@@ -34,5 +34,5 @@ data.  Currently registration will accept ESRI feature service endpoints and WMS
 endpoints.
 
 Full specifications of the service are still in development please see the
-[current draft specification](https://github.com/RAMP-PCAR/RCS/blob/master/contract.md)
+[current draft specification](docs/contract.md)
 for more details.
