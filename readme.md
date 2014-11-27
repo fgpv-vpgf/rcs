@@ -22,8 +22,8 @@ Python with a fairly minimal store and retrieve API.
 1. [Service Contract](docs/contract.md)
 
 ### Deployment
-1. [Deployment](deployment.md)
-1. [Replication](replication.md)
+1. [Deployment](docs/deployment.md)
+1. [Replication](docs/replication.md)
 
 ## Functionality
 
