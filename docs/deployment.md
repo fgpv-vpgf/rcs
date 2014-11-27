@@ -8,7 +8,7 @@ tested with 2008r2 and 2012).
 
 ### Install [CouchDB](http://couchdb.apache.org/)
 1. Run the installer
-1. Open a web browser and navigate to http://127.0.0.1/_utils
+1. Open a web browser and navigate to http://127.0.0.1:5984/_utils
 1. Setup the admin account (see link in bottom left of the window)
 1. Update the configuration to listen on the correct network address (Tools | Configuration | bind_addr)
 1. Create a database `rcs_cache` (navigate to Overview | Create Database)
@@ -31,12 +31,16 @@ tested with 2008r2 and 2012).
 ### Configure Python Environment
 
 1. Ensure python is a 2.7.x release
+1. Get an RCS release package `rcs-X.Y.Z.zip`
+1. Get prepackaged dependencies if necessary (should be a directory full of `.whl` files)
 1. Install pip (https://pip.pypa.io/en/latest/installing.html)
 1. Install virtualenv `pip install virtualenv`
 1. Create python virtual environment `virtualenv c:\inetpub\rcs`
 1. Activate the virtualenv `scripts\activate`
-1. Extract the deployment package (or for dev environments clone this repo) to `c:\inetpub\rcs`
-1. Install the project dependencies `pip install -r requirements.txt`
+1. Extract the deployment package to `c:\inetpub\rcs`
+1. Install the project dependencies:
+    * via internet `pip install -r requirements.txt`
+    * via wheel `pip install --use-wheel --no-index --find-links=c:\path\to\wheel\dir -r requirements.txt`
 1. Update the configuration in `config.py` or set the environment variable `RCS_CONFIG`
    to point to a config which overrides the defaults set in `config.py`
 1. Update the configuration variable for `REG_SCHEMA` to an absolute path (e.g. `c:\\inetpub\\rcs`

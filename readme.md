@@ -14,6 +14,17 @@ prefetch data from certain endpoints and store them as configuration fragments
 which the RAMP client can consume.  It is implemented as a REST service in
 Python with a fairly minimal store and retrieve API.
 
+## Overview
+
+### Development
+1. [Development Setup](docs/devsetup.md)
+1. [Building](docs/building.md)
+1. [Service Contract](docs/contract.md)
+
+### Deployment
+1. [Deployment](deployment.md)
+1. [Replication](replication.md)
+
 ## Functionality
 
 RCS currently exposes three REST endpoints.
