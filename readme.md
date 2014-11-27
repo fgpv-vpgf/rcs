@@ -1,4 +1,4 @@
-> *NOTE* The RCS code published to the github repository does not reflect the latest
+> *NOTE* The RCS code published to the github repository may not reflect the latest
 > version of the contract.
 
 # RAMP Configuration Service
