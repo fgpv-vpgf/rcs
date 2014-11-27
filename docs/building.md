@@ -1,51 +1,21 @@
-# Replication
+# Building RCS
 
-RCS was designed to be deployed in a load balanced environment.  The following
-steps can be used to setup CouchDB for master-master replication if it is deployed
-on systems which follow the same partitioning as the load balancer.
+RCS uses standard packaging tools as much as possible.  The current recommendation
+for Python appears to be [wheel](http://pythonwheels.com/).
 
-The notes are relatively straightforward, but only cover simple network architectures
-where a few servers are connected over local links.
+## Packaging RCS Only
 
-## Replication Setup
+If addtional dependencies are not required a source distribution will likely be sufficient.
 
-All replication in CouchDB is unidirectional from the source to the target.  There
-seems to be a common convention of setting a remote as the source and local as the
-target.  CouchDB uses a special database named `_replicator` for keeping replications;
-setting up a replication involves sending a PUT request to `/_replicator/<replication_id>`.
-Replication IDs can be any short string and RCS will use the convention `rep_serverX_rcs`.
+1. Initialize the virtual environment `scripts\activate`
+1. Edit `setup.py` if version or packaged dependencies have changed
+1. Edit `MANIFEST.in` if any other dependencies (e.g. docs, static test files) have changed
+1. Execute `python setup.py sdist`
 
-The payload for the replication request is:
-```js
-{
-    "source":"http://rcs:rcs@serverX:5984/rcs_cache",
-    "target":"rcs_cache",
-    "continuous":true,
-    "create_target":false,
-    "user_ctx":{
-        "name":"rcs",
-        "roles":["rcs"]
-    }
-}
-```
-If [curl](http://curl.haxx.se/download.html) is available on your system you can copy
-and paste the following.
-```sh
-curl -X PUT http://admin:admin@localhost:5984/_replicator/rep_server4_rcs -d '{ "source":"http://rcs:rcs@serverX:5984/rcs_cache", "target":"rcs_cache", "continuous":true, "create_target":false, "user_ctx":{"name":"rcs", "roles":["rcs"]} }'
-```
+## Packaging RCS and Dependencies
 
-The following bash script can be used to setup a 4 node replication.
-```
-HOST="http://admin:admin@localhost:5984"
-RCS1="http://rcs:rcs@10.0.2.6:5984/rcs_cache"
-RCS2="http://rcs:rcs@10.0.2.7:5984/rcs_cache"
-RCS3="http://rcs:rcs@10.0.2.8:5984/rcs_cache"
-RCS4="http://rcs:rcs@10.0.2.9:5984/rcs_cache"
-REPLICATION="2 3 4"   # do not include the current server in the replication
-
-curl $HOST #just a test
-for i in $REPLICATION; do
-    SRV=RCS$i
-    curl -X PUT $HOST/_replicator/rep_server$i_rcs -d "'{ \"source\":\"${!SRV}\", \"target\":\"rcs_cache\", \"continuous\":true, \"create_target\":false, \"user_ctx\":{\"name\":\"rcs\", \"roles\":[\"rcs\"]} }'"
-done
-```
+If you want to prefetch and build all the dependencies (e.g. avoiding tedious
+downloads on a server) then stop at step #3 above and instead execute
+`pip wheel . -r requirements.txt`.  Output should be in `./wheelhouse` as a
+set of `.whl` files.  This directory can be used as the installation source for
+a server deployment.
