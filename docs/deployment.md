@@ -14,7 +14,7 @@ tested with 2008r2 and 2012).
 1. Create a database `rcs_cache` (navigate to Overview | Create Database)
 1. Update the security for the `rcs_cache` database set Admin Roles: `["rcs"]` and Member Roles: `["rcs"]`
 1. Create a second database `rcs_sync` with the same permissions
-1. Add a new user to the `_users` database (Overview | _users | Create Document)
+1. Add a new user to the `_users` database (Overview | _users | New Document)
 1. Select source and enter the following then save document
 ```js
 {
@@ -32,13 +32,13 @@ tested with 2008r2 and 2012).
 
 1. Ensure python is a 2.7.x release
 1. Get an RCS release package `rcs-X.Y.Z.zip`
-1. Extract the release package, it should be somewhere IIS can be configured to read from `c:\inetpub\rcs-1.0.0`
+1. Extract the release package, it should be somewhere IIS can be configured to read from `c:\inetpub\rcs-X.Y.Z`
 1. [Optional] Get prepackaged dependencies (should be a directory full of `.whl` files)
 1. Install pip (https://pip.pypa.io/en/latest/installing.html)
 1. Install virtualenv `pip install virtualenv`
 1. Create python virtual environment in the release location and activate it
 ```
-cd c:\inetpub\rcs-1.0.0
+cd c:\inetpub\rcs-X.Y.Z
 virtualenv .
 scripts\activate
 ```
@@ -47,7 +47,7 @@ scripts\activate
     * via local wheel cache `pip install --use-wheel --no-index --find-links=c:\path\to\wheel\dir -r requirements.txt`
 1. Update the configuration in `config.py` or set the environment variable `RCS_CONFIG`
    to point to a config which overrides the defaults set in `config.py`
-1. Update the configuration variable for `REG_SCHEMA` to an absolute path (e.g. `c:\\inetpub\\rcs`
+1. Update the configuration variable for `REG_SCHEMA` to an absolute path (e.g. `c:\\inetpub\\rcs-X.Y.Z`
    -- use double backslashes to avoid string escape codes)
 1. Ensure the `DB_CONN` variable in the config matches the account, password and other settings
    from the CouchDB installation
@@ -61,12 +61,12 @@ scripts\activate
 ```yaml
 Request Path: *
 Module: FastCgiModule
-Executable: C:\inetpub\rcs\Scripts\python.exe|C:\inetpub\rcs\wfastcgi.py
+Executable: C:\inetpub\rcs-X.Y.Z\Scripts\python.exe|C:\inetpub\rcs-X.Y.Z\wfastcgi.py
 Name: (name)
 ```
 1. Go back to the server settings | FastCgi Settings | Right click Edit
 1. Select Environment variables and add the following:
 ```yaml
-PYTHONPATH: C:\inetpub\rcs\
+PYTHONPATH: C:\inetpub\rcs-X.Y.Z\
 WSGI_HANDLER: rcs.app
 ```
