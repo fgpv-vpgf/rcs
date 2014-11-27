@@ -1,41 +1,32 @@
 # Deployment
 
-RCS uses Python and MongoDB and should be deployable on any platform that
+RCS uses Python and CouchDB and should be deployable on any platform that
 supports both.  Currently deployment notes are provided only for Windows (and
 tested with 2008r2 and 2012).
 
 ## Windows via IIS and FastCGI
 
-### Install [MongoDB](http://www.mongodb.org)
-1. Run the installer (64bit version tested)
-2. Create a directory for data and logs (e.g. `c:\mongo\data\` and `c:\mongo\logs\`)
-3. Create a configuration file for the DB (e.g. `c:\mongo\mongod.cfg`)
-```yaml
-systemLog:
-    destination: file
-    path: "c:\\mongo\\logs\\mongodb.log"
-    quiet: true
-    logAppend: true
-storage:
-    dbPath: "c:\\mongo\\data"
-    directoryPerDB: true
-```
-4. Install MongoDB as a service:
-   `"c:\Program Files\MongoDB 2.6 Standard\bin\mongod.exe" --config "c:\mongo\mongod.cfg" --install`
-5. Start MongoDB: `net start MongoDB`
-6. Create an admin user and an rcs user (run `mongo.exe` for a shell)
+### Install [CouchDB](http://couchdb.apache.org/)
+1. Run the installer
+1. Open a web browser and navigate to http://127.0.0.1/_utils
+1. Setup the admin account (see link in bottom left of the window)
+1. Update the configuration to listen on the correct network address (Tools | Configuration | bind_addr)
+1. Create a database `rcs_cache` (navigate to Overview | Create Database)
+1. Update the security for the `rcs_cache` database set Admin Roles: `["rcs"]` and Member Roles: `["rcs"]`
+1. Create a second database `rcs_sync` with the same permissions
+1. Add a new user to the `_users` database (Overview | _users | Create Document)
+1. Select source and enter the following then save document
 ```js
-use admin
-db.createUser({user:"admin",pwd:"changeme",roles:["root"]})
-use rcs
-db.createUser({user:"rcs",pwd:"changeme",roles:["readWrite"]})
+{
+    "_id": "org.couchdb.user:rcs",
+    "name": "rcs",
+    "roles": ["rcs"],
+    "type": "user",
+    "password": "changeme"
+}
 ```
-7. Enable authentication in the config by adding the following:
-```yaml
-security:
-    authorization: enabled
-```
-8. Restart the MongoDB service `net stop mongodb`, `net start mongodb`
+1. Logout and attempt to login as user `rcs` to test the setup
+1. Confirm that access to `_users` is restricted and access to `rcs_cache` and `rcs_sync` is enabled
 
 ### Configure Python Environment
 
@@ -45,12 +36,13 @@ security:
 1. Create python virtual environment `virtualenv c:\inetpub\rcs`
 1. Activate the virtualenv `scripts\activate`
 1. Extract the deployment package (or for dev environments clone this repo) to `c:\inetpub\rcs`
-1. Ensure the account names and passwords in config.py match the rcs account defined in mongodb above
 1. Install the project dependencies `pip install -r requirements.txt`
 1. Update the configuration in `config.py` or set the environment variable `RCS_CONFIG`
    to point to a config which overrides the defaults set in `config.py`
 1. Update the configuration variable for `REG_SCHEMA` to an absolute path (e.g. `c:\\inetpub\\rcs`
    -- use double backslashes to avoid string escape codes)
+1. Ensure the `DB_CONN` variable in the config matches the account, password and other settings
+   from the CouchDB installation
 1. Test the installation `python rcs.py` (this will run a test server on localhost)
 
 ### IIS Integration
@@ -58,7 +50,7 @@ security:
 1. Ensure IIS has CGI support (http://www.iis.net/configreference/system.webserver/cgi)
 1. Create a website in IIS and point it to the Python virtual environment
 1. Go to the website | Handler Mappings | Add Module Mapping ...
-```
+```yaml
 Request Path: *
 Module: FastCgiModule
 Executable: C:\inetpub\rcs\Scripts\python.exe|C:\inetpub\rcs\wfastcgi.py
@@ -66,7 +58,7 @@ Name: (name)
 ```
 1. Go back to the server settings | FastCgi Settings | Right click Edit
 1. Select Environment variables and add the following:
-```
+```yaml
 PYTHONPATH: C:\inetpub\rcs\
 WSGI_HANDLER: rcs.app
 ```

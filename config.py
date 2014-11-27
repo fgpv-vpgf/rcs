@@ -3,5 +3,6 @@ DB_PASS='rcs'
 DB_NAME='rcs'
 DB_HOST='localhost'
 DB_PORT=27017
+DB_CONN='http://rcs:rcs@localhost:5984/'
 
 REG_SCHEMA='rcs_schema_v1.json'

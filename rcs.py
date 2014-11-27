@@ -1,6 +1,6 @@
 from __future__ import division, print_function, unicode_literals
 
-import json, pymongo, requests, jsonschema, regparse, db, config, os
+import json, pycouchdb, requests, jsonschema, regparse, db, config, os
 
 from functools import wraps
 from flask import Flask, Response, current_app
@@ -12,9 +12,9 @@ if os.environ.get('RCS_CONFIG'):
     app.config.from_envvar('RCS_CONFIG')
 api = Api(app)
 
-client = pymongo.MongoClient( host=app.config['DB_HOST'], port=app.config['DB_PORT'] )
-jsonset = client[app.config['DB_NAME']].json
-client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
+client = pycouchdb.Server( app.config['DB_CONN'] )
+jsonset = client.database( app.config['DB_NAME'] )
+# client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
 
 def jsonp(func):
@@ -35,7 +35,11 @@ def make_id( key, lang ):
     return "{0}.{1}.{2}".format('rcs',key,lang)
 
 def get_doc( smallkey, lang ):
-    o = jsonset.find_one({'key':smallkey})
+    try:
+        o = jsonset.get(smallkey)
+    except pycouchdb.exceptions.NotFound as nfe:
+        print( nfe )
+        return None
     if o is not None:
         fragment = o.get('data',{}).get(lang,None)
         if fragment is not None:
@@ -80,12 +84,15 @@ class Register(Resource):
             data['fr'] = regparse.esri_feature.make_node( s['fr'], make_id(smallkey,'fr') )
 
         print( data )
-        jsonset.remove( { 'key':smallkey } )
-        jsonset.insert( { 'key':smallkey, 'type':s['payload_type'], 'data':data } )
+        try:
+            jsonset.delete( smallkey )
+        except pycouchdb.exceptions.NotFound as nfe:
+            pass
+        jsonset.save( { '_id':smallkey, 'type':s['payload_type'], 'data':data } )
         return smallkey, 201
 
     def delete(self, smallkey):
-        jsonset.remove( { 'key':smallkey } )
+        jsonset.remove( smallkey )
         return '', 204
 
 
