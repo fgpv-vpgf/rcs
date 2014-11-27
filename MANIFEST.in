@@ -2,3 +2,4 @@ include *.md
 include requirements.txt
 include rcs_schema_v1.json
 recursive-include static *.html
+recursive-include docs *.md
