@@ -28,6 +28,8 @@ The payload for the replication request is:
     }
 }
 ```
+Please make the necessary updates to the source URL (it is in the form <user>:<password>@<server ip or name>:<port>/<database name>).
+
 If [curl](http://curl.haxx.se/download.html) is available on your system you can copy
 and paste the following.
 ```sh
