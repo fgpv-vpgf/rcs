@@ -4,6 +4,7 @@
 *.swp
 
 dist/
+build/
 Include/
 Lib/
 Scripts/
