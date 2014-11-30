@@ -3,8 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-RAMP Configuration Service |release| Docs
-=========================================
+RAMP Configuration Service Docs
+===============================
+
+:Date: |today|
+:Release: |release|
 
 .. include:: ../readme.rst
 
@@ -17,11 +20,6 @@ Contents
     dev/index
     admin/index
     service/index
-
-
-*:Date: |today|*
-
-..
 
 Indices and tables
 ==================
