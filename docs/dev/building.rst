@@ -1,9 +1,11 @@
-# Building RCS
+Building RCS
+============
 
 RCS uses standard packaging tools as much as possible.  The current recommendation
 for Python appears to be [wheel](http://pythonwheels.com/).
 
-## Packaging RCS Only
+Packaging RCS Only
+------------------
 
 If addtional dependencies are not required a source distribution will likely be sufficient.
 
@@ -12,7 +14,8 @@ If addtional dependencies are not required a source distribution will likely be 
 1. Edit `MANIFEST.in` if any other dependencies (e.g. docs, static test files) have changed
 1. Execute `python setup.py sdist`
 
-## Packaging RCS and Dependencies
+Packaging RCS and Dependencies
+------------------------------
 
 If you want to prefetch and build all the dependencies (e.g. avoiding tedious
 downloads on a server) then stop at step #3 above and instead execute
