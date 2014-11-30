@@ -18,7 +18,6 @@ Packaging RCS and Dependencies
 ------------------------------
 
 If you want to prefetch and build all the dependencies (e.g. avoiding tedious
-downloads on a server) then stop at step #3 above and instead execute
-``pip wheel . -r requirements.txt``.  Output should be in ``./wheelhouse`` as a
-set of ``.whl`` files.  This directory can be used as the installation source for
-a server deployment.
+downloads on a server) then execute ``pip wheel . -r requirements.txt``.
+Output should be in ``./wheelhouse`` as a set of ``.whl`` files.  This
+directory can be used as the installation source for a server deployment.
