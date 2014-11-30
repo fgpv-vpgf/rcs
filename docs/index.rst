@@ -6,17 +6,22 @@
 RAMP Configuration Service |release| Docs
 =========================================
 
-Contents:
+.. include:: ../readme.rst
+
+Contents
+--------
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
     dev/index
     admin/index
     service/index
 
 
-:Date: |today|
+*:Date: |today|*
+
+..
 
 Indices and tables
 ==================
