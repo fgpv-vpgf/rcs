@@ -3,6 +3,7 @@
 *~
 *.swp
 
+docs/_build
 dist/
 build/
 Include/
