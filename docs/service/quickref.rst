@@ -20,4 +20,4 @@ The data catalogue is intended to call the PUT and DELETE endpoints for storing
 data.  Currently registration will accept ESRI feature service endpoints and WMS
 endpoints.
 
-More details are available on the `contract`_ page.
+More details are available on the :ref:`contract` page.
