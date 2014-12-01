@@ -9,5 +9,6 @@ dependencies and configuring the service.
     :maxdepth: 1
 
     deployment
+    connecting-to-ramp
     replication
     configuration
