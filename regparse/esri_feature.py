@@ -1,14 +1,35 @@
+"""
+An ESRI feature "parser" (really the  requests library does most of the actual parsing).
+
+Most of the utility functions are exposed but most applications won't use them
+:func:make_node is generally the only point of interest here.
+"""
 import requests
 
-def make_feature_node():
-    return dict()
-
 def make_grid_col( **kw ):
+    """
+    Generate a RAMP compliant datagrid column object with the following defaults:
+        fieldName ''
+        isSortable False
+        sortType 'string'
+        alignment 0
+
+    :param kw: Takes keyword arguments and just fills in the defaults
+    :returns: dict -- a dictionary with the defaults applied
+    """
     d = dict( fieldName='', isSortable=False, sortType='string', alignment=0 )
     d.update(kw)
     return d
 
 def make_data_grid( json_data ):
+    """
+    Generate a RAMP datagrid by walking through the attributes.
+    Iterates over all entries in *fields* that do not have a type of *esriFieldGeometry*
+
+    :param json_data: A dictionary containing scraped data from an ESRI feature service endpoint
+    :type json_data: dict
+    :returns: dict -- A dictionary with a single entry *gridColumns* containing an array of datagrid objects
+    """
     g = []
     g.append( make_grid_col(id="iconCol", width="50px", title="Icon", columnTemplate="graphic_icon") )
     g.append( make_grid_col(id="detailsCol", width="60px", title="Details", columnTemplate="details_button") )
@@ -19,11 +40,26 @@ def make_data_grid( json_data ):
     return { 'gridColumns':g }
 
 def get_legend_url( feature_service_url ):
+    """
+    Converts a feature service URL into a legend request.  Handles the optional '/' at the end of requests.
+    
+    :param feature_service_url: A URL pointing to an ESRI feature service
+    :type feature_service_url: str
+    :returns: str -- A URL pointing to a legend request
+    """
     if feature_service_url.endswith('/'):
         feature_service_url = feature_service_url[:-1]
     return feature_service_url[:feature_service_url.rfind('/')] + '/legend?f=json'
 
 def get_legend_mapping( data, layer_id ):
+    """
+    Generates a mapping of layer labels to image data URLs.
+
+    :param data: The initial payload to RCS (should contain a 'service_url' entry)
+    :type data: dict
+    :param layer_id: The id of the layer to create the mapping for.
+    :returns: dict -- a mapping of 'label' => 'data URI encoded image'
+    """
     legend_json = requests.get( get_legend_url( data['service_url'] ) ).json()
     for layer in legend_json['layers']:
         if layer['layerId'] == layer_id:
@@ -31,7 +67,16 @@ def get_legend_mapping( data, layer_id ):
     return { x['label']:'data:'+x['contentType']+';base64,'+x['imageData'] for x in layer['legend'] }
 
 def make_symbology( json_data, data ):
-    images_url_prefix = data['service_url'] + '/images/'
+    """
+    Generates a symbology node for the RAMP configuration.  Handles simple,
+    unique value and class break renders; prefetches all symbology images.
+
+    :param json_data: A dictionary containing scraped data from an ESRI feature service endpoint
+    :type json_data: dict
+    :param data: The initial payload to RCS (should contain a 'service_url' entry)
+    :type data: dict
+    :returns: dict -- a symbology node
+    """
     render_json = json_data['drawingInfo']['renderer']
     symb = { 'type':render_json['type'] }
     label_map = get_legend_mapping( data, json_data['id'] )
@@ -59,6 +104,15 @@ def make_symbology( json_data, data ):
     return symb
 
 def make_node( data, id ):
+    """
+    Generate a RAMP layer entry for an ESRI feature service.
+
+    :param data: The initial payload to RCS (should contain a 'service_url' entry)
+    :type data: dict
+    :param id: An identifier for the layer (as this is unique it is generally supplied from :module:rcs )
+    :type id: str
+    :returns: dict -- a RAMP configuration fragment representing the ESRI layer
+    """
     node = { 'id': id }
     r = requests.get( data['service_url'] + '?f=json' )
     svc_data = r.json()
