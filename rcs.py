@@ -1,21 +1,41 @@
 from __future__ import division, print_function, unicode_literals
 
-import json, pycouchdb, requests, jsonschema, regparse, db, config, os
+import json, pycouchdb, requests, jsonschema, regparse, db, config, os, logging
 
 from functools import wraps
-from flask import Flask, Response, current_app
+from logging.handlers import RotatingFileHandler
+from flask import Flask, Response, current_app, got_request_exception
 from flask.ext.restful import reqparse, request, abort, Api, Resource
 
 app = Flask(__name__)
 app.config.from_object(config)
 if os.environ.get('RCS_CONFIG'):
     app.config.from_envvar('RCS_CONFIG')
+handler = RotatingFileHandler( app.config['LOGFILE'], maxBytes=10000, backupCount=1 )
+handler.setLevel( app.config['LOGLEVEL'] )
+app.logger.addHandler(handler)
 api = Api(app)
 
 client = pycouchdb.Server( app.config['DB_CONN'] )
 jsonset = client.database( app.config['DB_NAME'] )
 # client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
+
+def log_exception(sender,exception):
+    """Detailed error logging"""
+    app.logger.error(
+        """
+Request:   {method} {path}
+IP:        {ip}
+Raw Agent: {agent}
+        """.format(
+            method = request.method,
+            path = request.path,
+            ip = request.remote_addr,
+            agent = request.user_agent.string,
+        ), exc_info=exception
+    )
+got_request_exception.connect(log_exception, app)
 
 def jsonp(func):
     """Wraps JSONified output for JSONP requests."""
@@ -65,6 +85,9 @@ class Docs(Resource):
         return Response(json.dumps(docs),  mimetype='application/json')
 
 class Register(Resource):
+    def get(self,smallkey):
+        raise Exception('broken')
+
     def put(self, smallkey):
         try:
             s = json.loads( request.data )
@@ -89,10 +112,12 @@ class Register(Resource):
         except pycouchdb.exceptions.NotFound as nfe:
             pass
         jsonset.save( { '_id':smallkey, 'type':s['payload_type'], 'data':data } )
+        app.logger.info( 'added a smallkey %s' % smallkey )
         return smallkey, 201
 
     def delete(self, smallkey):
         jsonset.remove( smallkey )
+        app.logger.info( 'removed a smallkey %s' % smallkey )
         return '', 204
 
 
