@@ -3,3 +3,4 @@ Flask-RESTful==0.2.12
 jsonschema==2.4.0
 requests==2.4.3
 pycouchdb==1.9
+blinker==1.3

@@ -2,6 +2,7 @@
 
 *~
 *.swp
+*.log
 
 docs/_build
 dist/
