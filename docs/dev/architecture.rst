@@ -23,7 +23,7 @@ replication which allows for easy scaling of multiple nodes and easy partition
 recovery.  `pycouchdb <https://github.com/niwibe/py-couchdb>`_ is the Python
 driver used for interacting with the data store.
 
-Documents stored in CouchDB should be stored in a structure which closes
+Documents stored in CouchDB should be stored in a structure which closely
 follows the RAMP configuration format.  Since the value of the cache is on the
 read performance preprocessing during writes is preferred.
 
