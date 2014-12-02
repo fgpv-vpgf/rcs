@@ -28,14 +28,14 @@ class FlaskrTestCase(unittest.TestCase):
 					
 		testSmallKey = random.randint(100, 1000000)
 		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text"}
-		payload = '{version: "1.0.0", payload_type: "feature", en: { service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, fr: { service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}'
+		payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
 		
 		#write smallkey for extra sniffing
 		print "smallkey " + str(testSmallKey)
 	
 			
 		#do the put 
-		callResult = requests.put(self.service + 'register/' + str(testSmallKey), data=payload, headers=headers)
+		callResult = requests.put(self.service + 'register/' + str(testSmallKey), json=payload, headers=headers)
 	
 		# do we test anything here?   currently returning a 400 cuz i'm prolly doing things wrong
 		print "put result is: " + str(callResult)
