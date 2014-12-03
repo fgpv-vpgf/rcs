@@ -21,6 +21,16 @@ def make_grid_col( **kw ):
     d.update(kw)
     return d
 
+def make_extent( json_data ):
+    """
+    Extracts the extent for the layer from ESRI's JSON config.
+
+    :param json_data: A dictionary containing scraped data from an ESRI feature service endpoint
+    :type json_data: dict
+    :returns: dict -- A dictionary with the same data as the ESRI layerExtent node
+    """
+    return json_data['extent']
+
 def make_data_grid( json_data ):
     """
     Generate a RAMP datagrid by walking through the attributes.
@@ -124,6 +134,7 @@ def make_node( data, id ):
     if data.get('display_field',None) is None:
         node['nameField'] = svc_data['displayField']
     node['datagrid'] = make_data_grid( svc_data )
+    node['layerExtent'] = make_extent( svc_data )
     node['symbology'] = make_symbology( svc_data, data )
     return node
 
