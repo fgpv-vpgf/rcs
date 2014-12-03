@@ -15,8 +15,8 @@ app = Flask(__name__)
 app.config.from_object(config)
 if os.environ.get('RCS_CONFIG'):
     app.config.from_envvar('RCS_CONFIG')
-handler = RotatingFileHandler( app.config['LOGFILE'], maxBytes=10000, backupCount=1 )
-handler.setLevel( app.config['LOGLEVEL'] )
+handler = RotatingFileHandler( app.config['LOG_FILE'], maxBytes=10000, backupCount=1 )
+handler.setLevel( app.config['LOG_LEVEL'] )
 app.logger.addHandler(handler)
 api = Api(app)
 
