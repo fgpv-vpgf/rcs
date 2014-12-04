@@ -1,4 +1,5 @@
-DB_NAME='rcs_cache'
+STORAGE_DB='rcs_cache'
+AUTH_DB='rcs_auth'
 DB_CONN='http://localhost:5984/'
 
 LOG_FILE='rcs.log'

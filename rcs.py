@@ -21,7 +21,7 @@ app.logger.addHandler(handler)
 api = Api(app)
 
 client = pycouchdb.Server( app.config['DB_CONN'] )
-jsonset = client.database( app.config['DB_NAME'] )
+jsonset = client.database( app.config['STORAGE_DB'] )
 # client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
 
