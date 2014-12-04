@@ -52,6 +52,10 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script src="cryptojs/rollups/hmac-sha256.js"></script>
+<script src="cryptojs/components/core-min.js"></script>
+<script src="cryptojs/components/enc-base64-min.js"></script>
+
 <script>
     var sampleWMS = {
             version: "1.0.0",
@@ -71,6 +75,25 @@
             en: { service_url: "http://sedac.ciesin.org/geoserver/ows", layer: "aglands:aglands-pastures-2000", legend_format: "image/jpeg", feature_info_type: "text/plain" },
             fr: { service_url: "http://sedac.ciesin.org/geoserver/ows", layer: "aglands:aglands-pastures-2000" },
         };
+
+    function testsig() {
+        var dt = '2007-01-25T12:00:00Z';
+        var psk = 'test';
+        var cid = '1';
+        var rqpath = '/register/22';
+        var rqbody = '{"a":1}';
+        var sig = sign( psk, rqpath, cid, dt, rqbody );
+        console.log( sig );
+    }
+
+    function sign( key, path, id, isodate, body ) {
+        var msg = path + id + isodate + body;
+        var words = CryptoJS.HmacSHA256(msg,key);
+        return CryptoJS.enc.Base64.stringify(words)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/, '');
+    }
 
 
     function log_info(s) {
