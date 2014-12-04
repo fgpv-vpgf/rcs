@@ -8,6 +8,28 @@
 
 <div class="container-fluid">
     <div class="row">
+        <div class="form-group col-md-4">
+            <label>Client ID</label>
+            <input class="form-control" type="text" id="clientId" value="jstest" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>API Key</label>
+            <input class="form-control" type="text" id="apiKey" value="test_-k" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>Timestamp</label>
+            <input class="form-control" type="text" id="timeStamp" value="" />
+        </div>
+
+    </div>
+    <div class="row"><div class="form-group col-md-12">
+        <button class="btn" id='logclear'>Clear Log</button>
+        <button class="btn" id='dtrefresh'>Refresh Date</button>
+        <button class="btn" id='signput'>Sign PUT</button>
+        <button class="btn" id='signdel'>Sign DELETE</button>
+    </div></div>
+
+    <div class="row">
         <div class="form-group col-md-6">
             <label>Small Key</label>
             <input class="form-control" type="text" id="smallkey" value="0" />
@@ -88,11 +110,15 @@
 
     function sign( key, path, id, isodate, body ) {
         var msg = path + id + isodate + body;
+        log_info( 'msg: '+msg );
+        log_info( 'key: '+key );
         var words = CryptoJS.HmacSHA256(msg,key);
-        return CryptoJS.enc.Base64.stringify(words)
+        var sig = CryptoJS.enc.Base64.stringify(words)
             .replace(/\+/g, '-')
             .replace(/\//g, '_')
             .replace(/=+$/, '');
+        log_info( 'HMAC_SHA256(msg,key): '+sig );
+        return sig;
     }
 
 
@@ -104,16 +130,52 @@
         console.log(s);
         $('#log').append('<p class="bg-danger">'+s+'</p>');
     }
+    
+    function get_reg_url() {
+        return '/register/' + $('#smallkey').val();
+    }
+
+    function get_sig_params() {
+        var ret = {};
+        ret.isodate = $('#timeStamp').val();
+        ret.path = get_reg_url();
+        ret.id = $('#clientId').val();
+        ret.body = $('#data').val();
+        ret.key = $('#apiKey').val();
+        return ret;
+    }
+
+    function del_sig() {
+        var s = get_sig_params();
+        return sign( s.key, s.path, s.id, s.isodate, '' );
+    }
+    function put_sig() {
+        var s = get_sig_params();
+        return sign( s.key, s.path, s.id, s.isodate, s.body );
+    }
+    function make_headers(sig_params,sig) {
+        return {
+            Sender: sig_params.id,
+            TimeStamp: sig_params.isodate,
+            Authorization: sig
+        };
+    }
+
     $(document).ready(function () {
         $('#data').val(JSON.stringify(sampleFeature));
 
         $('#puttest').click( function() {
+            var s = get_sig_params(),
+                sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
+                h = make_headers(s,sig);
+            console.log(h);
             $.ajax({
                 type: "PUT",
                 contentType: "application/json; charset=utf-8",
-                url: '/register/' + $('#smallkey').val(),
-                data: $('#data').val(),
+                url: s.path,
+                data: s.body,
                 dataType: "text",
+                headers: h,
             }).done(function (data, status, xhr) {
                 log_info('put done '+xhr.status);
                 log_info(data);
@@ -127,7 +189,7 @@
         $('#deltest').click( function() {
             $.ajax({
                 type: "DELETE",
-                url: '/register/' + $('#smallkey').val(),
+                url: get_reg_url(),
                 dataType: "text",
             }).done(function (data, status, xhr) {
                 log_info('del done '+xhr.status);
@@ -137,6 +199,14 @@
             });
 
         });
+        $('#signdel').click( del_sig );
+        $('#signput').click( put_sig );
+
+        $('#logclear').click( function() { $('#log').html(''); } );
+
+        $('#dtrefresh').click( function() {
+            $('#timeStamp').val( (new Date()).toISOString() );
+        }).click();
 
         $('.sampledata').click( function(e) {
             var sample = { version: "1.0.0", payload_type: 'feature', en: {}, fr: {} }
