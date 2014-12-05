@@ -31,7 +31,7 @@ api = Api(app)
 
 client = pycouchdb.Server( app.config['DB_CONN'] )
 storage_db = client.database( app.config['STORAGE_DB'] )
-auth_db = client.database( app.config['AUTH_DB'] )
+db.auth.init_db( app.config['DB_CONN'], app.config['AUTH_DB'] )
 # client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
 

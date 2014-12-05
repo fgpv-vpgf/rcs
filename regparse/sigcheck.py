@@ -3,7 +3,7 @@ Tests RCS request signatures for validity
 """
 from __future__ import division, print_function, unicode_literals
 
-import hashlib, hmac, base64, logging, flask, iso8601, datetime
+import hashlib, hmac, base64, logging, flask, iso8601, datetime, db
 
 from flask.ext.restful import abort
 from functools import wraps
@@ -40,10 +40,10 @@ def test_request( request ):
     for h in 'Authorization TimeStamp Sender'.split():
         logger.debug( h+': '+request.headers.get(h) )
     dt = request.headers.get( 'TimeStamp' )
-    psk = 'test_-k'
     cid = request.headers.get( 'Sender' )
     rqpath = request.path
     rqbody = request.data
+    psk = db.auth.get_key(cid)
 
     sig = sign( psk, rqpath, cid, dt, rqbody )
     logger.info( 'Signature received: {0}  ##  Signature generated: {1}'.format(request.headers.get('Authorization'),sig) )
