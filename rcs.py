@@ -11,17 +11,27 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask, Response, current_app, got_request_exception
 from flask.ext.restful import reqparse, request, abort, Api, Resource
 
+# FIXME clean this up
 app = Flask(__name__)
 app.config.from_object(config)
 if os.environ.get('RCS_CONFIG'):
     app.config.from_envvar('RCS_CONFIG')
 handler = RotatingFileHandler( app.config['LOG_FILE'], maxBytes=10000, backupCount=1 )
 handler.setLevel( app.config['LOG_LEVEL'] )
-app.logger.addHandler(handler)
+handler.setFormatter( logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s '
+    '[in %(pathname)s:%(lineno)d]'
+))
+
+loggers = [app.logger, logging.getLogger('regparse.sigcheck')]
+for l in loggers:
+    l.addHandler( handler )
+
 api = Api(app)
 
 client = pycouchdb.Server( app.config['DB_CONN'] )
-jsonset = client.database( app.config['STORAGE_DB'] )
+storage_db = client.database( app.config['STORAGE_DB'] )
+auth_db = client.database( app.config['AUTH_DB'] )
 # client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
 
@@ -89,7 +99,7 @@ def get_doc( key, lang ):
     :returns: dict -- A dictionary representing a JSON configuration fragment for RAMP; None -- key not found
     """
     try:
-        o = jsonset.get(key)
+        o = storage_db.get(key)
     except pycouchdb.exceptions.NotFound as nfe:
         return None
     if o is not None:
@@ -145,6 +155,7 @@ class Register(Resource):
     Container class for all catalog requests for registering new features
     """
 
+    @regparse.sigcheck.validate
     def put(self, smallkey):
         """
         A REST endpoint for adding or editing a single layer.
@@ -173,13 +184,14 @@ class Register(Resource):
 
         print( data )
         try:
-            jsonset.delete( smallkey )
+            storage_db.delete( smallkey )
         except pycouchdb.exceptions.NotFound as nfe:
             pass
-        jsonset.save( { '_id':smallkey, 'type':s['payload_type'], 'data':data } )
+        storage_db.save( { '_id':smallkey, 'type':s['payload_type'], 'data':data } )
         app.logger.info( 'added a smallkey %s' % smallkey )
         return smallkey, 201
 
+    @regparse.sigcheck.validate
     def delete(self, smallkey):
         """
         A REST endpoint for removing a layer.
@@ -188,10 +200,15 @@ class Register(Resource):
         :type smallkey: str
         :returns: JSON Response -- 204 on success; 500 on failure
         """
+        # valid_sig = regparse.sigcheck.test_request( request )
 # FIXME send a proper error on missing key
-        jsonset.remove( smallkey )
-        app.logger.info( 'removed a smallkey %s' % smallkey )
-        return '', 204
+        try:
+            storage_db.delete( smallkey )
+            app.logger.info( 'removed a smallkey %s' % smallkey )
+            return '', 204
+        except pycouchdb.exceptions.NotFound as nfe:
+            app.logger.info( 'smallkey was not found %s' % smallkey,  exc_info=nfe )
+        return '',404
 
 
 api.add_resource(Doc, '/doc/<string:lang>/<string:smallkey>')
@@ -199,4 +216,7 @@ api.add_resource(Docs, '/docs/<string:lang>/<string:smallkeylist>')
 api.add_resource(Register, '/register/<string:smallkey>')
 
 if __name__ == '__main__':
+    for l in loggers:
+        l.setLevel(0)
+        l.info( 'logger started' )
     app.run(debug=True)
