@@ -20,10 +20,11 @@ def sign( key, *parts ):
     :type key: str
     :returns: str -- a URL safe base64 encoded signature
     """
-    logger = get_logger()
     msg = ''.join( parts )
-    logger.debug( msg )
+    logging.debug( msg )
+    print( msg )
     h = hmac.new( str(key), msg, digestmod=hashlib.sha256 )
+    print( h.hexdigest() )
     return base64.urlsafe_b64encode( h.digest() ).replace('=','')
 
 def test_request( request ):
@@ -43,6 +44,7 @@ def test_request( request ):
     cid = request.headers.get( 'Sender' )
     rqpath = request.path
     rqbody = request.data
+    print( rqbody )
     psk = db.auth.get_key(cid)
 
     sig = sign( psk, rqpath, cid, dt, rqbody )
@@ -99,4 +101,11 @@ if __name__ == '__main__':
     rqpath = '/register/22'
     rqbody = '{"a":1}'
     sig = sign( psk, rqpath, cid, dt, rqbody )
+    print( sig )
+    REQUEST_PATH = '/register/23ax5t'
+    SENDER_ID = 'jstest'
+    TIME_STAMP = '2014-12-05T18:28:56.714Z'
+    REQUEST_BODY =  '{"version":"1.0.0","payload_type":"wms","en":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"},"fr":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"}}'
+    psk = 'test_-k'
+    sig = sign( psk, REQUEST_PATH, SENDER_ID, TIME_STAMP, REQUEST_BODY )
     print( sig )
