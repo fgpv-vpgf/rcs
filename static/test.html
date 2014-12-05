@@ -145,14 +145,6 @@
         return ret;
     }
 
-    function del_sig() {
-        var s = get_sig_params();
-        return sign( s.key, s.path, s.id, s.isodate, '' );
-    }
-    function put_sig() {
-        var s = get_sig_params();
-        return sign( s.key, s.path, s.id, s.isodate, s.body );
-    }
     function make_headers(sig_params,sig) {
         return {
             Sender: sig_params.id,
@@ -187,10 +179,14 @@
 
         });
         $('#deltest').click( function() {
+            var s = get_sig_params(),
+                sig = sign( s.key, s.path, s.id, s.isodate, '' ),
+                h = make_headers(s,sig);
             $.ajax({
                 type: "DELETE",
-                url: get_reg_url(),
+                url: s.path,
                 dataType: "text",
+                headers: h,
             }).done(function (data, status, xhr) {
                 log_info('del done '+xhr.status);
             }).fail(function (err) {
