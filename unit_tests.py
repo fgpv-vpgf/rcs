@@ -26,27 +26,35 @@ class FlaskrTestCase(unittest.TestCase):
 	
 		#set up test params
 					
-		testSmallKey = random.randint(100, 1000000)
+		testSmallKey = str(random.randint(100, 1000000))
 		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text"}
 		payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
 		
 		#write smallkey for extra sniffing
-		print "smallkey " + str(testSmallKey)
+		print "smallkey " + testSmallKey
 	
 			
 		#do the put 
-		callResult = requests.put(self.service + 'register/' + str(testSmallKey), json=payload, headers=headers)
+		callResult = requests.put(self.service + 'register/' + testSmallKey, json=payload, headers=headers)
 	
-		# do we test anything here?   currently returning a 400 cuz i'm prolly doing things wrong
+		# do we test anything here?
 		print "put result is: " + str(callResult)
 	
 	
 		#do a get on the thing we just put
-		#do we need to wait for service to register?  it can take a few seconds for rcs to scrape the map service
-		testVal = requests.get(self.service + "docs/en/" + str(testSmallKey)).json()
-		assert len(testVal) == 1
+		
+		
+		configSnippet = requests.get(self.service + "docs/en/" + testSmallKey).json()
+		assert len(configSnippet) == 1
+		
+		print str(configSnippet)
 		
 		#do many more tests here
+		
+		#test that smallkey is id
+		testVal = configSnippet[0].layers.feature[0].id
+		
+		assert testVal == testSmallKey
 	
 		
 if __name__ == '__main__':
