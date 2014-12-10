@@ -1,7 +1,7 @@
 """
 A WMS "parser" (barely does any parsing at the moment).
 """
-import requests
+import requests, metadata
 
 def make_feature_info( data ):
     """
@@ -26,7 +26,7 @@ def make_feature_info( data ):
         return { 'mimeType':fi_type, 'parser':'jsonRawParse' }
     return None
 
-def make_node( data, id ):
+def make_node( data, id, config=None ):
     """
     Generate a RAMP layer entry for a WMS.
 
@@ -41,6 +41,9 @@ def make_node( data, id ):
     wms_node['layerName'] = data['layer']
     wms_node['displayName'] = data['layer']
     wms_node['format'] = 'image/png'
+    metadata_url = metadata.get_url( data, config )
+    if metadata_url:
+        wms_node['metadataUrl'] = metadata_url
     if 'legend_format' in data:
         wms_node['legendMimeType'] = data['legend_format']
     fi_node = make_feature_info( data )

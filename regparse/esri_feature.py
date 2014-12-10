@@ -4,7 +4,7 @@ An ESRI feature "parser" (really the  requests library does most of the actual p
 Most of the utility functions are exposed but most applications won't use them
 :func:make_node is generally the only point of interest here.
 """
-import requests
+import requests, metadata
 
 def make_grid_col( **kw ):
     """
@@ -113,7 +113,7 @@ def make_symbology( json_data, data ):
         symb['rangeMaps'] = range_maps
     return symb
 
-def make_node( data, id ):
+def make_node( data, id, config ):
     """
     Generate a RAMP layer entry for an ESRI feature service.
 
@@ -133,6 +133,9 @@ def make_node( data, id ):
         node['displayName'] = svc_data['name']
     if data.get('display_field',None) is None:
         node['nameField'] = svc_data['displayField']
+    metadata_url = metadata.get_url( data, config )
+    if metadata_url:
+        node['metadataUrl'] = metadata_url
     node['datagrid'] = make_data_grid( svc_data )
     node['layerExtent'] = make_extent( svc_data )
     node['symbology'] = make_symbology( svc_data, data )
