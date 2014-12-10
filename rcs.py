@@ -176,11 +176,11 @@ class Register(Resource):
 
         data = dict( key=smallkey )
         if s['payload_type'] == 'wms':
-            data['en'] = regparse.wms.make_node( s['en'], make_id(smallkey,'en') )
-            data['fr'] = regparse.wms.make_node( s['fr'], make_id(smallkey,'fr') )
+            data['en'] = regparse.wms.make_node( s['en'], make_id(smallkey,'en'), app.config )
+            data['fr'] = regparse.wms.make_node( s['fr'], make_id(smallkey,'fr'), app.config )
         else:
-            data['en'] = regparse.esri_feature.make_node( s['en'], make_id(smallkey,'en') )
-            data['fr'] = regparse.esri_feature.make_node( s['fr'], make_id(smallkey,'fr') )
+            data['en'] = regparse.esri_feature.make_node( s['en'], make_id(smallkey,'en'), app.config )
+            data['fr'] = regparse.esri_feature.make_node( s['fr'], make_id(smallkey,'fr'), app.config )
 
         print( data )
         try:
