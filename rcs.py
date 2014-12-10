@@ -4,7 +4,7 @@ for RCS and this should eventually end up in separate modules or packages.
 """
 from __future__ import division, print_function, unicode_literals
 
-import json, pycouchdb, requests, jsonschema, regparse, db, config, os, logging
+import json, pycouchdb, requests, jsonschema, regparse, db, config, os, sys, logging
 
 from functools import wraps
 from logging.handlers import RotatingFileHandler
@@ -33,7 +33,10 @@ client = pycouchdb.Server( app.config['DB_CONN'] )
 storage_db = client.database( app.config['STORAGE_DB'] )
 db.auth.init_db( app.config['DB_CONN'], app.config['AUTH_DB'] )
 # client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
-validator = jsonschema.validators.Draft4Validator( json.load(open(app.config['REG_SCHEMA'])) )
+schema_path = app.config['REG_SCHEMA']
+if not os.path.exists(schema_path):
+    schema_path = os.path.join( sys.prefix, schema_path )
+validator = jsonschema.validators.Draft4Validator( json.load(open(schema_path)) )
 
 def log_exception(sender,exception):
     """
@@ -171,18 +174,22 @@ class Register(Resource):
             return '{"errors":["Unparsable json"]}',400
         if not validator.is_valid( s ):
             resp = { 'errors': [x.message for x in validator.iter_errors(s)] }
-            print( resp )
+            app.logger.info( resp )
             return Response(json.dumps(resp),  mimetype='application/json', status=400)
 
         data = dict( key=smallkey )
-        if s['payload_type'] == 'wms':
-            data['en'] = regparse.wms.make_node( s['en'], make_id(smallkey,'en'), app.config )
-            data['fr'] = regparse.wms.make_node( s['fr'], make_id(smallkey,'fr'), app.config )
-        else:
-            data['en'] = regparse.esri_feature.make_node( s['en'], make_id(smallkey,'en'), app.config )
-            data['fr'] = regparse.esri_feature.make_node( s['fr'], make_id(smallkey,'fr'), app.config )
+        try:
+            if s['payload_type'] == 'wms':
+                data['en'] = regparse.wms.make_node( s['en'], make_id(smallkey,'en'), app.config )
+                data['fr'] = regparse.wms.make_node( s['fr'], make_id(smallkey,'fr'), app.config )
+            else:
+                data['en'] = regparse.esri_feature.make_node( s['en'], make_id(smallkey,'en'), app.config )
+                data['fr'] = regparse.esri_feature.make_node( s['fr'], make_id(smallkey,'fr'), app.config )
+        except regparse.metadata.MetadataException as mde:
+            app.logger.warning( 'Metadata could not be retrieved for layer', exc_info=mde )
+            abort( 400, msg=mde.message )
 
-        print( data )
+        app.logger.debug( data )
         try:
             storage_db.delete( smallkey )
         except pycouchdb.exceptions.NotFound as nfe:
