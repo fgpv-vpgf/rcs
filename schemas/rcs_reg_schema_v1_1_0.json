@@ -19,7 +19,8 @@
             "properties": {
                 "service_url": { "type": "string" },
                 "service_name": { "type": "string" },
-                "display_field": { "type": "string" }
+                "display_field": { "type": "string" },
+                "metadata": { "$ref": "#/defs/metadata" }
             },
             "required": [ "service_url" ],
             "additionalProperties": false
