@@ -6,6 +6,10 @@ RCS Service Contract
 This is the current draft of the RCS service contract.  It outlines the expected
 endpoints and payloads but it is far from finalized.
 
+.. toctree::
+
+    jsonschema
+
 GET ``/doc/[lang]/[smallkey]``
 ------------------------------
 
@@ -61,6 +65,7 @@ Error Conditions:
 - missing headers / unretrivable key: 401 Not Authorized
 - exception in processing: 500 Internal Server Error, empty body
 
+Registration requests are validated against 
 The body of the request should conform to:
 
 .. code-block:: javascript
@@ -74,10 +79,19 @@ The feature payload should conform to:
 
 .. code-block:: javascript
 
-    {"service_url":(URL to ESRI REST Service),"service_name":"Layer Name","display_field":"Layer Attribute"}
+    {
+        "service_url":(URL to ESRI REST Service),
+        "service_name":"Layer Name",
+        "display_field":"Layer Attribute"
+        "metadata": {
+            "uuid":
+        }
+    }
 
 - the service URL should not have any query string component
-- ``display_field`` and ``service_name`` are optional
+- ``metadata``, ``display_field``, ``service_name`` are optional
+- *NOTE metadata should be present for most layers, it is left as optional
+  only for exceptional cases*
 
 Payload Type ``wms``
 ^^^^^^^^^^^^^^^^^^^^

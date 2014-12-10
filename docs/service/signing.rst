@@ -57,6 +57,7 @@ unavailable.
         SENDER_ID = jstest
         TIME_STAMP = 2014-12-05T18:28:56.714Z
         REQUEST_BODY =  {"version":"1.0.0","payload_type":"wms","en":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"},"fr":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"}}
+
     resulting in ::
 
         MSG = /register/23ax5tjstest2014-12-05T18:28:56.714Z{"version":"1.0.0","payload_type":"wms","en":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"},"fr":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"}}
