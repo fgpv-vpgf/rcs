@@ -7,7 +7,7 @@ class MetadataException(Exception):
     """
     An exception encoding all problems with metadata parsing and retrival.
     """
-    def __init__(self, msg, inner_exception):
+    def __init__(self, msg, inner_exception=None):
         self.message = msg
         self.inner_exception = inner_exception
 
@@ -42,13 +42,16 @@ def get_url( data, config ):
     try:
         r = requests.get( url )
     except Exception as e:
-        raise MetadataException('Exception during metadata URL request {0}'.format(e.message), e)
+        raise MetadataException('Exception during metadata URL {0} request {1}'.format(url, e.message), e)
 
     if r.headers.get('content-type') not in ('application/xml','text/xml'):
-        raise MetadataException( 'Expected xml MIME type, got {0}'.format( r.headers.get('content-type') ) )
+        raise MetadataException( 'Metadata from {0} could not be retrieved: expected XML MIME type, got {1}'
+                                    .format( url, r.headers.get('content-type') ) )
     if not len(r.content):
-        raise MetadataException( 'Got a zero length request' )
+        raise MetadataException( 'Metadata from {0} could not be retrieved: Got a zero length request'
+                                    .format( url ) )
     if r.status_code != requests.codes.ok:
-        raise MetadataException( 'Bad HTTP status code received {0}'.format( r.status_code ) )
+        raise MetadataException( 'Metadata from {0} could not be retrieved: bad HTTP status code received {0}'
+                                    .format( url, r.status_code ) )
 
     return url
