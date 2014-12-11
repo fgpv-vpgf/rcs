@@ -84,7 +84,7 @@ The feature payload should conform to:
 .. code-block:: javascript
 
     {
-        "service_url": (str: URL to ESRI REST Service),
+        "service_url": (str: URL to ESRI REST Feature Layer Endpoint),
         "service_name": (str: Layer Name),
         "display_field": (str: Layer Attribute),
         "metadata": {
@@ -95,6 +95,9 @@ The feature payload should conform to:
 
 - the service URL should not have any query string component
 - ``metadata``, ``display_field``, ``service_name`` are optional
+- where ``service_url`` specifies Feature Layer endpoint, this may be an
+  endpoint from a *Feature Service* or a *Map Service*; what is important is
+  that the URL should reference the layer id within it
 - *NOTE metadata should be present for most layers, it is left as optional
   only for exceptional cases*
 - one of ``uuid`` or ``url`` should be specified

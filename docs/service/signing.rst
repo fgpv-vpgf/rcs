@@ -7,7 +7,7 @@ Protocol
 --------
 
 All requests which modify the database must be signed.  Signing is performed by
-a pre-shared key between the catalog and RCS using the following procedure ::
+a pre-shared key between the sender and RCS using the following procedure ::
 
     SIGNATURE := hmac_sha256( MSG, KEY )
     MSG := concat( REQUEST_PATH, SENDER_ID, TIME_STAMP, REQUEST_BODY )
