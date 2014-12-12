@@ -89,7 +89,8 @@ The feature payload should conform to:
         "display_field": (str: Layer Attribute),
         "metadata": {
             "uuid": (str: a unique identifier),
-            "url": (str: direct URL to metadata for that layer)
+            "catalogue_url": (str: URL describing the layer in full detail)
+            "metadata_url": (str: direct URL to metadata for that layer)
         }
     }
 
@@ -100,8 +101,9 @@ The feature payload should conform to:
   that the URL should reference the layer id within it
 - *NOTE metadata should be present for most layers, it is left as optional
   only for exceptional cases*
-- one of ``uuid`` or ``url`` should be specified
-- ``url`` should be direct URL to the layer's metadata which should be in XML format
+- one of ``uuid`` or ``*_url`` should be specified
+- ``metadata_url`` should be direct URL to the layer's metadata which should be in XML format
+- ``catalogue_url`` should be a URL linking back to the catalogue's page describing the layer
 - ``uuid`` should be a unique identifier which can be prefixed with a
   preconfigured metadata URL to retrieve specific metadata for that layer
 
@@ -119,7 +121,8 @@ The wms payload should conform to:
         "feature_info_type": (str: MIME type),
         "metadata": {
             "uuid": (str: a unique identifier),
-            "url": (str: direct URL to metadata for that layer)
+            "catalogue_url": (str: URL describing the layer in full detail)
+            "metadata_url": (str: direct URL to metadata for that layer)
         }
     }
 
@@ -130,8 +133,9 @@ The wms payload should conform to:
 - ``feature_info_type`` is an optional field, if present it indicates feature info support on the WMS, default parsers are available for ``text/html`` (direct HTML code which can be inserted into a RAMP panel), ``text/plain`` (plain text which will be wrapped in a paragraph tag and then inserted into a RAMP panel *NOTE: all formatting will be lost*), and ``application/json`` (a JSON fragment which will have its top level properties displayed in a tabular format in a RAMP panel)
 - *NOTE metadata should be present for most layers, it is left as optional
   only for exceptional cases*
-- one of ``uuid`` or ``url`` should be specified
-- ``url`` should be direct URL to the layer's metadata which should be in XML format
+- one of ``uuid`` or ``*_url`` should be specified
+- ``metadata_url`` should be direct URL to the layer's metadata which should be in XML format
+- ``catalogue_url`` should be a URL linking back to the catalogue's page describing the layer
 - ``uuid`` should be a unique identifier which can be prefixed with a
   preconfigured metadata URL to retrieve specific metadata for that layer
 
