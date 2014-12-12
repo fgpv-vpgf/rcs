@@ -49,7 +49,7 @@ def get_url( data, config ):
     url = None
     catalogue_url = None
     if 'metadata' not in data:
-        return url
+        return url, catalogue_url
     if 'metadata_url' in data['metadata']:
         url = data['metadata']['metadata_url']
         catalogue_url = data['metadata']['catalogue_url']
