@@ -18,6 +18,23 @@ doc_sample_v11 = """
     }
 """
 
+doc_sample_url_v11 = """
+    {
+        "version": "1.0.0",
+        "payload_type": "wms",
+        "en": {
+            "service_url": "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en",
+            "layer": "limits",
+            "metadata": { "catalogue_url": "http://example.com", "metadata_url": "http://example.com" }
+        },
+        "fr": {
+            "service_url": "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_fr",
+            "layer": "limits",
+            "metadata": { "catalogue_url": "http://example.com", "metadata_url": "http://example.com" }
+        }
+    }
+"""
+
 doc_sample_v1 = """
     {
         "version": "1.0.0",
@@ -41,6 +58,11 @@ class SchemaTestCase(unittest.TestCase):
 
     def test_doc_sample_forward_compat(self):
         fragment = json.loads( doc_sample_v1 )
+        r = validate( fragment, self.schema110 )
+        self.assertEquals( r, None )
+
+    def test_url_v11(self):
+        fragment = json.loads( doc_sample_url_v11 )
         r = validate( fragment, self.schema110 )
         self.assertEquals( r, None )
 

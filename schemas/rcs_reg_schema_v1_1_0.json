@@ -10,7 +10,7 @@
             "type": "object",
             "oneOf": [
                 { "properties": { "uuid": { "type": "string" } }, "additionalProperties": false },
-                { "properties": { "url": { "type": "string" } }, "additionalProperties": false }
+                { "properties": { "metadata_url": { "type": "string" }, "catalogue_url": { "type": "string" } }, "additionalProperties": false }
             ]
         },
 
