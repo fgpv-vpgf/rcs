@@ -65,6 +65,7 @@
         <input type="button" class="btn samplejson" value="WMS" data-obj="sampleWMS" />
         <input type="button" class="btn samplejson" value="Full WMS" data-obj="fullWMS" />
         <input type="button" class="btn samplejson" value="Feature" data-obj="sampleFeature" />
+        <input type="button" class="btn samplejson" value="Proper Metadata" data-obj="sampleMeta" />
     </div></div>
 
     <div class="row"><div id="log" class="form-group col-md-12">
@@ -96,6 +97,18 @@
             payload_type: "wms",
             en: { service_url: "http://sedac.ciesin.org/geoserver/ows", layer: "aglands:aglands-pastures-2000", legend_format: "image/jpeg", feature_info_type: "text/plain" },
             fr: { service_url: "http://sedac.ciesin.org/geoserver/ows", layer: "aglands:aglands-pastures-2000" },
+        },
+        sampleMeta = {
+            version: "1.1.0",
+            payload_type: "feature",
+            en: {
+                service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0",
+                metadata: { metadata_url: "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1418414595024", catalogue_url: "http://www.google.ca/" }
+            },
+            fr: {
+                service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0",
+                metadata: { metadata_url: "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1418414595024", catalogue_url: "http://www.google.ca/" }
+            }
         };
 
     function testsig() {
