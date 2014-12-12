@@ -133,9 +133,10 @@ def make_node( data, id, config ):
         node['displayName'] = svc_data['name']
     if data.get('display_field',None) is None:
         node['nameField'] = svc_data['displayField']
-    metadata_url = metadata.get_url( data, config )
+    metadata_url, catalogue_url = metadata.get_url( data, config )
     if metadata_url:
         node['metadataUrl'] = metadata_url
+        node['catalogueUrl'] = catalogue_url
     node['datagrid'] = make_data_grid( svc_data )
     node['layerExtent'] = make_extent( svc_data )
     node['symbology'] = make_symbology( svc_data, data )

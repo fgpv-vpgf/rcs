@@ -41,9 +41,10 @@ def make_node( data, id, config=None ):
     wms_node['layerName'] = data['layer']
     wms_node['displayName'] = data['layer']
     wms_node['format'] = 'image/png'
-    metadata_url = metadata.get_url( data, config )
+    metadata_url, catalogue_url = metadata.get_url( data, config )
     if metadata_url:
         wms_node['metadataUrl'] = metadata_url
+        wms_node['catalogueUrl'] = catalogue_url
     if 'legend_format' in data:
         wms_node['legendMimeType'] = data['legend_format']
     fi_node = make_feature_info( data )
