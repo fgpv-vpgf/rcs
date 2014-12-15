@@ -95,7 +95,7 @@ def make_symbology( json_data, data ):
         symb['imageUrl'] = label_map[render_json['label']]
 
     elif render_json['type'] == 'uniqueValue':
-        if render_json.get('defaultLabel',None):
+        if render_json.get('defaultLabel',None) and render_json['defaultLabel'] in label_map:
             symb['defaultImageUrl'] = label_map[render_json['defaultLabel']]
         for field in 'field1 field2 field3'.split():
             symb[field] = render_json[field]
@@ -104,7 +104,7 @@ def make_symbology( json_data, data ):
         symb['valueMaps'] = val_maps
 
     elif render_json['type'] == 'classBreaks':
-        if render_json.get('defaultLabel',None):
+        if render_json.get('defaultLabel',None) and render_json['defaultLabel'] in label_map:
             symb['defaultImageUrl'] = label_map[render_json['defaultLabel']]
         symb['field'] = render_json['field']
         symb['minValue'] = render_json['minValue']
@@ -137,6 +137,8 @@ def make_node( data, id, config ):
     if metadata_url:
         node['metadataUrl'] = metadata_url
         node['catalogueUrl'] = catalogue_url
+    node['min_scale'] = svc_data.get('minScale',0)
+    node['max_scale'] = svc_data.get('maxScale',0)
     node['datagrid'] = make_data_grid( svc_data )
     node['layerExtent'] = make_extent( svc_data )
     node['symbology'] = make_symbology( svc_data, data )
