@@ -17,7 +17,7 @@ def make_grid_col( **kw ):
     :param kw: Takes keyword arguments and just fills in the defaults
     :returns: dict -- a dictionary with the defaults applied
     """
-    d = dict( fieldName='', isSortable=False, sortType='string', alignment=0 )
+    d = { 'fieldName':'', 'orderable':False, 'type':'string', 'alignment':0 }
     d.update(kw)
     return d
 
@@ -44,7 +44,7 @@ def make_data_grid( json_data ):
     g.append( make_grid_col(id="iconCol", width="50px", title="Icon", columnTemplate="graphic_icon") )
     g.append( make_grid_col(id="detailsCol", width="60px", title="Details", columnTemplate="details_button") )
     g.extend( [ make_grid_col(id=attrib['name'], fieldName=attrib['name'], width="400px",
-                              isSortable=True, alignment=1, title=attrib['name'],
+                              orderable=True, alignment=1, title=attrib['name'],
                               columnTemplate="unformatted_grid_value") 
                 for attrib in json_data['fields'] if attrib['type'] != 'esriFieldGeometry' ] )
     return { 'gridColumns':g }
