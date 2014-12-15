@@ -16,7 +16,7 @@ Install `CouchDB <http://couchdb.apache.org/>`_
 #. Update the configuration to listen on the correct network address (Tools | Configuration | bind_addr)
 #. Create a database ``rcs_cache`` (navigate to Overview | Create Database)
 #. Update the security for the ``rcs_cache`` database set Admin Roles: ``["rcs"]`` and Member Roles: ``["rcs"]``
-#. Create a second database ``rcs_sync`` with the same permissions
+#. Create a second database ``rcs_auth`` with the same permissions
 #. Add a new user to the ``_users`` database (Overview | _users | Create Document)
 #. Select source and enter the following then save document
     .. code-block:: javascript
@@ -28,8 +28,8 @@ Install `CouchDB <http://couchdb.apache.org/>`_
             "type": "user",
             "password": "changeme"
         }
-#. Logout and attempt to login as user `rcs` to test the setup
-#. Confirm that access to `_users` is restricted and access to `rcs_cache` and `rcs_sync` is enabled
+#. Logout and attempt to login as user ``rcs`` to test the setup
+#. Confirm that access to ``_users`` is restricted and access to ``rcs_cache`` and ``rcs_auth`` is enabled
 
 .. _pyvenvconfig:
 
@@ -63,6 +63,7 @@ Configure Python Environment
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
 #. Test the installation ``python rcs.py`` (this will run a test server on localhost)
+#. Seed the database ``python seed_qa_keys.py``
 
 IIS Integration
 ^^^^^^^^^^^^^^^
