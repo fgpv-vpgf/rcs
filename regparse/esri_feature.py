@@ -137,8 +137,8 @@ def make_node( data, id, config ):
     if metadata_url:
         node['metadataUrl'] = metadata_url
         node['catalogueUrl'] = catalogue_url
-    node['min_scale'] = svc_data.get('minScale',0)
-    node['max_scale'] = svc_data.get('maxScale',0)
+    node['minScale'] = svc_data.get('minScale',0)
+    node['maxScale'] = svc_data.get('maxScale',0)
     node['datagrid'] = make_data_grid( svc_data )
     node['layerExtent'] = make_extent( svc_data )
     node['symbology'] = make_symbology( svc_data, data )
