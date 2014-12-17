@@ -60,7 +60,7 @@
     },
 
     "properties": {
-        "version": { "type": "string", "enum": [ "1.0.0", "1.1.0" ] },
+        "version": { "type": "string", "enum": [ "1.0.0", "1.1" ] },
         "payload_type": { "type": "string", "enum": ["feature","wms"] }
     },
 
