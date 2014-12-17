@@ -2,7 +2,7 @@ import pycouchdb
 
 _db = None
 
-def init_db( url, db_name ):
+def init_auth_db( url, db_name ):
     global _db
     client = pycouchdb.Server( url )
     _db = client.database( db_name )

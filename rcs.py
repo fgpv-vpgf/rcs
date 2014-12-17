@@ -8,7 +8,7 @@ import json, pycouchdb, requests, jsonschema, regparse, db, config, os, sys, log
 
 from functools import wraps
 from logging.handlers import RotatingFileHandler
-from flask import Flask, Response, current_app, got_request_exception
+from flask import Flask, Blueprint, Response, current_app, got_request_exception
 from flask.ext.restful import reqparse, request, abort, Api, Resource
 
 # FIXME clean this up
@@ -27,11 +27,9 @@ loggers = [app.logger, logging.getLogger('regparse.sigcheck')]
 for l in loggers:
     l.addHandler( handler )
 
-api = Api(app)
 
-client = pycouchdb.Server( app.config['DB_CONN'] )
-storage_db = client.database( app.config['STORAGE_DB'] )
-db.auth.init_db( app.config['DB_CONN'], app.config['AUTH_DB'] )
+db.init_auth_db( app.config['DB_CONN'], app.config['AUTH_DB'] )
+db.init_doc_db( app.config['DB_CONN'], app.config['STORAGE_DB'] )
 # client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 schema_path = app.config['REG_SCHEMA']
 if not os.path.exists(schema_path):
@@ -91,32 +89,11 @@ def make_id( key, lang ):
     return "{0}.{1}.{2}".format('rcs',key,lang)
 
 
-def get_doc( key, lang ):
-    """
-    Fetch a record from the document store and output a RAMP compatible configuration.
-
-    :param key: The key to search the document store for
-    :type key: str
-    :param lang: A two letter language code identifying the language for the response
-    :type lang: str
-    :returns: dict -- A dictionary representing a JSON configuration fragment for RAMP; None -- key not found
-    """
-    try:
-        o = storage_db.get(key)
-    except pycouchdb.exceptions.NotFound as nfe:
-        return None
-    if o is not None:
-        fragment = o.get('data',{}).get(lang,None)
-        if fragment is not None:
-            result = { 'layers': {} }
-            result['layers'][ o['type'] ] = [ fragment ]
-            return result
-    return None
-
 class Doc(Resource):
     """
     Container class for all web requests for single documents
     """
+
     @jsonp
     def get(self, lang, smallkey):
         """
@@ -127,7 +104,7 @@ class Doc(Resource):
         :type smallkey: str
         :returns: Response -- a JSON response object; None with a 404 code if the key was not matched
         """
-        doc = get_doc( smallkey, lang )
+        doc = db.get_doc( smallkey, lang, self.version )
         print( doc )
         if doc is None:
             return None,404
@@ -137,6 +114,7 @@ class Docs(Resource):
     """
     Container class for all web requests for sets of documents
     """
+
     @jsonp
     def get(self, lang, smallkeylist):
         """
@@ -149,9 +127,29 @@ class Docs(Resource):
         :returns: list -- an array of JSON configuration fragments (empty error objects are added where keys do not match)
         """
         keys = [ x.strip() for x in smallkeylist.split(',') ]
-        docs = [ get_doc(smallkey,lang) for smallkey in keys ]
+        docs = [ db.get_doc(smallkey, lang, self.version) for smallkey in keys ]
         print( docs )
         return Response(json.dumps(docs),  mimetype='application/json')
+
+class DocV09(Doc):
+    def __init__(self):
+        super(DocV09,self).__init__()
+        self.version = '0.9'
+
+class DocV1(Doc):
+    def __init__(self):
+        super(DocV1,self).__init__()
+        self.version = '1'
+
+class DocsV09(Docs):
+    def __init__(self):
+        super(DocsV09,self).__init__()
+        self.version = '0.9'
+
+class DocsV1(Docs):
+    def __init__(self):
+        super(DocsV1,self).__init__()
+        self.version = '1'
 
 class Register(Resource):
     """
@@ -190,11 +188,8 @@ class Register(Resource):
             abort( 400, msg=mde.message )
 
         app.logger.debug( data )
-        try:
-            storage_db.delete( smallkey )
-        except pycouchdb.exceptions.NotFound as nfe:
-            pass
-        storage_db.save( { '_id':smallkey, 'type':s['payload_type'], 'data':data } )
+
+        db.put_doc( smallkey, { 'type':s['payload_type'], 'data':data } )
         app.logger.info( 'added a smallkey %s' % smallkey )
         return smallkey, 201
 
@@ -210,7 +205,7 @@ class Register(Resource):
         # valid_sig = regparse.sigcheck.test_request( request )
 # FIXME send a proper error on missing key
         try:
-            storage_db.delete( smallkey )
+            db.delete_doc( smallkey )
             app.logger.info( 'removed a smallkey %s' % smallkey )
             return '', 204
         except pycouchdb.exceptions.NotFound as nfe:
@@ -218,9 +213,18 @@ class Register(Resource):
         return '',404
 
 
-api.add_resource(Doc, '/doc/<string:lang>/<string:smallkey>')
-api.add_resource(Docs, '/docs/<string:lang>/<string:smallkeylist>')
-api.add_resource(Register, '/register/<string:smallkey>')
+api_0_9_bp = Blueprint('api_0_9', __name__, url_prefix='/v0.9')
+api_0_9 = Api(api_0_9_bp)
+api_0_9.add_resource(DocV09, '/doc/<string:lang>/<string:smallkey>')
+api_0_9.add_resource(DocsV09, '/docs/<string:lang>/<string:smallkeylist>')
+app.register_blueprint(api_0_9_bp)
+
+api_1_bp = Blueprint('api_1', __name__, url_prefix='/v1')
+api_1 = Api(api_1_bp)
+api_1.add_resource(DocV1, '/doc/<string:lang>/<string:smallkey>')
+api_1.add_resource(DocsV1, '/docs/<string:lang>/<string:smallkeylist>')
+api_1.add_resource(Register, '/register/<string:smallkey>')
+app.register_blueprint(api_1_bp)
 
 if __name__ == '__main__':
     for l in loggers:
