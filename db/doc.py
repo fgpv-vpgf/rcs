@@ -19,10 +19,10 @@ def remap( key_map, fragment ):
             f[k] = v
     return f
 
-def gc_10( col ):
+def gc_09( col ):
     return remap( { 'orderable':'isSortable', 'type':'sortType' }, col )
 
-def gc_11( col ):
+def gc_10( col ):
     return remap( { 'isSortable':'orderable', 'sortType':'type' }, col )
 
 def version_conversion( ver, fragment ):
@@ -30,15 +30,15 @@ def version_conversion( ver, fragment ):
     Convert a JSON fragment to the target version
     """
 
-    if ver == '1.0':
+    if ver == '0.9':
+        if 'datagrid' not in fragment:
+            return fragment
+        fragment['datagrid']['gridColumns'] = [ gc_09(x) for x in fragment['datagrid']['gridColumns'] ]
+        return fragment
+    elif ver == '1':
         if 'datagrid' not in fragment:
             return fragment
         fragment['datagrid']['gridColumns'] = [ gc_10(x) for x in fragment['datagrid']['gridColumns'] ]
-        return fragment
-    elif ver == '1.1':
-        if 'datagrid' not in fragment:
-            return fragment
-        fragment['datagrid']['gridColumns'] = [ gc_11(x) for x in fragment['datagrid']['gridColumns'] ]
         return fragment
     raise Exception("Invalid version")
 

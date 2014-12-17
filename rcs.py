@@ -131,25 +131,25 @@ class Docs(Resource):
         print( docs )
         return Response(json.dumps(docs),  mimetype='application/json')
 
-class DocV10(Doc):
+class DocV09(Doc):
     def __init__(self):
-        super(DocV10,self).__init__()
-        self.version = '1.0'
+        super(DocV09,self).__init__()
+        self.version = '0.9'
 
-class DocV11(Doc):
+class DocV1(Doc):
     def __init__(self):
-        super(DocV11,self).__init__()
-        self.version = '1.1'
+        super(DocV1,self).__init__()
+        self.version = '1'
 
-class DocsV10(Docs):
+class DocsV09(Docs):
     def __init__(self):
-        super(DocsV10,self).__init__()
-        self.version = '1.0'
+        super(DocsV09,self).__init__()
+        self.version = '0.9'
 
-class DocsV11(Docs):
+class DocsV1(Docs):
     def __init__(self):
-        super(DocsV11,self).__init__()
-        self.version = '1.1'
+        super(DocsV1,self).__init__()
+        self.version = '1'
 
 class Register(Resource):
     """
@@ -213,19 +213,18 @@ class Register(Resource):
         return '',404
 
 
-api_1_0_bp = Blueprint('api_1_0', __name__, url_prefix='/1.0')
-api_1_0 = Api(api_1_0_bp)
-api_1_0.add_resource(DocV10, '/doc/<string:lang>/<string:smallkey>')
-api_1_0.add_resource(DocsV10, '/docs/<string:lang>/<string:smallkeylist>')
-api_1_0.add_resource(Register, '/register/<string:smallkey>')
-app.register_blueprint(api_1_0_bp)
+api_0_9_bp = Blueprint('api_0_9', __name__, url_prefix='/v0.9')
+api_0_9 = Api(api_0_9_bp)
+api_0_9.add_resource(DocV09, '/doc/<string:lang>/<string:smallkey>')
+api_0_9.add_resource(DocsV09, '/docs/<string:lang>/<string:smallkeylist>')
+app.register_blueprint(api_0_9_bp)
 
-api_1_1_bp = Blueprint('api_1_1', __name__, url_prefix='/1.1')
-api_1_1 = Api(api_1_1_bp)
-api_1_1.add_resource(DocV11, '/doc/<string:lang>/<string:smallkey>')
-api_1_1.add_resource(DocsV11, '/docs/<string:lang>/<string:smallkeylist>')
-api_1_1.add_resource(Register, '/register/<string:smallkey>')
-app.register_blueprint(api_1_1_bp)
+api_1_bp = Blueprint('api_1', __name__, url_prefix='/v1')
+api_1 = Api(api_1_bp)
+api_1.add_resource(DocV1, '/doc/<string:lang>/<string:smallkey>')
+api_1.add_resource(DocsV1, '/docs/<string:lang>/<string:smallkeylist>')
+api_1.add_resource(Register, '/register/<string:smallkey>')
+app.register_blueprint(api_1_bp)
 
 if __name__ == '__main__':
     for l in loggers:
