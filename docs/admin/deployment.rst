@@ -48,7 +48,7 @@ Configure Python Environment
         cd c:\inetpub\rcs-X.Y.Z
         virtualenv .
         scripts\activate
-#. Install the project dependencies:
+#. Install the project dependencies (perform only one of the following steps):
 
     * via internet ``pip install -r requirements.txt``
     * via local wheel cache ``pip install --use-wheel --no-index --find-links=c:\path\to\wheel\dir -r requirements.txt``
@@ -63,7 +63,7 @@ Configure Python Environment
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
 #. Test the installation ``python rcs.py`` (this will run a test server on localhost)
-#. Seed the database ``python seed_qa_keys.py``
+#. Seed the database ``python seed_qa_keys.py`` (**do not perform this in pproduction**)
 
 IIS Integration
 ^^^^^^^^^^^^^^^
@@ -118,3 +118,24 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
 #. Test the installation ``python rcs.py`` (this will run a test server on localhost)
+
+Verification
+------------
+
+This is a small test that can verify if all the major components have been installed.
+
+#. RCS comes pre-packaged with a testing interface, where you can test the
+   GET, PUT, REGISTER, and DELETE requests. The full service contract is
+   available at :ref:`contract`
+#. In a browser, load up http://rcs.localhost/static/test.html (replacing the
+   hostname with the correct path to rcs)
+#. Enter a smallkey value (e.g. “test”)
+#. Press the *Feature* button in the second row of buttons
+#. Press *PUT*
+#. If successful you will see a ``201`` code that the service was properly added to the database
+#. Press *GET*
+#. It should return a JSON object with a status code of ``200``
+#. If a version of RAMP is configured alongside the RCS install the test can be
+   extended by visiting the following RAMP URL:
+   ``http://ramp.localhost/ramp-en.html?keys=test`` (replacing the hostname
+   with the correct value)
