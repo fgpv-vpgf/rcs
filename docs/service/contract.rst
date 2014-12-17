@@ -3,16 +3,24 @@
 RCS Service Contract
 ====================
 
-This is version 1.1.0 RCS service contract, it is backwards compatible with
-1.0.0 and RCS will accept both types of requests.  For registration of new
-datasets a JSON schema is used to validate input:
+This release of RCS publishes endpoints at ``/v1`` and ``/v0.9``.  The
+endpoints at ``/v1`` are compatible with registration requests for schemas 1.0
+and 1.1 and document requests for RAMP schema 1.0 .
+
+The current JSON schema is used to validate registration requests is at:
 
 .. toctree::
 
     jsonschema
 
-GET ``/doc/[lang]/[smallkey]``
-------------------------------
+An older schema for RAMP versions prior to schema 1.0 is documented at:
+
+.. toctree::
+
+    endpoint_09
+
+GET ``/v1/doc/[lang]/[smallkey]``
+---------------------------------
 
 Success Code: 200
 
@@ -21,15 +29,17 @@ Request Body: Empty
 Response Body: JSON Object
 
 The response will have a JSON configuration fragment to be merged into the RAMP
-configuration.
+configuration.  It will be compatible with RAMP schema 1.0, although as it is a
+fragment it will not validate against the schema without additional
+configuration being supplied.
 
 Error conditions:
 
 - invalid language code: 400 Bad Request, response body empty
 - smallkey not found: 404 Not Found, response body empty
 
-GET ``/docs/[lang]/[smallkey]{,[smallkey]}``
---------------------------------------------
+GET ``/v1/docs/[lang]/[smallkey]{,[smallkey]}``
+-----------------------------------------------
 
 Success Code: 200
 
@@ -38,7 +48,9 @@ Request Body: Empty
 Response Body: JSON Array
 
 The response will be an array of JSON objects, each object will be a JSON
-configuration fragment to be merged into the RAMP config.
+configuration fragment to be merged into the RAMP config.  It will be
+compatible with RAMP schema 1.0, although as it is a fragment it will not
+validate against the schema without additional configuration being supplied.
 
 Error conditions:
 
@@ -47,8 +59,8 @@ Error conditions:
   structured as:
   ``{"error_code":404,"smallkey":"[smallkey]"}``
 
-PUT ``/register/[smallkey]``
-----------------------------
+PUT ``/v1/register/[smallkey]``
+-------------------------------
 
 Success Code: 201
 
@@ -139,7 +151,7 @@ The wms payload should conform to:
 - ``uuid`` should be a unique identifier which can be prefixed with a
   preconfigured metadata URL to retrieve specific metadata for that layer
 
-DELETE ``/register/[smallkey]``
+DELETE ``/v1/register/[smallkey]``
 ----------------------------------
 
 Success Code: 204

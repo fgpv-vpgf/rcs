@@ -10,5 +10,5 @@ prefetch data from certain endpoints and store them as configuration fragments
 which the RAMP client can consume.  It is implemented as a REST service in
 Python with a fairly minimal store and retrieve API.
 
-RCS is developed by Environment Canada as part of the RAMP project and is lisenced
+RCS is developed by Environment Canada as part of the RAMP project and is licensed
 under the MIT license.
