@@ -30,11 +30,11 @@
     </div></div>
 
     <div class="row">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
             <label>Small Key</label>
             <input class="form-control" type="text" id="smallkey" value="0" />
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
             <label>Get Method Language</label>
             <br />
             <div class="btn-group" data-toggle="buttons">
@@ -43,6 +43,18 @@
                 </label>
                 <label class="btn btn-default">
                     <input type="radio" name="lang" id="lang-fr" value="fr" /> French
+                </label>
+            </div>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Get Version</label>
+            <br />
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default active">
+                    <input type="radio" name="ver" id="v09" value="v0.9" checked /> 0.9
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="ver" id="v1" value="v1" /> 1
                 </label>
             </div>
         </div>
@@ -151,8 +163,8 @@
         $('#log').append('<p class="bg-danger">'+s+'</p>');
     }
     
-    function get_reg_url() {
-        return '/register/' + $('#smallkey').val();
+    function get_reg_url(ver) {
+        return '/' + $('[name=ver]:checked').val() + '/register/' + $('#smallkey').val();
     }
 
     function get_sig_params() {
@@ -246,7 +258,7 @@
         });
 
         $('#gettest').click( function() {
-            var u = '/doc/' + $('[name=lang]:checked').val() + '/' + $('#smallkey').val();
+            var u = '/' + $('[name=ver]:checked').val() + '/doc/' + $('[name=lang]:checked').val() + '/' + $('#smallkey').val();
             log_info('GET URL: '+u);
             $.ajax({
                 type: "GET",
