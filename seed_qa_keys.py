@@ -4,3 +4,4 @@ auth_db = client.database( config.AUTH_DB )
 
 auth_db.save( { '_id':'jstest', 'key':'test_-k' } )
 auth_db.save( { '_id':'1', 'key':'n4bQgYhMfWWaL-qgxVrQFaO_TxsrC4Is0V1sFbDwCgg' } )
+auth_db.save( { '_id':'ecdmpdev', 'key':'MTg4NGM3ZDY1OWEyZmVhYTBjNTVhZDA' } )
