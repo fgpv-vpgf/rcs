@@ -212,19 +212,20 @@ class Register(Resource):
             app.logger.info( 'smallkey was not found %s' % smallkey,  exc_info=nfe )
         return '',404
 
+global_prefix = app.config.get('URL_PREFIX','')
 
-api_0_9_bp = Blueprint('api_0_9', __name__, url_prefix='/v0.9')
+api_0_9_bp = Blueprint('api_0_9', __name__)
 api_0_9 = Api(api_0_9_bp)
 api_0_9.add_resource(DocV09, '/doc/<string:lang>/<string:smallkey>')
 api_0_9.add_resource(DocsV09, '/docs/<string:lang>/<string:smallkeylist>')
-app.register_blueprint(api_0_9_bp)
+app.register_blueprint(api_0_9_bp, url_prefix=global_prefix+'/v0.9')
 
-api_1_bp = Blueprint('api_1', __name__, url_prefix='/v1')
+api_1_bp = Blueprint('api_1', __name__)
 api_1 = Api(api_1_bp)
 api_1.add_resource(DocV1, '/doc/<string:lang>/<string:smallkey>')
 api_1.add_resource(DocsV1, '/docs/<string:lang>/<string:smallkeylist>')
 api_1.add_resource(Register, '/register/<string:smallkey>')
-app.register_blueprint(api_1_bp)
+app.register_blueprint(api_1_bp, url_prefix=global_prefix+'/v1')
 
 if __name__ == '__main__':
     for l in loggers:

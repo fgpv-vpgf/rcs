@@ -11,3 +11,5 @@ LOG_FILE='rcs.log'
 LOG_LEVEL=10
 
 REG_SCHEMA='schemas/rcs_reg_schema_v1_1_0.json'
+
+URL_PREFIX=''
