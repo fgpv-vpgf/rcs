@@ -20,7 +20,6 @@ Contents
     dev/index
     admin/index
     service/index
-    testing/index
 
 Indices and tables
 ==================

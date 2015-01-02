@@ -9,4 +9,5 @@ These docs cover the internal workings of RCS.
     setup
     architecture
     building
+    release
     api
