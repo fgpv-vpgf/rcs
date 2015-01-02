@@ -77,6 +77,8 @@ IIS Integration
         Module: FastCgiModule
         Executable: C:\inetpub\rcs-X.Y.Z\Scripts\python.exe|C:\inetpub\rcs-X.Y.Z\wfastcgi.py
         Name: (name)
+#. If **URL_PREFIX** was set in the configuration it should be applied to the
+   ``Request Path`` setting (e.g. ``/rcs1/*`` for a prefix of ``/rcs1``).
 #. Go back to the server settings | FastCgi Settings | Right click Edit
 #. Select Environment variables and add the following:
     .. code-block:: yaml
@@ -84,8 +86,8 @@ IIS Integration
         PYTHONPATH: C:\inetpub\rcs\
         WSGI_HANDLER: rcs.app
 
-Upgrading on Windows (IIS + FastCgi)
-------------------------------------
+Upgrading from 1.x on Windows (IIS + FastCgi)
+---------------------------------------------
 
 Upgrading RCS can be performed in place wihtout the need to change the IIS
 configuration.  If you are upgrading from a post 1.5 release then there is
@@ -96,7 +98,10 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
 #. Get an RCS release package ``rcs-X.Y.Z.zip``
 #. In the existing RCS directory (e.g. ``c:\inetpub\rcs``) remove all folders
    except ``Lib``, ``Scripts`` and ``Include``.  By keeping those folders the
-   virtualenv will remain intact.
+   virtualenv will remain intact.  Remove all files except ``wfastcgi.py`` and
+   ``config.py``.
+#. If ``wfastcgi.py`` was removed please recreate the module mapping as
+   described in `IIS Integration`_ .
 #. Extract the release package into the existing directory, by default it will
    extract into a subdirectory ``rcs-X.Y.Z`` and those files should be moved to
    the top level directory.
@@ -118,6 +123,27 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
 #. Test the installation ``python rcs.py`` (this will run a test server on localhost)
+#. Follow any other version specific upgrade notes in this section.
+
+Upgrading from 1.6
+^^^^^^^^^^^^^^^^^^
+
+Version 1.7 of RCS adds the capability to use a URL prefix for an RCS
+installation.  This makes it possible to deploy multiple copies of RCS side by
+side in IIS.  To prefix an existing RCS install please follow the steps.
+
+#. Select a common directory for the various RCS installations to share (this
+   is only necessary if IIS needs to serve up static files)
+#. Create or copy RCS installations into various subfolders (e.g. ``rcs1`` and
+   ``rcs2``)
+#. In IIS create or modify a website to be the root for the various RCS installations
+#. (Optional) The root directory should point to the common directory for the
+   RCS installations
+#. For each RCS installation add a handler as described above using a Request
+   Path of ``/<subfolder name>/*`` (if static files are not needed the prefix
+   may be any prefix identifying the RCS installation)
+#. In the RCS installation set the configuration parameter **URL_PREFIX** (e.g.
+   ``/rcs1`` for a request path of ``/rcs1/*``)
 
 Verification
 ------------
