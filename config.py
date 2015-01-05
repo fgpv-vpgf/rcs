@@ -1,6 +1,6 @@
 STORAGE_DB='rcs_cache'
-AUTH_DB='rcs_auth'
-DB_CONN='http://localhost:5984/'
+AUTH_DB='rcs_auth_unit_test'
+DB_CONN='http://rcs:changeme@localhost:5984/'
 
 SIG_CHECK=True
 METADATA_URL='http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service='
