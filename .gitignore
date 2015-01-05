@@ -11,5 +11,6 @@ Include/
 Lib/
 Scripts/
 wheelhouse/
+runTest/
 
 MANIFEST
