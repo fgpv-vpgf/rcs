@@ -19,7 +19,7 @@ class FlaskrTestCase(unittest.TestCase):
 	#basic test function to prove things are doing stuff
 	def test_hello_world(self):
 		# testVal = requests.get(self.service + "v1/docs/en/0").json()
-		testVal = requests.get(self.service + "docs/en/0").json()
+		testVal = requests.get(self.service + "v0.9/docs/en/0").json()
 
 		assert len(testVal) == 1
 	
@@ -37,7 +37,8 @@ class FlaskrTestCase(unittest.TestCase):
 	
 			
 		#do the put 
-		callResult = requests.put(self.service + 'register/' + testSmallKey, json=payload, headers=headers)
+		# need to add v1 infront the register
+		callResult = requests.put(self.service + 'v1/register/' + testSmallKey, json=payload, headers=headers)
 	
 		# do we test anything here?
 		print "put result is: " + str(callResult)
@@ -47,7 +48,7 @@ class FlaskrTestCase(unittest.TestCase):
 		
 		# configSnippet = requests.get(self.service + "v0.9/docs/en/" + "112233").json()
 		# configSnippet = requests.get(self.service + "v1/docs/en/" + testSmallKey).json()
-		configSnippet = requests.get(self.service + "docs/en/" + testSmallKey).json()
+		configSnippet = requests.get(self.service + "v0.9/docs/en/" + testSmallKey).json()
 		assert len(configSnippet) == 1
 		
 		print str(configSnippet)
@@ -57,7 +58,8 @@ class FlaskrTestCase(unittest.TestCase):
 		#do many more tests here
 		
 		#test that smallkey is id
-		testVal = configSnippet[0]['layers']['feature'][0]['id']
+		#testVal = configSnippet[0]['layers']['feature'][0]['id']
+		testVal = configSnippet[0].layers.feature[0].id
 		
 		print "testVal:" + testVal
 		assert testVal == "rcs." + testSmallKey+ ".en"
