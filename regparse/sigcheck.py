@@ -22,9 +22,7 @@ def sign( key, *parts ):
     """
     msg = ''.join( parts )
     logging.debug( msg )
-    print( msg )
     h = hmac.new( str(key), msg, digestmod=hashlib.sha256 )
-    print( h.hexdigest() )
     return base64.urlsafe_b64encode( h.digest() ).replace('=','')
 
 def test_request( request ):
@@ -39,17 +37,20 @@ def test_request( request ):
     """
     logger = get_logger()
     for h in 'Authorization TimeStamp Sender'.split():
-        logger.debug( h+': '+request.headers.get(h) )
-    dt = request.headers.get( 'TimeStamp' )
-    cid = request.headers.get( 'Sender' )
+        logger.debug( h+': '+request.headers.get(h,'MISSING') )
+    dt = request.headers.get( 'TimeStamp', None )
+    cid = request.headers.get( 'Sender', None )
+    msg_sig = request.headers.get('Authorization', None)
+    if not (dt and cid and msg_sig):
+        logger.warning( 'Missing data from headers, sig check failed' )
+        return False
     rqpath = request.path
     rqbody = request.data
-    print( rqbody )
     psk = db.auth.get_key(cid)
 
-    sig = sign( psk, rqpath, cid, dt, rqbody )
-    logger.info( 'Signature received: {0}  ##  Signature generated: {1}'.format(request.headers.get('Authorization'),sig) )
-    return sig == request.headers.get('Authorization')
+    ref_sig = sign( psk, rqpath, cid, dt, rqbody )
+    logger.info( 'Signature received: {0}  ##  Signature generated: {1}'.format(msg_sig,ref_sig) )
+    return ref_sig is not None and ref_sig == msg_sig
 
 def validate(func):
     """
@@ -73,7 +74,10 @@ def validate(func):
             if not check_time( flask.request ):
                 validation_fail( 'Request time out of sync' )
         except iso8601.ParseError:
-            abort(400,msg="Unparsable timestamp")
+            if flask.current_app.config['SIG_CHECK']:
+                abort(400,msg="Unparsable timestamp")
+            else:
+                get_logger().warning('Timestamp parse failure ignored: SIG_CHECK is off in the config')
         return func(*args, **kwargs)
     return decorated_function
 
