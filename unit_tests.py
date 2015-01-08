@@ -15,6 +15,7 @@ class FlaskrTestCase(unittest.TestCase):
 		self.sender = "jstest"
 		
 
+	
 		
 	#things to release / clean up at end of unit tests
 	def tearDown(self):
@@ -85,6 +86,43 @@ class FlaskrTestCase(unittest.TestCase):
 		
 		print "testVal:" + testVal
 		assert testVal == "rcs." + testSmallKey+ ".en"	
+
+	#write multiple keys and read them back
+	def test_read_write_multiple_layers(self):
+
+		#get config json 
+		key1 = "132456"
+		key2 = "123456"
+		result = requests.get(self.service + "v0.9/docs/en/"+key1+","+key2).json()
+
+		assert len(result)==2
+		testValKey1 = result[0]['layers']['feature'][0]['id']
+		testValKey2 = result[1]['layers']['feature'][0]['id']
+
+		testValKey1 = self.smallkey_from_id(testValKey1)
+		testValKey2 = self.smallkey_from_id(testValKey2)
+
+		print "testValKey1=" + testValKey1
+		print "testValKey2=" + testValKey2
+
+		assert key1 == testValKey1 and key2 == testValKey2
+
+	#test for null
+	def test_xfor_nonexisting_layer(self):
+		randomKey = str(random.randint(100, 1000000))
+
+		result = requests.get(self.service + "v0.9/docs/en/"+randomKey).json()
+
+		print "randomKey:" + randomKey
+
+		self.assertIsNone(result[0])
+
+
+	#helper function to strip rcs. and .en from id in the config 
+	def smallkey_from_id(self, id):
+		smallkey = id.lstrip("rcs.").rstrip(".en")
+		return smallkey
+	
 		
 if __name__ == '__main__':
 	unittest.main()
