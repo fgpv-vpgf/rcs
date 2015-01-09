@@ -83,9 +83,10 @@ class FlaskrTestCase(unittest.TestCase):
 		#test that smallkey is id
 		testVal = configSnippet[0]['layers']['feature'][0]['id']
 		#testVal = configSnippet[0].layers.feature[0].id
-		
+		testVal = self.smallkey_from_id(testVal)
+
 		print "testVal:" + testVal
-		assert testVal == "rcs." + testSmallKey+ ".en"	
+		assert testVal == testSmallKey	
 
 	#write multiple keys and read them back
 	def test_read_write_multiple_layers(self):
