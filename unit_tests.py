@@ -11,11 +11,9 @@ class FlaskrTestCase(unittest.TestCase):
 	def setUp(self):		
 		donothing = True
 		self.service = 'http://127.0.0.1:5000/'
-		self.key = "test-k"
+		self.key = "test_-k"
 		self.sender = "jstest"
 		
-
-	
 		
 	#things to release / clean up at end of unit tests
 	def tearDown(self):
@@ -35,6 +33,8 @@ class FlaskrTestCase(unittest.TestCase):
 					
 		testSmallKey = str(random.randint(100, 1000000))
 		
+		#payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
+		jsonString = '{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}'
 		payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
 		
 		#write smallkey for extra sniffing
@@ -52,37 +52,34 @@ class FlaskrTestCase(unittest.TestCase):
 		print "msg: " + msg
 		
 		#generate hash
-		h = hmac.new( str(self.key), msg, digestmod=hashlib.sha256 )
-		signature = base64.urlsafe_b64encode( h.digest() ).replace('=','')
+		# h = hmac.new( str(self.key), msg, digestmod=hashlib.sha256 )
+		# signature = base64.urlsafe_b64encode( h.digest() ).replace('=','')
+
+		signature = self.signReqeust(str(self.key), msg)
+
+		print "signature:" + signature
+		#signature = self.signReqeust(self.key, msg)
 
 		# add sender, authroization and timestamp.
 		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": signature, "TimeStamp": timeStamp}
 
 		#do the put 
 		# need to add v1 infront the register
-		callResult = requests.put(self.service + 'v1/register/' + testSmallKey, json=payload, headers=headers)
+		putResponse = requests.put(self.service + 'v1/register/' + testSmallKey, json=payload, headers=headers)
 		# callResult = requests.put(self.service + 'v1/register/' + testSmallKey , json=payload, headers=headers)
 	
+		#make sure success code 201 
+		# assert putResponse.status_code == 201
+		print "put response "+ str(putResponse)
+
 		# do we test anything here?
-		print "put result is: " + str(callResult)
-	
-	
+		#print "put result is: " + str(callResult)	
 		#do a get on the thing we just put
-		
-		# configSnippet = requests.get(self.service + "v0.9/docs/en/" + "112233").json()
-		# configSnippet = requests.get(self.service + "v1/docs/en/" + testSmallKey).json()
 		configSnippet = requests.get(self.service + "v0.9/docs/en/" + testSmallKey).json()
 		assert len(configSnippet) == 1
 		
-		print str(configSnippet)
-		
-		# print configSnippet[0]['layers']['feature'][0]['id']
-		
-		#do many more tests here
-		
 		#test that smallkey is id
 		testVal = configSnippet[0]['layers']['feature'][0]['id']
-		#testVal = configSnippet[0].layers.feature[0].id
 		testVal = self.smallkey_from_id(testVal)
 
 		print "testVal:" + testVal
@@ -109,7 +106,7 @@ class FlaskrTestCase(unittest.TestCase):
 		assert key1 == testValKey1 and key2 == testValKey2
 
 	#test for null
-	def test_xfor_nonexisting_layer(self):
+	def test_for_nonexisting_layer(self):
 		randomKey = str(random.randint(100, 1000000))
 
 		result = requests.get(self.service + "v0.9/docs/en/"+randomKey).json()
@@ -118,12 +115,109 @@ class FlaskrTestCase(unittest.TestCase):
 
 		self.assertIsNone(result[0])
 
+	#test for properties service url, test for en and fr
+	# def test_config_property(self):
+	# 	assert False
 
+	#test DELETE random key by adding the key, then delete it
+	def test_delete(self):
+		print "Test Delete"
+		#add first
+		smallkey = str(random.randint(100, 1000000))
+		
+		payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
+		
+		#write smallkey for extra sniffing
+		print "smallkey " + smallkey
+
+		#add timeStamp to the put requeset
+		now = datetime.datetime.now( iso8601.iso8601.Utc() )
+		timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+		msg = '/v1/register/'+smallkey + self.sender + timeStamp + json.dumps(payload)
+		print "msg: " + msg
+		
+
+		#generate hash
+		# h = hmac.new( str(self.key), msg, digestmod=hashlib.sha256 )
+		# signature = base64.urlsafe_b64encode( h.digest() ).replace('=','')
+
+		signature = self.signReqeust(str(self.key), msg)
+
+		print "signature:" + signature
+		#signature = self.signReqeust(self.key, msg)
+
+		# add sender, authroization and timestamp.
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": signature, "TimeStamp": timeStamp}
+
+		# headers = {"contentType": "application/json; charset=utf-8", "dataType": "text"}
+
+		#do the put 
+		# need to add v1 infront the register
+		putResponse = requests.put(self.service + 'v1/register/' + smallkey, json=payload, headers=headers)
+		
+		assert putResponse.status_code == 201
+	
+		#do a get on the thing we just put
+		configSnippet = requests.get(self.service + "v1/docs/en/" + smallkey).json()
+		assert len(configSnippet) == 1
+		
+		#test that smallkey is id
+		testVal = configSnippet[0]['layers']['feature'][0]['id']
+		#testVal = configSnippet[0].layers.feature[0].id
+		testVal = self.smallkey_from_id(testVal)
+
+		print "testVal:" + testVal
+		assert testVal == smallkey	
+		
+		print "Delete:" + smallkey
+
+		delMsg = "/v1/register/"+ smallkey + self.sender + timeStamp
+
+		print "delete message" + delMsg
+		delSignature = self.signReqeust(str(self.key), delMsg)
+
+		print "delete signature" + delSignature
+
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": delSignature, "TimeStamp": timeStamp}
+
+
+		response = requests.delete(self.service + 'v1/register/'+smallkey,  headers=headers)
+
+		print "Delete Result:" + str(response)
+
+		#http://docs.python-requests.org/en/latest/api/#requests.Response
+		#access the status_code
+		assert response.status_code == 204
+
+	#test DELETE for key that does not exist
+	def test_delete_non_existing_key(self):
+		smallkey="JACKWEN"
+
+		now = datetime.datetime.now( iso8601.iso8601.Utc() )
+		timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+		delMsg = "/v1/register/"+ smallkey + self.sender + timeStamp
+		delSignature = self.signReqeust(str(self.key), delMsg)
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": delSignature, "TimeStamp": timeStamp}
+
+		response = requests.delete(self.service + 'v1/register/'+smallkey,  headers=headers)
+
+		assert response.status_code == 404
+
+	# ========================Helper Functions======================================
 	#helper function to strip rcs. and .en from id in the config 
 	def smallkey_from_id(self, id):
 		smallkey = id.lstrip("rcs.").rstrip(".en")
 		return smallkey
 	
+
+	#helper function to add Request Signing
+	def signReqeust(self, key, msg):
+		#generate hash
+		h = hmac.new( key, msg, digestmod=hashlib.sha256 )
+		signature = base64.urlsafe_b64encode( h.digest() ).replace('=','')
+		return signature
 		
 if __name__ == '__main__':
 	unittest.main()
