@@ -391,6 +391,48 @@ class FlaskrTestCase(unittest.TestCase):
 		print "Test invalid message: incorrect order " + timeStamp + " Status Code:" + str(response.status_code)
 		assert response.status_code == 401
 
+	#7. Test signing of invalid key
+	def test_put_signing_with_invalid_key(self):
+		print "--Test Signing wtih invalid key--"
+		#set up test params
+					
+		testSmallKey = str(random.randint(100, 1000000))
+		
+		#payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
+		jsonString = '{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}'
+		payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
+		
+
+		#add timeStamp to the put requeset
+		now = datetime.datetime.now( iso8601.iso8601.Utc() )
+		timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+		# create msg for calculateing HMAC_SHA256
+		msg = '/v1/register/'+testSmallKey + self.sender + timeStamp + json.dumps(payload)
+		
+		#generate hash
+		invalidKey = "ThisIsATestKey"		
+
+		signature = self.signReqeust(invalidKey, msg)
+
+		print "signature:" + signature
+		#signature = self.signReqeust(self.key, msg)
+
+		# add sender, authroization and timestamp.
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": signature, "TimeStamp": timeStamp}
+
+		#do the put 
+		# need to add v1 infront the register
+		putResponse = requests.put(self.service + 'v1/register/' + testSmallKey, json=payload, headers=headers)
+		# callResult = requests.put(self.service + 'v1/register/' + testSmallKey , json=payload, headers=headers)
+	
+		#make sure success code 201 
+		# assert putResponse.status_code == 201
+		print "Put response (with invalid key, status code should be 401) "+ str(putResponse.status_code)
+		assert putResponse.status_code == 401
+
+
+
 	# ========================Helper Functions======================================
 	#helper function to strip rcs. and .en from id in the config 
 	def smallkey_from_id(self, id):
