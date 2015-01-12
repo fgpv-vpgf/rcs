@@ -205,6 +205,24 @@ class FlaskrTestCase(unittest.TestCase):
 
 		assert response.status_code == 404
 
+	# ========================Authentication Test===================================
+	# Header
+	# 1. Test for no signing (No signature)
+	# 2. Test for invalid timestamp a. 2 mins+ b. 2 mins-
+	# 3. Test for no sender
+	# Payload
+	# 4. Test for no Payload (Delete)
+	# 5. Test for with Payload (Put)
+	# 6. Test for invalid msg (invalid msg construction for signing)
+	# Key
+	# 7. Key must be the same. Test with invalid key
+	 
+	# 1. Test for no signing
+	def test_authorization_no_signing_delete():
+		assert False
+	
+
+
 	# ========================Helper Functions======================================
 	#helper function to strip rcs. and .en from id in the config 
 	def smallkey_from_id(self, id):
