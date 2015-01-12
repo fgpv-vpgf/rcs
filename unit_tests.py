@@ -192,7 +192,7 @@ class FlaskrTestCase(unittest.TestCase):
 
 	#test DELETE for key that does not exist
 	def test_delete_non_existing_key(self):
-		smallkey="JACKWEN"
+		smallkey="Burlington-Downsview"
 
 		now = datetime.datetime.now( iso8601.iso8601.Utc() )
 		timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -219,7 +219,7 @@ class FlaskrTestCase(unittest.TestCase):
 	 
 	# 1. Test for no signing
 	def test_authorization_no_signing_delete(self):
-		smallkey="JACKWEN"
+		smallkey="Burlington-Downsview"
 
 		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text"}
 
@@ -235,7 +235,7 @@ class FlaskrTestCase(unittest.TestCase):
 	# 		Test code for invalid time format is 400
 	def test_authorization_expired_timestamp(self):
 		print "--Test Expired TimeStamp--"
-		smallkey="JACKWEN"
+		smallkey="Burlington-Downsview"
 
 		#set time equals to 15minutes ago
 		now = datetime.datetime.now( iso8601.iso8601.Utc() ) - datetime.timedelta(minutes=15)
@@ -253,7 +253,7 @@ class FlaskrTestCase(unittest.TestCase):
 
 	def test_authorization_future_timestamp(self):
 		print "--Test Future TimeStamp--"
-		smallkey="JACKWEN"
+		smallkey="Burlington-Downsview"
 
 		#set time equals to 15minutes ago
 		now = datetime.datetime.now( iso8601.iso8601.Utc() ) + datetime.timedelta(minutes=15)
@@ -268,10 +268,11 @@ class FlaskrTestCase(unittest.TestCase):
 		print "Test timestamp: 15minutes ahead " + timeStamp + " Status Code:" + str(response.status_code)
 		assert response.status_code == 401
 
+	# Note failed test: should return 400 according to documentation
 	def test_authorization_invalid_timeformat(self):
 
 		print "--Test Invalid Time format--"
-		smallkey="JACKWEN"
+		smallkey="Burlington-Downsview"
 
 		#set time equals to 15minutes ago
 		now = datetime.datetime.now( iso8601.iso8601.Utc() ) + datetime.timedelta(minutes=15)
@@ -288,7 +289,26 @@ class FlaskrTestCase(unittest.TestCase):
 		print "Test timestamp invalid time format: " + timeStamp + " Status Code:" + str(response.status_code)
 		assert response.status_code == 400
 	
+	#3. Test for no sender
+	def test_authroization_no_sender(self):
+		print "--Test No Sender in Header --"
+		smallkey="Burlington-Downsview"
 
+		#set time equals to 15minutes ago
+		now = datetime.datetime.now( iso8601.iso8601.Utc() ) + datetime.timedelta(minutes=15)
+
+		# invalid time format
+		timeStamp = now.strftime('%Y-%m-%d %H:%M:%S')
+
+		delMsg = "/v1/register/"+ smallkey + self.sender + timeStamp
+		delSignature = self.signReqeust(str(self.key), delMsg)
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Authorization": delSignature, "TimeStamp": timeStamp}
+
+		response = requests.delete(self.service + 'v1/register/'+smallkey,  headers=headers)
+
+		print "Test No Sender in header, Status Code:" + str(response.status_code)
+		assert response.status_code == 401
+		
 
 	# ========================Helper Functions======================================
 	#helper function to strip rcs. and .en from id in the config 
