@@ -341,7 +341,7 @@ class FlaskrTestCase(unittest.TestCase):
 		now = datetime.datetime.now( iso8601.iso8601.Utc() ) + datetime.timedelta(minutes=15)
 
 		# invalid time format
-		timeStamp = now.strftime('%Y-%m-%d %H:%M:%S')
+		timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 		delMsg = "/v1/register/"+ smallkey + self.sender + timeStamp
 		delSignature = self.signReqeust(str(self.key), delMsg)
