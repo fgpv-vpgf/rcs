@@ -358,6 +358,39 @@ class FlaskrTestCase(unittest.TestCase):
 	#5. Test with payload (Should only apply to PUT, because in DELETE, no payload is included)
 	# Both cases works. Should add the case for testing PUT without payload
 
+
+	#6. Test for invalid msg (invalid msg construction for signing)
+	# RCS singing require the followin gsg format: "/v1/register/"+ smallkey + self.sender + timeStamp
+	# Obivious test, but in case code changed like v1.6 vs v1.7
+	def test_invalid_msg_construction(self):
+
+		print "--Test invalid message construction for signing--"
+		smallkey="Burlington-Downsview"
+
+		#set time equals to 15minutes ago
+		now = datetime.datetime.now( iso8601.iso8601.Utc() ) + datetime.timedelta(minutes=15)
+		timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+		# missing /v1
+		delMsg = "/register/"+ smallkey + self.sender + timeStamp
+		delSignature = self.signReqeust(str(self.key), delMsg)
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": delSignature, "TimeStamp": timeStamp}
+
+		response = requests.delete(self.service + 'v1/register/'+smallkey,  headers=headers)
+
+		print "Test invlaid message: missing /v1/ " + timeStamp + " Status Code:" + str(response.status_code)
+		assert response.status_code == 401
+
+		# order in correct
+		delMsg = "/v1/register/"+ smallkey  + timeStamp + self.sender
+		delSignature = self.signReqeust(str(self.key), delMsg)
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": delSignature, "TimeStamp": timeStamp}
+
+		response = requests.delete(self.service + 'v1/register/'+smallkey,  headers=headers)
+
+		print "Test invalid message: incorrect order " + timeStamp + " Status Code:" + str(response.status_code)
+		assert response.status_code == 401
+
 	# ========================Helper Functions======================================
 	#helper function to strip rcs. and .en from id in the config 
 	def smallkey_from_id(self, id):
