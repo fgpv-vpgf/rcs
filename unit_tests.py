@@ -85,6 +85,49 @@ class FlaskrTestCase(unittest.TestCase):
 		print "testVal:" + testVal
 		assert testVal == testSmallKey	
 
+	# Test for put without payload in http put request
+	def test_write_no_payload(self):
+	
+		print "--Test put without payload--"
+						
+		testSmallKey = str(random.randint(100, 1000000))
+		
+		#payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
+		jsonString = '{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}'
+		payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
+		
+		#write smallkey for extra sniffing
+		# print "smallkey " + testSmallKey
+
+		#add timeStamp to the put requeset
+		now = datetime.datetime.now( iso8601.iso8601.Utc() )
+		timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+		# print "timestamp " + timeStamp		
+
+		# create msg for calculateing HMAC_SHA256
+		msg = '/v1/register/'+testSmallKey + self.sender + timeStamp + json.dumps(payload)
+		# print "msg: " + msg
+
+		signature = self.signReqeust(str(self.key), msg)
+
+		# print "signature:" + signature
+		#signature = self.signReqeust(self.key, msg)
+
+		# add sender, authroization and timestamp.
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": signature, "TimeStamp": timeStamp}
+
+		#do the put 
+		# need to add v1 infront the register
+		# no payload included
+		putResponse = requests.put(self.service + 'v1/register/' + testSmallKey, headers=headers)
+		
+	
+		#make sure success code 201 
+		# assert putResponse.status_code == 201
+		print "Put response without payload (should be 500): "+ str(putResponse.status_code)
+		assert putResponse.status_code == 500
+		
+
 	#write multiple keys and read them back
 	def test_read_write_multiple_layers(self):
 
@@ -308,7 +351,12 @@ class FlaskrTestCase(unittest.TestCase):
 
 		print "Test No Sender in header, Status Code:" + str(response.status_code)
 		assert response.status_code == 401
-		
+	
+	#4. Test without payload (Only testing PUT, for DELETE case, no payload is included
+	# see test_write_no_payload
+
+	#5. Test with payload (Should only apply to PUT, because in DELETE, no payload is included)
+	# Both cases works. Should add the case for testing PUT without payload
 
 	# ========================Helper Functions======================================
 	#helper function to strip rcs. and .en from id in the config 
