@@ -229,6 +229,64 @@ class FlaskrTestCase(unittest.TestCase):
 
 		# Make sure status code is 401
 		assert response.status_code == 401
+
+	# 2. Test for invalid timestamp
+	# Note: No specific error message for expired timestamp, using  401 status code instead
+	# 		Test code for invalid time format is 400
+	def test_authorization_expired_timestamp(self):
+		print "--Test Expired TimeStamp--"
+		smallkey="JACKWEN"
+
+		#set time equals to 15minutes ago
+		now = datetime.datetime.now( iso8601.iso8601.Utc() ) - datetime.timedelta(minutes=15)
+		timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+		delMsg = "/v1/register/"+ smallkey + self.sender + timeStamp
+		delSignature = self.signReqeust(str(self.key), delMsg)
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": delSignature, "TimeStamp": timeStamp}
+
+		response = requests.delete(self.service + 'v1/register/'+smallkey,  headers=headers)
+
+		print "Test timestamp: 15minutes ago " + timeStamp + " Status Code:" + str(response.status_code)
+		assert response.status_code == 401
+		
+
+	def test_authorization_future_timestamp(self):
+		print "--Test Future TimeStamp--"
+		smallkey="JACKWEN"
+
+		#set time equals to 15minutes ago
+		now = datetime.datetime.now( iso8601.iso8601.Utc() ) + datetime.timedelta(minutes=15)
+		timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+		delMsg = "/v1/register/"+ smallkey + self.sender + timeStamp
+		delSignature = self.signReqeust(str(self.key), delMsg)
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": delSignature, "TimeStamp": timeStamp}
+
+		response = requests.delete(self.service + 'v1/register/'+smallkey,  headers=headers)
+
+		print "Test timestamp: 15minutes ahead " + timeStamp + " Status Code:" + str(response.status_code)
+		assert response.status_code == 401
+
+	def test_authorization_invalid_timeformat(self):
+
+		print "--Test Invalid Time format--"
+		smallkey="JACKWEN"
+
+		#set time equals to 15minutes ago
+		now = datetime.datetime.now( iso8601.iso8601.Utc() ) + datetime.timedelta(minutes=15)
+
+		# invalid time format
+		timeStamp = now.strftime('%Y-%m-%d %H:%M:%S')
+
+		delMsg = "/v1/register/"+ smallkey + self.sender + timeStamp
+		delSignature = self.signReqeust(str(self.key), delMsg)
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": delSignature, "TimeStamp": timeStamp}
+
+		response = requests.delete(self.service + 'v1/register/'+smallkey,  headers=headers)
+
+		print "Test timestamp invalid time format: " + timeStamp + " Status Code:" + str(response.status_code)
+		assert response.status_code == 400
 	
 
 
