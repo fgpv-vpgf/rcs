@@ -218,8 +218,17 @@ class FlaskrTestCase(unittest.TestCase):
 	# 7. Key must be the same. Test with invalid key
 	 
 	# 1. Test for no signing
-	def test_authorization_no_signing_delete():
-		assert False
+	def test_authorization_no_signing_delete(self):
+		smallkey="JACKWEN"
+
+		headers = {"contentType": "application/json; charset=utf-8", "dataType": "text"}
+
+		response = requests.delete(self.service + 'v1/register/'+smallkey,  headers=headers)
+
+		print "Authorization Test(no signing + delete): Response Code = " + str(response.status_code)
+
+		# Make sure status code is 401
+		assert response.status_code == 401
 	
 
 
