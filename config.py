@@ -6,6 +6,8 @@ SIG_CHECK=True
 METADATA_URL='http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service='
 
 LOG_FILE='rcs.log'
+LOG_ROTATE_BYTES=200000
+LOG_BACKUPS=10
 # https://docs.python.org/2/library/logging.html#levels
 # common options DEBUG 10; ERROR 40
 LOG_LEVEL=10

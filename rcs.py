@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.config.from_object(config)
 if os.environ.get('RCS_CONFIG'):
     app.config.from_envvar('RCS_CONFIG')
-handler = RotatingFileHandler( app.config['LOG_FILE'], maxBytes=10000, backupCount=1 )
+handler = RotatingFileHandler( app.config['LOG_FILE'], maxBytes=app.config.get('LOG_ROTATE_BYTES',200000), backupCount=app.config.get('LOG_BACKUPS',5) )
 handler.setLevel( app.config['LOG_LEVEL'] )
 handler.setFormatter( logging.Formatter(
     '%(asctime)s %(levelname)s: %(message)s '
