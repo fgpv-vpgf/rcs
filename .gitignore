@@ -7,9 +7,11 @@
 docs/_build
 dist/
 build/
-Include/
-Lib/
+[iI]nclude/
+[lL]ib/
+lib64
 Scripts/
+bin/
 wheelhouse/
 
 MANIFEST
