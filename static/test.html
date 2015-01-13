@@ -130,6 +130,10 @@
             }
         };
 
+    function get_versioned_url() {
+        return '../' + $('[name=ver]:checked').val();
+    }
+
     function testsig() {
         var dt = '2007-01-25T12:00:00Z';
         var psk = 'test';
@@ -156,11 +160,11 @@
 
     function log_info(s) {
         console.log(s);
-        $('#log').append('<p class="bg-info">'+s+'</p>');
+        $('#log').prepend('<p class="bg-info"><em class="text-muted">'+(new Date()).toISOString()+'</em>&nbsp;'+s+'</p>');
     }
     function log_err(s) {
         console.log(s);
-        $('#log').append('<p class="bg-danger">'+s+'</p>');
+        $('#log').prepend('<p class="bg-danger"><em class="text-muted">'+(new Date()).toISOString()+'</em>&nbsp;'+s+'</p>');
     }
     
     function get_reg_url(ver) {
@@ -171,6 +175,7 @@
         var ret = {};
         ret.isodate = $('#timeStamp').val();
         ret.path = get_reg_url();
+        ret.target = '..' + ret.path;
         ret.id = $('#clientId').val();
         ret.body = $('#data').val();
         ret.key = $('#apiKey').val();
@@ -185,6 +190,16 @@
         };
     }
 
+    function make_curl_header_opts( headers ) {
+        return Object.keys(headers).map( function(v,k) { return '-H "'+v+': '+headers[v]+'"'; } ).join(' ');
+    }
+
+    function get_abs_path( path ) {
+        var link = document.createElement("a");
+        link.href = path;
+        return link.protocol + '//' + link.host + link.pathname;
+    }
+
     $(document).ready(function () {
         $('#data').val(JSON.stringify(sampleFeature));
 
@@ -196,7 +211,7 @@
             $.ajax({
                 type: "PUT",
                 contentType: "application/json; charset=utf-8",
-                url: s.path,
+                url: s.target,
                 data: s.body,
                 dataType: "text",
                 headers: h,
@@ -216,7 +231,7 @@
                 h = make_headers(s,sig);
             $.ajax({
                 type: "DELETE",
-                url: s.path,
+                url: s.target,
                 dataType: "text",
                 headers: h,
             }).done(function (data, status, xhr) {
@@ -230,14 +245,23 @@
         $('#signdel').click( function() {
             var s = get_sig_params(),
                 sig = sign( s.key, s.path, s.id, s.isodate, '' ),
-                h = make_headers(s,sig);
+                h = make_headers(s,sig),
+                curlcmd = 'curl -v -X DELETE ';
+            curlcmd += make_curl_header_opts(h) +' '+ get_abs_path(s.target);
             log_info( 'headers: '+JSON.stringify(h) );
+            log_info( curlcmd );
+
         });
         $('#signput').click( function() {
             var s = get_sig_params(),
                 sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
-                h = make_headers(s,sig);
+                h = make_headers(s,sig),
+                curlcmd = 'curl -v -X PUT ';
+            curlcmd += make_curl_header_opts(h);
+            curlcmd += ' -d "'+ s.body +'" ';
+            curlcmd += get_abs_path(s.target);
             log_info( 'headers: '+JSON.stringify(h) );
+            log_info( curlcmd );
         });
 
         $('#logclear').click( function() { $('#log').html(''); } );
