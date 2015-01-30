@@ -76,17 +76,7 @@ def jsonp(func):
             return func(*args, **kwargs)
     return decorated_function
 
-def make_id( key, lang ):
-    """
-    Generates an RCS ID in the form rcs.a82d987e.en
 
-    :param key: The key to use for generating the unique id (keys are shared amongst different languages)
-    :type key: str
-    :param lang: The two letter language code for generating the unique id
-    :type lang: str
-    :returns: str -- an id that should be unique amongst all RCS ids
-    """
-    return "{0}.{1}.{2}".format('rcs',key,lang)
 
 
 class Doc(Resource):
@@ -178,11 +168,11 @@ class Register(Resource):
         data = dict( key=smallkey, request=s )
         try:
             if s['payload_type'] == 'wms':
-                data['en'] = regparse.wms.make_node( s['en'], make_id(smallkey,'en'), app.config )
-                data['fr'] = regparse.wms.make_node( s['fr'], make_id(smallkey,'fr'), app.config )
+                data['en'] = regparse.wms.make_node( s['en'], regparse.make_id(smallkey,'en'), app.config )
+                data['fr'] = regparse.wms.make_node( s['fr'], regparse.make_id(smallkey,'fr'), app.config )
             else:
-                data['en'] = regparse.esri_feature.make_node( s['en'], make_id(smallkey,'en'), app.config )
-                data['fr'] = regparse.esri_feature.make_node( s['fr'], make_id(smallkey,'fr'), app.config )
+                data['en'] = regparse.esri_feature.make_node( s['en'], regparse.make_id(smallkey,'en'), app.config )
+                data['fr'] = regparse.esri_feature.make_node( s['fr'], regparse.make_id(smallkey,'fr'), app.config )
         except regparse.metadata.MetadataException as mde:
             app.logger.warning( 'Metadata could not be retrieved for layer', exc_info=mde )
             abort( 400, msg=mde.message )
@@ -233,7 +223,7 @@ class Update(Resource):
             pass
         if day_limit is None and arg != 'all' or day_limit is not None and day_limit < 1:
             return '{"error":"argument should be either \'all\' or a positive integer"}',400
-        return Response( json.dumps( db.refresh_records( day_limit ) ),  mimetype='application/json' )
+        return Response( json.dumps( regparse.refresh_records( day_limit, app.config ) ),  mimetype='application/json' )
 
 
 global_prefix = app.config.get('URL_PREFIX','')

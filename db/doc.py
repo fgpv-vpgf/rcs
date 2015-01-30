@@ -1,7 +1,7 @@
 """
 Methods for dealing with DB document requests
 """
-import pycouchdb, datetime
+import pycouchdb, datetime, string
 
 _db = None
 
@@ -74,10 +74,8 @@ def put_doc( key, doc ):
     doc['updated_at'] = datetime.date.today().isoformat()
     _db.save( doc )
 
-def refresh_records( day_limit ):
-    valid = []
-    invalid = {}
-    return { "updated":valid, "errors":invalid }
+def query( q ):
+    return _db.temporary_query( q )
 
 def delete_doc( key ):
     _db.delete( key )
