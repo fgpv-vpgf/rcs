@@ -18,15 +18,17 @@
         </div>
         <div class="form-group col-md-4">
             <label>Timestamp</label>
-            <input class="form-control" type="text" id="timeStamp" value="" />
+            <div class="input-group">
+               <span class="input-group-addon">
+                 Auto Refresh
+                 <input type="checkbox" id="autodate" checked />
+               </span>
+               <input class="form-control" type="text" id="timeStamp" value="" />
+             </div>
         </div>
 
     </div>
     <div class="row"><div class="form-group col-md-12">
-        <button class="btn" id='logclear'>Clear Log</button>
-        <button class="btn" id='dtrefresh'>Refresh Date</button>
-        <button class="btn" id='signput'>Sign PUT</button>
-        <button class="btn" id='signdel'>Sign DELETE</button>
     </div></div>
 
     <div class="row">
@@ -50,11 +52,11 @@
             <label>Get Version</label>
             <br />
             <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default active">
-                    <input type="radio" name="ver" id="v09" value="v0.9" checked /> 0.9
-                </label>
                 <label class="btn btn-default">
-                    <input type="radio" name="ver" id="v1" value="v1" /> 1
+                    <input type="radio" name="ver" id="v09" value="v0.9" /> 0.9
+                </label>
+                <label class="btn btn-default active">
+                    <input type="radio" name="ver" id="v1" value="v1" checked /> 1
                 </label>
             </div>
         </div>
@@ -64,22 +66,38 @@
         <textarea id="data" rows=7 class="form-control"></textarea>
     </div></div>
 
-    <div class="row"><div class="form-group col-md-12">
-        <button class="btn" id='puttest'>PUT</button>
-        <button class="btn" id='gettest'>GET</button>
-        <button class="btn" id='deltest'>DELETE</button>
-        <input type="button" class="btn sampledata" value="Unique with Default"
-               data-url="http://devmap.on.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer/0" />
-        <input type="button" class="btn sampledata" value="Class Breaks"
-               data-url="http://devmap.on.ec.gc.ca/ArcGIS/rest/services/ClassBreaks/MapServer/0" />
-        <input type="button" class="btn sampledata" value="JOSM Unique"
-               data-url="http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/0" />
-        <input type="button" class="btn samplejson" value="WMS" data-obj="sampleWMS" />
-        <input type="button" class="btn samplejson" value="Full WMS" data-obj="fullWMS" />
-        <input type="button" class="btn samplejson" value="Feature" data-obj="sampleFeature" />
-        <input type="button" class="btn samplejson" value="Proper Metadata" data-obj="sampleMeta" />
-        <input type="button" class="btn samplejson" value="Zoom Scale" data-obj="sampleZoomScale" />
-    </div></div>
+    <div class="row form-group">
+        <div class="col-md-1">
+            Actions
+        </div>
+        <div class="btn-group col-md-11">
+            <button class="btn btn-default" id='logclear'>Clear Log</button>
+            <button class="btn btn-default" id='puttest'>PUT (register)</button>
+            <button class="btn btn-default" id='gettest'>GET (doc)</button>
+            <button class="btn btn-default" id='deltest'>DELETE (register)</button>
+            <button class="btn btn-default" id='dtrefresh'>Refresh Date</button>
+            <button class="btn btn-default" id='signput'>Sign PUT</button>
+            <button class="btn btn-default" id='signdel'>Sign DELETE</button>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-1">
+            Sample Data
+        </div>
+        <div class="btn-group col-md-11">
+            <input type="button" class="btn btn-default sampledata" value="Unique with Default"
+                   data-url="http://devmap.on.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer/0" />
+            <input type="button" class="btn btn-default sampledata" value="Class Breaks"
+                   data-url="http://devmap.on.ec.gc.ca/ArcGIS/rest/services/ClassBreaks/MapServer/0" />
+            <input type="button" class="btn btn-default sampledata" value="JOSM Unique"
+                   data-url="http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/0" />
+            <input type="button" class="btn btn-default samplejson" value="WMS" data-obj="sampleWMS" />
+            <input type="button" class="btn btn-default samplejson" value="Full WMS" data-obj="fullWMS" />
+            <input type="button" class="btn btn-default samplejson" value="Feature" data-obj="sampleFeature" />
+            <input type="button" class="btn btn-default samplejson" value="Proper Metadata" data-obj="sampleMeta" />
+            <input type="button" class="btn btn-default samplejson" value="Zoom Scale" data-obj="sampleZoomScale" />
+        </div>
+    </div>
 
     <div class="row"><div id="log" class="form-group col-md-12">
     </div></div>
@@ -173,6 +191,9 @@
 
     function get_sig_params() {
         var ret = {};
+        if ( $('#autodate').prop('checked') ) {
+            $('#dtrefresh').click();
+        }
         ret.isodate = $('#timeStamp').val();
         ret.path = get_reg_url();
         ret.target = '..' + ret.path;
