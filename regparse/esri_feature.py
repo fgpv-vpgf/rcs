@@ -126,12 +126,12 @@ def make_node( data, id, config ):
     node = { 'id': id }
     r = requests.get( data['service_url'] + '?f=json' )
     svc_data = r.json()
-    print( svc_data  )
-    print( svc_data['displayField'] )
     node['url'] = data['service_url']
-    if data.get('service_name',None) is None:
+    node['displayName'] = data.get('service_name',None)
+    node['nameField'] = data.get('display_field',None)
+    if node.get('displayName',None) is None:
         node['displayName'] = svc_data['name']
-    if data.get('display_field',None) is None:
+    if node.get('nameField',None) is None:
         node['nameField'] = svc_data['displayField']
     metadata_url, catalogue_url = metadata.get_url( data, config )
     if metadata_url:
