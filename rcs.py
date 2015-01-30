@@ -175,7 +175,7 @@ class Register(Resource):
             app.logger.info( resp )
             return Response(json.dumps(resp),  mimetype='application/json', status=400)
 
-        data = dict( key=smallkey )
+        data = dict( key=smallkey, request=s )
         try:
             if s['payload_type'] == 'wms':
                 data['en'] = regparse.wms.make_node( s['en'], make_id(smallkey,'en'), app.config )
@@ -202,8 +202,6 @@ class Register(Resource):
         :type smallkey: str
         :returns: JSON Response -- 204 on success; 500 on failure
         """
-        # valid_sig = regparse.sigcheck.test_request( request )
-# FIXME send a proper error on missing key
         try:
             db.delete_doc( smallkey )
             app.logger.info( 'removed a smallkey %s' % smallkey )
@@ -211,6 +209,32 @@ class Register(Resource):
         except pycouchdb.exceptions.NotFound as nfe:
             app.logger.info( 'smallkey was not found %s' % smallkey,  exc_info=nfe )
         return '',404
+
+class Update(Resource):
+    """
+    Handles cache maintenance requests
+    """
+
+    @regparse.sigcheck.validate
+    def post(self, arg):
+        """
+        A REST endpoint for triggering cache updates.
+        Walks through the database and updates cached data.
+
+        :param arg: Either 'all' or a positive integer indicating the minimum
+        age in days of a record before it should be updated
+        :type arg: str
+        :returns: JSON Response -- 200 on success; 400 on malformed URL
+        """
+        day_limit = None
+        try:
+            day_limit = int(arg)
+        except:
+            pass
+        if day_limit is None and arg != 'all' or day_limit is not None and day_limit < 1:
+            return '{"error":"argument should be either \'all\' or a positive integer"}',400
+        return Response( json.dumps( db.refresh_records( day_limit ) ),  mimetype='application/json' )
+
 
 global_prefix = app.config.get('URL_PREFIX','')
 
@@ -225,6 +249,7 @@ api_1 = Api(api_1_bp)
 api_1.add_resource(DocV1, '/doc/<string:lang>/<string:smallkey>')
 api_1.add_resource(DocsV1, '/docs/<string:lang>/<string:smallkeylist>')
 api_1.add_resource(Register, '/register/<string:smallkey>')
+api_1.add_resource(Update, '/update/<string:arg>')
 app.register_blueprint(api_1_bp, url_prefix=global_prefix+'/v1')
 
 if __name__ == '__main__':
