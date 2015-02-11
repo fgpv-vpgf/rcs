@@ -16,7 +16,7 @@ A sample request:
 .. code-block:: javascript
 
     {
-        "version": "1.1.0",
+        "version": "1.1",
         "payload_type": "wms",
         "en": {
             "service_url": "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en",

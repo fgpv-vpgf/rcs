@@ -54,7 +54,8 @@ Configure Python Environment
     * via local wheel cache ``pip install --use-wheel --no-index --find-links=c:\path\to\wheel\dir -r requirements.txt``
 
 #. Update the configuration in ``config.py`` or set the environment variable ``RCS_CONFIG``
-   to point to a config which overrides the defaults set in ``config.py``:
+   to point to a config which overrides the defaults set in ``config.py``.  See :ref:`config` for a
+   full description for all options, at a minimum update the following:
 
     * **DB_CONN** should match the account, password and host settings from the CouchDB installation
     * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_schema_v1.json``
@@ -125,8 +126,8 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
 #. Test the installation ``python rcs.py`` (this will run a test server on localhost)
 #. Follow any other version specific upgrade notes in this section.
 
-Upgrading from 1.6
-^^^^^^^^^^^^^^^^^^
+Upgrading from 1.6 to 1.7 or 1.8
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Version 1.7 of RCS adds the capability to use a URL prefix for an RCS
 installation.  This makes it possible to deploy multiple copies of RCS side by
@@ -144,6 +145,11 @@ side in IIS.  To prefix an existing RCS install please follow the steps.
    may be any prefix identifying the RCS installation)
 #. In the RCS installation set the configuration parameter **URL_PREFIX** (e.g.
    ``/rcs1`` for a request path of ``/rcs1/*``)
+
+Upgrading from 1.7 to 1.8
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+RCS 1.8 adds a new endpoint but does not require any additional deployment changes.
 
 Verification
 ------------

@@ -1,7 +1,7 @@
 Service Quick Reference
 =======================
 
-RCS currently exposes 4 REST endpoints.
+RCS currently exposes 5 REST endpoints.
 
 ========================================  ==================================================================
 Endpoint                                  Description
@@ -10,6 +10,7 @@ GET /doc/[lang]/[smallkey]                Retrieves a single configuration fragm
 GET /docs/[lang]/[smallkey]{,[smallkey]}  Retrieves multiple configuration fragments
 PUT /register/[smallkey]                  Stores a configuration fragment
 DELETE /register/[smallkey]               Deletes a configuration fragment
+POST /update/[age]                        Updates all cached fragements older than [age] days
 ========================================  ==================================================================
 
 The RAMP client is intended to call the GET driven endpoints for dynamically
