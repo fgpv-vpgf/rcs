@@ -3,7 +3,8 @@ AUTH_DB='rcs_auth'
 DB_CONN='http://localhost:5984/'
 
 SIG_CHECK=True
-METADATA_URL='http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service='
+METADATA_URL='http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service={0}'
+CATALOGUE_URL='http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service={0}'
 
 LOG_FILE='rcs.log'
 LOG_ROTATE_BYTES=200000
