@@ -168,3 +168,23 @@ Error Conditions:
 - invalid timestamp format: 400 Bad Request
 - missing headers / unretrivable key: 401 Not Authorized
 - exception in processing: 500 Internal Server Error, empty body
+
+POST ``/v1/update/[age]``
+-------------------------
+
+*added in RCS 1.8.0*
+
+Success Code: 200
+
+Request Body: Empty
+
+Request Headers: Implement the :ref:`signing` protocol
+
+Request Params: **age** should be either "all" or a positive integer indicating
+the minimum age in days that a record should be before it is updated
+
+Response Body: ``{ "success": ["smallkey", …], "errors": {"smallkey": "message", …} }``
+
+Error conditions:
+
+- Age is invalid, error code 400, body {"error":"argument should be either 'all' or a positive integer"}
