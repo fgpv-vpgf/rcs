@@ -76,6 +76,17 @@ def get_legend_mapping( data, layer_id ):
             break
     return { x['label']:'data:'+x['contentType']+';base64,'+x['imageData'] for x in layer['legend'] }
 
+def make_alias_mapping( json_data ):
+    """
+    Generates a mapping of field names to field aliases.
+
+    :param json_data: An array of field objects, taken from the fields property of an ESRI feature service endpoint
+    :type json_data: list   
+    :returns: dict -- a mapping of 'name' => 'alias'
+    """    
+    return { x['name']:x['alias'] for x in json_data }
+
+
 def make_symbology( json_data, data ):
     """
     Generates a symbology node for the RAMP configuration.  Handles simple,
@@ -142,5 +153,6 @@ def make_node( data, id, config ):
     node['datagrid'] = make_data_grid( svc_data )
     node['layerExtent'] = make_extent( svc_data )
     node['symbology'] = make_symbology( svc_data, data )
+    node['aliasMap'] = make_alias_mapping( svc_data['fields'] )
     return node
 
