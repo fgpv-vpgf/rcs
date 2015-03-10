@@ -4,7 +4,7 @@ for RCS and this should eventually end up in separate modules or packages.
 """
 from __future__ import division, print_function, unicode_literals
 
-import json, pycouchdb, requests, jsonschema, regparse, db, config, os, sys, logging
+import json, pycouchdb, requests, jsonschema, regparse, db, config, os, sys, logging, numbers
 
 from functools import wraps
 from logging.handlers import RotatingFileHandler
@@ -225,7 +225,53 @@ class Update(Resource):
             return '{"error":"argument should be either \'all\' or a positive integer"}',400
         return Response( json.dumps( regparse.refresh_records( day_limit, app.config ) ),  mimetype='application/json' )
 
+class Simplification(Resource):
+    """
+    Handles updates to simplification factor of a feature layer
+    """
 
+    @regparse.sigcheck.validate
+    def put(self, smallkey):
+        """
+        A REST endpoint for updating a simplification factor on a registered feature service.
+
+        :param smallkey: A unique identifier for the dataset (can be any unique string, but preferably should be short)
+        :type smallkey: str
+        :returns: JSON Response -- 200 on success; 400 with JSON payload of an errors array on failure
+        """
+        try:
+            payload = json.loads( request.data )
+        except Exception:
+            return '{"errors":["Unparsable json"]}',400
+        
+        #check that our payload has a 'factor' property that contains an integer
+        if not isinstance(payload['factor'], numbers.Integral):
+            resp = { 'errors': ['Invalid payload JSON'] }
+            app.logger.info( resp )
+            return Response(json.dumps(resp),  mimetype='application/json', status=400)
+        
+        #grab english and french doc fragments
+        dbdata = db.get_raw( smallkey )
+        
+        if dbdata is None:
+            #smallkey/lang is not in the database
+            return '{"errors":["Record not found in database"]}',400
+        
+        elif dbdata['type'] != 'feature':
+            #layer is not a feature layer
+            return '{"errors":["Record is not a feature layer"]}',400
+        else:
+            #add in new simplification factor
+            dbdata['data']['en']['maxAllowableOffset'] = int( payload['factor'] )
+            dbdata['data']['fr']['maxAllowableOffset'] = int( payload['factor'] )
+    
+        #put back in the database
+        db.put_doc( smallkey, dbdata )
+                     
+        app.logger.info( 'updated simpification factor on smallkey %s' % smallkey )
+        return smallkey, 200
+        
+        
 global_prefix = app.config.get('URL_PREFIX','')
 
 api_0_9_bp = Blueprint('api_0_9', __name__)
@@ -240,6 +286,7 @@ api_1.add_resource(DocV1, '/doc/<string:lang>/<string:smallkey>')
 api_1.add_resource(DocsV1, '/docs/<string:lang>/<string:smallkeylist>')
 api_1.add_resource(Register, '/register/<string:smallkey>')
 api_1.add_resource(Update, '/update/<string:arg>')
+api_1.add_resource(Simplification, '/simplification/<string:smallkey>')
 app.register_blueprint(api_1_bp, url_prefix=global_prefix+'/v1')
 
 if __name__ == '__main__':

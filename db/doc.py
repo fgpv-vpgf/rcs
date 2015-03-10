@@ -65,6 +65,20 @@ def get_doc( key, lang, ver ):
             return result
     return None
 
+def get_raw( key ):
+    """
+    Fetch a record from the document store, no nonsense.
+
+    :param key: The key to search the document store for
+    :type key: str   
+    :returns: dict -- A dictionary representing the value in the database; None -- key not found
+    """
+    try:
+        o = _db.get(key)
+    except pycouchdb.exceptions.NotFound as nfe:
+        return None
+    return o
+	
 def put_doc( key, doc ):
     try:
         _db.delete( key )
