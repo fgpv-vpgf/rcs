@@ -262,9 +262,14 @@ class Simplification(Resource):
             return '{"errors":["Record is not a feature layer"]}',400
         else:
             #add in new simplification factor
-            dbdata['data']['en']['maxAllowableOffset'] = int( payload['factor'] )
-            dbdata['data']['fr']['maxAllowableOffset'] = int( payload['factor'] )
-    
+            intFactor = int( payload['factor'] )
+            dbdata['data']['en']['maxAllowableOffset'] = intFactor
+            dbdata['data']['fr']['maxAllowableOffset'] = intFactor
+            
+            #also store factor in the request, so we can preserve the factor during an update
+            dbdata['request']['en']['maxAllowableOffset'] = intFactor
+            dbdata['request']['fr']['maxAllowableOffset'] = intFactor
+        
         #put back in the database
         db.put_doc( smallkey, dbdata )
                      

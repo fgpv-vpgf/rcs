@@ -154,5 +154,7 @@ def make_node( data, id, config ):
     node['layerExtent'] = make_extent( svc_data )
     node['symbology'] = make_symbology( svc_data, data )
     node['aliasMap'] = make_alias_mapping( svc_data['fields'] )
+    if data['maxAllowableOffset'] is not None:
+        node['maxAllowableOffset'] = data['maxAllowableOffset']
     return node
 

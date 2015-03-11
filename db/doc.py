@@ -78,7 +78,7 @@ def get_raw( key ):
     except pycouchdb.exceptions.NotFound as nfe:
         return None
     return o
-	
+
 def put_doc( key, doc ):
     try:
         _db.delete( key )
