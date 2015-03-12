@@ -27,8 +27,7 @@
             <label>API Key</label>
             <input class="form-control" type="text" id="apiKey" value="test_-k" />
         </div>
-        
-
+       
     </div>
     <div class="row"><div class="form-group col-md-12">
     </div></div>
@@ -65,47 +64,7 @@
 <script src="cryptojs/components/enc-base64-min.js"></script>
 
 <script>
-    var sampleWMS = {
-            version: "1.1",
-            payload_type: "wms",
-            en: { service_url: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", layer: "limits", metadata: { metadata_url: "http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service=wms", catalogue_url: "http://example.com" } },
-            fr: { service_url: "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", layer: "limits", metadata: { metadata_url: "http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service=wms", catalogue_url: "http://example.com" } },
-        },
-        sampleZoomScale = {
-            version: "1.1",
-            payload_type: "feature",
-            en: { service_url: "http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/2" },
-            fr: { service_url: "http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/2" },
-        },
-        sampleFeature = {
-            version: "1.0.0",
-            payload_type: "feature",
-            en: { service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" },
-            fr: { service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" },
-        },
-        fullWMS = {
-            version: "1.0.0",
-            payload_type: "wms",
-            en: { service_url: "http://sedac.ciesin.org/geoserver/ows", layer: "aglands:aglands-pastures-2000", legend_format: "image/jpeg", feature_info_type: "text/plain" },
-            fr: { service_url: "http://sedac.ciesin.org/geoserver/ows", layer: "aglands:aglands-pastures-2000" },
-        },
-        sampleMeta = {
-            version: "1.1.0",
-            payload_type: "feature",
-            en: {
-                service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0",
-                metadata: { metadata_url: "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1418414595024", catalogue_url: "http://www.google.ca/" }
-            },
-            fr: {
-                service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0",
-                metadata: { metadata_url: "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1418414595024", catalogue_url: "http://www.google.ca/" }
-            }
-        };
-
-    function get_versioned_url() {
-        return '../' + $('[name=ver]:checked').val();
-    }
-
+   
     function testsig() {
         var dt = '2007-01-25T12:00:00Z';
         var psk = 'test';
@@ -147,24 +106,35 @@
         return '/' + $('[name=ver]:checked').val() + '/update/' + $('#smallkey').val();
     }
 
+	//generate a payload for simplification
+	function make_payload() {
+		return '{"user": "' + $('#clientId').val() + '", "factor": ' + $('#factor').val() + '}';
+		
+		/*
+		var ret = {};
+		ret.user = $('#clientId').val();
+		ret.factor = $('#factor').val();
+		
+		return ret;
+		*/
+	}
+	
+	//bundle up the parameters to be encrypted in the signature
     function get_sig_params( urlType ) {
         var ret = {};
         if ( $('#autodate').prop('checked') ) {
             $('#dtrefresh').click();
         }
-        ret.isodate = $('#timeStamp').val();
-        if ( urlType === 'update' ) {
-            ret.path = get_update_url();
-        } else {
-            ret.path = get_reg_url();
-        }
+        ret.isodate = (new Date()).toISOString();    
+		ret.path = '/v1/simplification/' + $('#smallkey').val();
         ret.target = '..' + ret.path;
         ret.id = $('#clientId').val();
-        ret.body = $('#data').val();
+        ret.body = make_payload();
         ret.key = $('#apiKey').val();
         return ret;
     }
 
+	//generate headers for the request
     function make_headers(sig_params,sig) {
         return {
             Sender: sig_params.id,
@@ -184,9 +154,10 @@
     }
 
     $(document).ready(function () {
-        $('#data').val(JSON.stringify(sampleFeature));
+        //$('#data').val(JSON.stringify(sampleFeature));
 
-        $('#puttest').click( function() {
+		//launch the updater
+        $('#simplifier').click( function() {
             var s = get_sig_params(),
                 sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
                 h = make_headers(s,sig);
@@ -194,7 +165,7 @@
             $.ajax({
                 type: "PUT",
                 contentType: "application/json; charset=utf-8",
-                url: s.target,
+                url: s.path,
                 data: s.body,
                 dataType: "text",
                 headers: h,
@@ -208,103 +179,9 @@
             });
 
         });
-        $('#deltest').click( function() {
-            var s = get_sig_params(),
-                sig = sign( s.key, s.path, s.id, s.isodate, '' ),
-                h = make_headers(s,sig);
-            $.ajax({
-                type: "DELETE",
-                url: s.target,
-                dataType: "text",
-                headers: h,
-            }).done(function (data, status, xhr) {
-                log_info('del done '+xhr.status);
-            }).fail(function (err) {
-                log_err('del failed '+err.status+' '+err.responseText);
-                console.log(err);
-            });
-
-        });
-        $('#signdel').click( function() {
-            var s = get_sig_params(),
-                sig = sign( s.key, s.path, s.id, s.isodate, '' ),
-                h = make_headers(s,sig),
-                curlcmd = 'curl -v -X DELETE ';
-            curlcmd += make_curl_header_opts(h) +' '+ get_abs_path(s.target);
-            log_info( 'headers: '+JSON.stringify(h) );
-            log_info( curlcmd );
-
-        });
-        $('#signput').click( function() {
-            var s = get_sig_params(),
-                sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
-                h = make_headers(s,sig),
-                curlcmd = 'curl -v -X PUT ';
-            curlcmd += make_curl_header_opts(h);
-            curlcmd += ' -d "'+ s.body +'" ';
-            curlcmd += get_abs_path(s.target);
-            log_info( 'headers: '+JSON.stringify(h) );
-            log_info( curlcmd );
-        });
-
-        $('#updatetest').click( function() {
-            var s = get_sig_params('update'),
-                sig = sign( s.key, s.path, s.id, s.isodate, '' ),
-                h = make_headers(s, sig),
-                curlcmd = 'curl -v -X POST ';
-
-            curlcmd += make_curl_header_opts(h);
-            curlcmd += get_abs_path(s.target);
-            log_info( 'headers: '+JSON.stringify(h) );
-            log_info( curlcmd );
-            $.ajax({
-                type: "POST",
-                url: s.target,
-                dataType: "text",
-                headers: h,
-            }).done(function (data, status, xhr) {
-                log_info('update done '+xhr.status);
-                log_info(data);
-            }).fail(function (err) {
-                log_err('update failed '+err.status+' '+err.responseText);
-                console.log(err);
-            });
-        });
-
+              
         $('#logclear').click( function() { $('#log').html(''); } );
 
-        $('#dtrefresh').click( function() {
-            $('#timeStamp').val( (new Date()).toISOString() );
-        }).click();
-
-        $('.sampledata').click( function(e) {
-            var sample = { version: "1.0.0", payload_type: 'feature', en: {}, fr: {} }
-            sample.en.service_url = $(e.target).data('url');
-            sample.fr.service_url = $(e.target).data('url');
-            $('#data').val(JSON.stringify(sample));
-        });
-
-        $('.samplejson').click(function (e) {
-            $('#data').val(JSON.stringify(window[$(e.target).data('obj')]));
-        });
-
-        $('#gettest').click( function() {
-            var u = '/' + $('[name=ver]:checked').val() + '/doc/' + $('[name=lang]:checked').val() + '/' + $('#smallkey').val();
-            log_info('GET URL: '+u);
-            $.ajax({
-                type: "GET",
-                url: u,
-                dataType: "json",
-            }).done(function (data) {
-                log_info('get done');
-                log_info(JSON.stringify(data));
-                $('#data').val(JSON.stringify(data));
-            }).fail(function (err) {
-                log_err('get failed '+err.status);
-                log_err(JSON.stringify(err));
-                console.log(err);
-            });
-        });
     });
 </script>
 
