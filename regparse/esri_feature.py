@@ -153,8 +153,7 @@ def make_node( data, id, config ):
     node['datagrid'] = make_data_grid( svc_data )
     node['layerExtent'] = make_extent( svc_data )
     node['symbology'] = make_symbology( svc_data, data )
-    node['aliasMap'] = make_alias_mapping( svc_data['fields'] )
-    if data['maxAllowableOffset'] is not None:
-        node['maxAllowableOffset'] = data['maxAllowableOffset']
+    node['aliasMap'] = make_alias_mapping( svc_data['fields'] )    
+    node['maxAllowableOffset'] = data.get('maxAllowableOffset', 0)
     return node
 
