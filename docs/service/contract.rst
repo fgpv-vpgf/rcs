@@ -188,3 +188,29 @@ Response Body: ``{ "success": ["smallkey", …], "errors": {"smallkey": "message
 Error conditions:
 
 - Age is invalid, error code 400, body {"error":"argument should be either 'all' or a positive integer"}
+
+PUT ``/v1/simplification/[smallkey]``
+-------------------------
+
+*added in RCS 1.9.0*
+
+Success Code: 200
+
+Request Body: JSON Object
+
+Request Headers: Implement the :ref:`signing` protocol
+
+The body of the request should conform to:
+
+.. code-block:: javascript
+
+    {"user":"<user name>","factor":<simplification factor> }
+
+Response Body: ``{ "success": ["smallkey", …], "errors": {"smallkey": "message", …} }``
+
+Error conditions:
+
+- smallkey not found: 404 Not Found
+- smallkey maps to non-feature layer: 400 Record is not a feature layer
+- factor is not an integer: 400 Invalid payload JSON
+- exception in processing: 500 Internal Server Error, empty body

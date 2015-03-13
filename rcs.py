@@ -255,7 +255,7 @@ class Simplification(Resource):
         
         if dbdata is None:
             #smallkey/lang is not in the database
-            return '{"errors":["Record not found in database"]}',400
+            return '{"errors":["Record not found in database"]}',404
         
         elif dbdata['type'] != 'feature':
             #layer is not a feature layer
