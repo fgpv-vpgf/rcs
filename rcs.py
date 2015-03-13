@@ -267,11 +267,11 @@ class Simplification(Resource):
             dbdata['data']['fr']['maxAllowableOffset'] = intFactor
             
             #also store factor in the request, so we can preserve the factor during an update
-            dbdata['request']['en']['maxAllowableOffset'] = intFactor
-            dbdata['request']['fr']['maxAllowableOffset'] = intFactor
+            dbdata['data']['request']['en']['maxAllowableOffset'] = intFactor
+            dbdata['data']['request']['fr']['maxAllowableOffset'] = intFactor
         
         #put back in the database
-        db.put_doc( smallkey, dbdata )
+        db.put_doc( smallkey, { 'type':dbdata['type'], 'data':dbdata['data'] } )
                      
         app.logger.info( 'updated simpification factor on smallkey %s' % smallkey )
         return smallkey, 200
