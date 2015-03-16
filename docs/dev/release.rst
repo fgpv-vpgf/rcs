@@ -1,5 +1,5 @@
-Cutting a Release
------------------
+Preparing a Release
+-------------------
 
 How to release a new version of RCS in N easy steps.
 
