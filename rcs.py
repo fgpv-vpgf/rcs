@@ -13,6 +13,8 @@ from flask.ext.restful import reqparse, request, abort, Api, Resource
 
 # FIXME clean this up
 app = Flask(__name__)
+reload(sys)
+sys.setdefaultencoding('utf8')
 app.config.from_object(config)
 if os.environ.get('RCS_CONFIG'):
     app.config.from_envvar('RCS_CONFIG')

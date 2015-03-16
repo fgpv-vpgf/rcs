@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Tests RCS request signatures for validity
 """
@@ -20,7 +21,8 @@ def sign( key, *parts ):
     :type key: str
     :returns: str -- a URL safe base64 encoded signature
     """
-    msg = ''.join( parts )
+    u8parts = [p.encode('utf8') for p in parts]
+    msg = str('').join( u8parts )
     logging.debug( msg )
     h = hmac.new( str(key), msg, digestmod=hashlib.sha256 )
     return base64.urlsafe_b64encode( h.digest() ).replace('=','')
@@ -109,7 +111,7 @@ if __name__ == '__main__':
     REQUEST_PATH = '/register/23ax5t'
     SENDER_ID = 'jstest'
     TIME_STAMP = '2014-12-05T18:28:56.714Z'
-    REQUEST_BODY =  '{"version":"1.0.0","payload_type":"wms","en":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"},"fr":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"}}'
+    REQUEST_BODY =  '''{"version":"1.0.0","payload_type":"wms","en":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","service_name":"Key Areas for Birds in Coastal Regions of the Canadian Beaufort Sea - la Mue ou l'élevage des couvées (de la mi-juillet à la mi-août)","layer":"limits"},"fr":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"}}'''
     psk = 'test_-k'
     sig = sign( psk, REQUEST_PATH, SENDER_ID, TIME_STAMP, REQUEST_BODY )
     print( sig )
