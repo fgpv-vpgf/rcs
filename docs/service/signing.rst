@@ -53,14 +53,14 @@ unavailable.
 
 #.  GeoCat computes the message string by concatenating the fragments specified in the `Protocol`_ section ::
 
-        REQUEST_PATH = /register/23ax5t
+        REQUEST_PATH = /v1/register/23ax5t
         SENDER_ID = jstest
         TIME_STAMP = 2014-12-05T18:28:56.714Z
         REQUEST_BODY =  {"version":"1.0.0","payload_type":"wms","en":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"},"fr":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"}}
 
     resulting in ::
 
-        MSG = /register/23ax5tjstest2014-12-05T18:28:56.714Z{"version":"1.0.0","payload_type":"wms","en":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"},"fr":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"}}
+        MSG = /v1/register/23ax5tjstest2014-12-05T18:28:56.714Z{"version":"1.0.0","payload_type":"wms","en":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"},"fr":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en","layer":"limits"}}
 
 #.  GeoCat generates the authorization code using the method described in `Protocol`_ ::
 
@@ -80,7 +80,7 @@ unavailable.
 
     and sends the request (sample request escaped for the Windows command prompt) ::
 
-        curl -X PUT http://localhost:5000/register/23ax5t
+        curl -X PUT http://localhost:5000/v1/register/23ax5t
             -H "Authorization: v6XaQasyZzcm_Bz4W_p5fO1wbyJKCZnJFEspIXw9elY"
             -H "TimeStamp: 2014-12-05T18:28:56.714Z"
             -H "Sender: jstest"
@@ -100,3 +100,33 @@ unavailable.
         assert( -2 min < UTC_NOW - TIME_STAMP < 2 min )
 
 #.  RCS executes the request *alternate*: if the verification fails then a 401 error is sent back)
+
+
+Code Example
+------------
+
+Here’s a sample code from our Python unit test ::
+    
+    smallkey = str(random.randint(100, 1000000))
+        
+    payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
+
+    #add timeStamp to the put requeset
+    now = datetime.datetime.now( iso8601.iso8601.Utc() )
+    timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    # construct msg for signing
+    msg = '/v1/register/'+smallkey + self.sender + timeStamp + json.dumps(payload)       
+
+    #generate hash
+    h = hmac.new( str(self.key), msg, digestmod=hashlib.sha256 )
+    signature = base64.urlsafe_b64encode( h.digest() ).replace('=','')
+
+    # add sender, authroization and timestamp.
+    headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": signature, "TimeStamp": timeStamp}
+
+    # run put and get response
+    putResponse = requests.put(self.service + 'v1/register/' + smallkey, json=payload, headers=headers)
+    
+    # status code should be 201
+    assert putResponse.status_code == 201
