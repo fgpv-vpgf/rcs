@@ -104,22 +104,25 @@ def make_symbology( json_data, data ):
 
     if render_json['type'] == 'simple':
         symb['imageUrl'] = label_map[render_json['label']]
+        symb['label'] = render_json['label']
 
     elif render_json['type'] == 'uniqueValue':
         if render_json.get('defaultLabel',None) and render_json['defaultLabel'] in label_map:
             symb['defaultImageUrl'] = label_map[render_json['defaultLabel']]
+            symb['label'] = render_json['defaultLabel']
         for field in 'field1 field2 field3'.split():
             symb[field] = render_json[field]
-        val_maps = [ dict( value= u['value'], imageUrl= label_map[u['label']] )
+        val_maps = [ dict( value= u['value'], imageUrl= label_map[u['label']], label= u['label'] )
                      for u in render_json['uniqueValueInfos'] ]
         symb['valueMaps'] = val_maps
 
     elif render_json['type'] == 'classBreaks':
         if render_json.get('defaultLabel',None) and render_json['defaultLabel'] in label_map:
             symb['defaultImageUrl'] = label_map[render_json['defaultLabel']]
+            symb['label'] = render_json['defaultLabel']
         symb['field'] = render_json['field']
         symb['minValue'] = render_json['minValue']
-        range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=label_map[u['label']])
+        range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=label_map[u['label']], label= u['label'] )
                        for u in render_json['classBreakInfos'] ]
         symb['rangeMaps'] = range_maps
     return symb
