@@ -252,6 +252,8 @@ class Simplification(Resource):
             app.logger.info( resp )
             return Response(json.dumps(resp),  mimetype='application/json', status=400)
         
+        intFactor = int( payload['factor'] )
+        
         #grab english and french doc fragments
         dbdata = db.get_raw( smallkey )
         
@@ -263,8 +265,7 @@ class Simplification(Resource):
             #layer is not a feature layer
             return '{"errors":["Record is not a feature layer"]}',400
         else:
-            #add in new simplification factor
-            intFactor = int( payload['factor'] )
+            #add in new simplification factor            
             dbdata['data']['en']['maxAllowableOffset'] = intFactor
             dbdata['data']['fr']['maxAllowableOffset'] = intFactor
             
@@ -275,7 +276,7 @@ class Simplification(Resource):
         #put back in the database
         db.put_doc( smallkey, { 'type':dbdata['type'], 'data':dbdata['data'] } )
                      
-        app.logger.info( 'updated simpification factor on smallkey %s' % smallkey )
+        app.logger.info( 'updated simpification factor on smallkey %(s)s to %(f)d by %(u)s' % {"s":smallkey, "f": intFactor, "u": payload['user'] } )
         return smallkey, 200
         
         
