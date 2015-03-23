@@ -95,6 +95,7 @@
             <input type="button" class="btn btn-default samplejson" value="WMS" data-obj="sampleWMS" />
             <input type="button" class="btn btn-default samplejson" value="Full WMS" data-obj="fullWMS" />
             <input type="button" class="btn btn-default samplejson" value="Feature" data-obj="sampleFeature" />
+            <input type="button" class="btn btn-default samplejson" value="French" data-obj="sampleFrench" />
             <input type="button" class="btn btn-default samplejson" value="Proper Metadata" data-obj="sampleMeta" />
             <input type="button" class="btn btn-default samplejson" value="Zoom Scale" data-obj="sampleZoomScale" />
         </div>
@@ -147,6 +148,28 @@
                 service_url: "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0",
                 metadata: { metadata_url: "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1418414595024", catalogue_url: "http://www.google.ca/" }
             }
+        },
+        sampleFrench = {
+         "version": "1.0.0",
+         "payload_type": "feature",
+         "en": {
+               "service_url": "http://intranet.ec.gc.ca/arcgis/rest/services/data-donnees/b2a5ed48/MapServer/0",
+               "service_name": "Key Areas for Birds in Coastal Regions of the Canadian Beaufort Sea - Moulting/Brood-rearing (mid-July to mid-August)",
+               "display_field": "IMPORTANCE",
+               "metadata": {
+                    "catalogue_url": "http://donnees-data.intranet.ec.gc.ca/geonetwork/",
+                    "metadata_url": "http://donnees-data.intranet.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=b2a5ed48-e012-46c9-bc66-47cb23e836f2"
+               }
+         },
+         "fr": {
+               "service_url": "http://intranet.ec.gc.ca/arcgis/rest/services/data-donnees/b2a5ed48/MapServer/0",
+               "service_name": "Key Areas for Birds in Coastal Regions of the Canadian Beaufort Sea - la Mue ou l'élevage des couvées (de la mi-juillet à la mi-août)",
+               "display_field": "IMPORTANCE",
+               "metadata": {
+                    "catalogue_url": "http://donnees-data.intranet.ec.gc.ca/geonetwork/",
+                    "metadata_url": "http://donnees-data.intranet.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=b2a5ed48-e012-46c9-bc66-47cb23e836f2"
+               }
+         }
         };
 
     function get_versioned_url() {
@@ -231,7 +254,7 @@
     }
 
     $(document).ready(function () {
-        $('#data').val(JSON.stringify(sampleFeature));
+        $('#data').val(JSON.stringify(sampleFrench));
 
         $('#puttest').click( function() {
             var s = get_sig_params(),
