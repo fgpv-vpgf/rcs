@@ -27,6 +27,20 @@ Documents stored in CouchDB should be stored in a structure which closely
 follows the RAMP configuration format.  Since the value of the cache is on the
 read performance preprocessing during writes is preferred.
 
+Couch DB Record Schema:
+
+.. code-block:: javascript
+
+    {
+        "type": (str: 'feature' or 'wms'),                
+        "data": {
+            "request": (obj: the request object used to register this entry),
+            "en": (obj: the English config fragment),
+            "fr": (obj: the French config fragment),
+            "key": (str: Smallkey)
+        }
+    }
+
 REST Endpoints
 --------------
 

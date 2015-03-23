@@ -34,7 +34,7 @@ def make_extent( json_data ):
 def make_data_grid( json_data ):
     """
     Generate a RAMP datagrid by walking through the attributes.
-    Iterates over all entries in *fields* that do not have a type of *esriFieldGeometry*
+    Iterates over all entries in *fields* that do not have a type of *esriFieldTypeGeometry*
 
     :param json_data: A dictionary containing scraped data from an ESRI feature service endpoint
     :type json_data: dict
@@ -46,7 +46,7 @@ def make_data_grid( json_data ):
     g.extend( [ make_grid_col(id=attrib['name'], fieldName=attrib['name'], width="400px",
                               orderable=True, alignment=1, title=attrib['name'],
                               columnTemplate="unformatted_grid_value") 
-                for attrib in json_data['fields'] if attrib['type'] != 'esriFieldGeometry' ] )
+                for attrib in json_data['fields'] if attrib['type'] != 'esriFieldTypeGeometry' ] )
     return { 'gridColumns':g }
 
 def get_legend_url( feature_service_url ):
@@ -104,22 +104,25 @@ def make_symbology( json_data, data ):
 
     if render_json['type'] == 'simple':
         symb['imageUrl'] = label_map[render_json['label']]
+        symb['label'] = render_json['label']
 
     elif render_json['type'] == 'uniqueValue':
         if render_json.get('defaultLabel',None) and render_json['defaultLabel'] in label_map:
             symb['defaultImageUrl'] = label_map[render_json['defaultLabel']]
+            symb['label'] = render_json['defaultLabel']
         for field in 'field1 field2 field3'.split():
             symb[field] = render_json[field]
-        val_maps = [ dict( value= u['value'], imageUrl= label_map[u['label']] )
+        val_maps = [ dict( value= u['value'], imageUrl= label_map[u['label']], label= u['label'] )
                      for u in render_json['uniqueValueInfos'] ]
         symb['valueMaps'] = val_maps
 
     elif render_json['type'] == 'classBreaks':
         if render_json.get('defaultLabel',None) and render_json['defaultLabel'] in label_map:
             symb['defaultImageUrl'] = label_map[render_json['defaultLabel']]
+            symb['label'] = render_json['defaultLabel']
         symb['field'] = render_json['field']
         symb['minValue'] = render_json['minValue']
-        range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=label_map[u['label']])
+        range_maps = [ dict(maxValue=u['classMaxValue'], imageUrl=label_map[u['label']], label= u['label'] )
                        for u in render_json['classBreakInfos'] ]
         symb['rangeMaps'] = range_maps
     return symb
