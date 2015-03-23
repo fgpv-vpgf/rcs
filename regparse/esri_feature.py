@@ -34,7 +34,7 @@ def make_extent( json_data ):
 def make_data_grid( json_data ):
     """
     Generate a RAMP datagrid by walking through the attributes.
-    Iterates over all entries in *fields* that do not have a type of *esriFieldGeometry*
+    Iterates over all entries in *fields* that do not have a type of *esriFieldTypeGeometry*
 
     :param json_data: A dictionary containing scraped data from an ESRI feature service endpoint
     :type json_data: dict
@@ -46,7 +46,7 @@ def make_data_grid( json_data ):
     g.extend( [ make_grid_col(id=attrib['name'], fieldName=attrib['name'], width="400px",
                               orderable=True, alignment=1, title=attrib['name'],
                               columnTemplate="unformatted_grid_value") 
-                for attrib in json_data['fields'] if attrib['type'] != 'esriFieldGeometry' ] )
+                for attrib in json_data['fields'] if attrib['type'] != 'esriFieldTypeGeometry' ] )
     return { 'gridColumns':g }
 
 def get_legend_url( feature_service_url ):
