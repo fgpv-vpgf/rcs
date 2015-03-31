@@ -146,15 +146,10 @@ side in IIS.  To prefix an existing RCS install please follow the steps.
 #. In the RCS installation set the configuration parameter **URL_PREFIX** (e.g.
    ``/rcs1`` for a request path of ``/rcs1/*``)
 
-Upgrading from 1.7 to 1.8
+Upgrading from 1.7 to 1.9
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-RCS 1.8 adds a new endpoint but does not require any additional deployment changes.
-
-Upgrading from 1.8.0 to 1.8.1
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-RCS 1.8.1 fixes issues in 1.8.0, no addtional deployment changes.
+RCS 1.8.0, 1.8.1 and 1.9.0 do not require any additional deployment changes.
 
 Verification
 ------------

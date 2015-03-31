@@ -190,7 +190,7 @@ Error conditions:
 - Age is invalid, error code 400, body {"error":"argument should be either 'all' or a positive integer"}
 
 PUT ``/v1/simplification/[smallkey]``
--------------------------
+-------------------------------------
 
 *added in RCS 1.9.0*
 
