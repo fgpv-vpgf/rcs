@@ -40,6 +40,8 @@ def make_node( data, id, config=None ):
     wms_node['url'] = data['service_url']
     wms_node['layerName'] = data['layer']
     wms_node['displayName'] = data['layer']
+    if 'service_name' in data:
+        wms_node['displayName'] = data['service_name']
     wms_node['format'] = 'image/png'
     metadata_url, catalogue_url = metadata.get_url( data, config )
     if metadata_url:
