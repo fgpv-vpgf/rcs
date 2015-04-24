@@ -23,6 +23,7 @@
                 "display_field": { "type": "string" },
                 "metadata": { "$ref": "#/defs/metadata" },
                 "loading_mode": { "type": "string", "enum": ["ondemand","snapshot"], "description": "Specifies the layer loading mode: either snapshot (load all data upfront) or ondemand (load data as needed); when not specified RCS will probe the service and make an intelligent guesss" },
+                "max_allowable_offset": { "type": "integer", "minimum": 0, "description": "Simplification factor for the layer geometry" }
             },
             "required": [ "service_url" ],
             "additionalProperties": false

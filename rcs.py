@@ -270,8 +270,8 @@ class Simplification(Resource):
             dbdata['data']['fr']['maxAllowableOffset'] = intFactor
             
             #also store factor in the request, so we can preserve the factor during an update
-            dbdata['data']['request']['en']['maxAllowableOffset'] = intFactor
-            dbdata['data']['request']['fr']['maxAllowableOffset'] = intFactor
+            dbdata['data']['request']['en']['max_allowable_offset'] = intFactor
+            dbdata['data']['request']['fr']['max_allowable_offset'] = intFactor
         
         #put back in the database
         db.put_doc( smallkey, { 'type':dbdata['type'], 'data':dbdata['data'] } )
