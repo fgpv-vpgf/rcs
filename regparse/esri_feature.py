@@ -159,5 +159,7 @@ def make_node( data, id, config ):
     node['aliasMap'] = make_alias_mapping( svc_data['fields'] )    
     if 'max_allowable_offset' in data:
         node['maxAllowableOffset'] = data['max_allowable_offset']
+    if 'loading_mode' in data:
+        node['mode'] = data['loading_mode']
     return node
 

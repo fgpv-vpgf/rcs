@@ -1,5 +1,5 @@
 import wms, esri_feature, sigcheck
-__all__ = ['esri_feature','wms','make_id','refresh_records']
+__all__ = ['esri_feature','wms','make_id','refresh_records','make_record']
 
 def make_id( key, lang ):
     """
@@ -34,16 +34,20 @@ def refresh_records( day_limit, config ):
             continue
         req = r['value']['request']
         try:
-            data = dict( key=key, request=req )
-            if req['payload_type'] == 'wms':
-                data['en'] = wms.make_node( req['en'], make_id(key,'en'), config )
-                data['fr'] = wms.make_node( req['fr'], make_id(key,'fr'), config )
-            else:
-                data['en'] = esri_feature.make_node( req['en'], make_id(key,'en'), config )
-                data['fr'] = esri_feature.make_node( req['fr'], make_id(key,'fr'), config )
+            data = make_record( key, req, config )
             db.put_doc( key, { 'type':req['payload_type'], 'data':data } )
             valid.append( key )
         except Exception as e:
             invalid[key] = str(e)
             
     return { "updated":valid, "errors":invalid }
+
+def make_record( key, request, config ):
+    data = dict( key=key, request=request )
+    if request['payload_type'] == 'wms':
+        data['en'] = wms.make_node( request['en'], make_id(key,'en'), config )
+        data['fr'] = wms.make_node( request['fr'], make_id(key,'fr'), config )
+    else:
+        data['en'] = esri_feature.make_node( request['en'], make_id(key,'en'), config )
+        data['fr'] = esri_feature.make_node( request['fr'], make_id(key,'fr'), config )
+    return data
