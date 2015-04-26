@@ -28,6 +28,10 @@ handler.setFormatter( logging.Formatter(
 loggers = [app.logger, logging.getLogger('regparse.sigcheck')]
 for l in loggers:
     l.addHandler( handler )
+if 'ACCESS_LOG' in app.config:
+    acc_log = logging.getLogger('werkzeug')
+    acc_handler = RotatingFileHandler( app.config['ACCESS_LOG'], maxBytes=app.config.get('LOG_ROTATE_BYTES',200000), backupCount=app.config.get('LOG_BACKUPS',5) )
+    acc_log.addHandler( acc_handler )
 
 
 db.init_auth_db( app.config['DB_CONN'], app.config['AUTH_DB'] )

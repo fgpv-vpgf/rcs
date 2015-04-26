@@ -7,6 +7,7 @@ METADATA_URL='http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&reques
 CATALOGUE_URL='http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service={0}'
 
 LOG_FILE='rcs.log'
+ACCESS_LOG='access.log'
 LOG_ROTATE_BYTES=200000
 LOG_BACKUPS=10
 # https://docs.python.org/2/library/logging.html#levels
