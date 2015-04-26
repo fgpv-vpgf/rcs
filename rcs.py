@@ -4,11 +4,11 @@ for RCS and this should eventually end up in separate modules or packages.
 """
 from __future__ import division, print_function, unicode_literals
 
-import json, pycouchdb, requests, jsonschema, regparse, db, config, os, sys, logging, numbers
+import json, pycouchdb, requests, jsonschema, regparse, db, config, os, sys, logging, numbers, flask
 
 from functools import wraps
 from logging.handlers import RotatingFileHandler
-from flask import Flask, Blueprint, Response, current_app, got_request_exception
+from flask import Flask, Blueprint, Response, current_app
 from flask.ext.restful import reqparse, request, abort, Api, Resource
 
 # FIXME clean this up
@@ -18,8 +18,9 @@ sys.setdefaultencoding('utf8')
 app.config.from_object(config)
 if os.environ.get('RCS_CONFIG'):
     app.config.from_envvar('RCS_CONFIG')
-handler = RotatingFileHandler( app.config['LOG_FILE'], maxBytes=app.config.get('LOG_ROTATE_BYTES',200000), backupCount=app.config.get('LOG_BACKUPS',5) )
-handler.setLevel( app.config['LOG_LEVEL'] )
+handler = RotatingFileHandler( app.config['LOG_FILE'],
+                               maxBytes=app.config.get('LOG_ROTATE_BYTES',200000),
+                               backupCount=app.config.get('LOG_BACKUPS',5) )
 handler.setFormatter( logging.Formatter(
     '%(asctime)s %(levelname)s: %(message)s '
     '[in %(pathname)s:%(lineno)d]'
@@ -27,11 +28,29 @@ handler.setFormatter( logging.Formatter(
 
 loggers = [app.logger, logging.getLogger('regparse.sigcheck')]
 for l in loggers:
+    l.setLevel( app.config['LOG_LEVEL'] )
     l.addHandler( handler )
+
 if 'ACCESS_LOG' in app.config:
-    acc_log = logging.getLogger('werkzeug')
-    acc_handler = RotatingFileHandler( app.config['ACCESS_LOG'], maxBytes=app.config.get('LOG_ROTATE_BYTES',200000), backupCount=app.config.get('LOG_BACKUPS',5) )
-    acc_log.addHandler( acc_handler )
+    acc_log = logging.getLogger('testlog')
+    acc_log.setLevel(logging.DEBUG)
+    acc_handler = RotatingFileHandler( app.config['ACCESS_LOG'],
+                                       maxBytes=app.config.get('LOG_ROTATE_BYTES',200000),
+                                       backupCount=app.config.get('LOG_BACKUPS',5) )
+    acc_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s '))
+    acc_log.addHandler(acc_handler)
+
+    def log_request(sender):
+        acc_log.info( '{ip} {method} {path} {agent}'.format( method = request.method,
+                                                             path = request.path,
+                                                             ip = request.remote_addr,
+                                                             agent = request.user_agent.string ) )
+        acc_log.debug(request.data)
+    flask.request_started.connect(log_request, app)
+
+    def log_response(sender, response):
+        acc_log.info( '{code} {text}'.format( code=response.status_code, text=response.status ) )
+    flask.request_finished.connect(log_response, app)
 
 
 db.init_auth_db( app.config['DB_CONN'], app.config['AUTH_DB'] )
@@ -64,7 +83,7 @@ Raw Agent: {agent}
             agent = request.user_agent.string,
         ), exc_info=exception
     )
-got_request_exception.connect(log_exception, app)
+flask.got_request_exception.connect(log_exception, app)
 
 def jsonp(func):
     """
@@ -350,6 +369,5 @@ app.register_blueprint(api_1_bp, url_prefix=global_prefix+'/v1')
 
 if __name__ == '__main__':
     for l in loggers:
-        l.setLevel(0)
         l.info( 'logger started' )
     app.run(debug=True)
