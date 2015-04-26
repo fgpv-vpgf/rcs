@@ -76,6 +76,7 @@
             <button class="btn btn-default" id='gettest'>GET (doc)</button>
             <button class="btn btn-default" id='deltest'>DELETE (register)</button>
             <button class="btn btn-default" id='updatetest'>POST (update)</button>
+            <button class="btn btn-default" id='ufput'>PUT (update feature)</button>
             <button class="btn btn-default" id='dtrefresh'>Refresh Date</button>
             <button class="btn btn-default" id='signput'>Sign PUT</button>
             <button class="btn btn-default" id='signdel'>Sign DELETE</button>
@@ -217,6 +218,10 @@
         return '/' + $('[name=ver]:checked').val() + '/update/' + $('#smallkey').val();
     }
 
+    function get_updatefeature_url(ver) {
+        return '/' + $('[name=ver]:checked').val() + '/updatefeature/' + $('#smallkey').val();
+    }
+
     function get_sig_params( urlType ) {
         var ret = {};
         if ( $('#autodate').prop('checked') ) {
@@ -225,6 +230,8 @@
         ret.isodate = $('#timeStamp').val();
         if ( urlType === 'update' ) {
             ret.path = get_update_url();
+        } else if ( urlType === 'updatefeature' ) {
+            ret.path = get_updatefeature_url();
         } else {
             ret.path = get_reg_url();
         }
@@ -315,6 +322,34 @@
             curlcmd += get_abs_path(s.target);
             log_info( 'headers: '+JSON.stringify(h) );
             log_info( curlcmd );
+        });
+
+        $('#ufput').click( function() {
+            var s = get_sig_params('updatefeature'),
+                sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
+                h = make_headers(s, sig),
+                curlcmd = 'curl -v -X PUT ';
+
+            curlcmd += make_curl_header_opts(h);
+            curlcmd += ' -d "'+ s.body +'" ';
+            curlcmd += get_abs_path(s.target);
+            log_info( 'headers: '+JSON.stringify(h) );
+            log_info( curlcmd );
+            $.ajax({
+                type: "PUT",
+                url: s.target,
+                contentType: "application/json; charset=utf-8",
+                dataType: "text",
+                data: s.body,
+                headers: h,
+            }).done(function (data, status, xhr) {
+                log_info('update done '+xhr.status);
+                log_info(data);
+            }).fail(function (err) {
+                log_err('update failed '+err.status+' '+err.responseText);
+                console.log(err);
+            });
+
         });
 
         $('#updatetest').click( function() {
