@@ -49,6 +49,18 @@ def make_data_grid( json_data ):
                 for attrib in json_data['fields'] if attrib['type'] != 'esriFieldTypeGeometry' ] )
     return { 'gridColumns':g }
 
+def get_base_url( feature_service_url ):
+    """
+    Strips trailing / from the feature service URL if present.
+    
+    :param feature_service_url: A URL pointing to an ESRI feature service
+    :type feature_service_url: str
+    :returns: str -- A URL pointing to the base URL
+    """
+    if feature_service_url.endswith('/'):
+        return feature_service_url[:-1]
+    return feature_service_url
+
 def get_legend_url( feature_service_url ):
     """
     Converts a feature service URL into a legend request.  Handles the optional '/' at the end of requests.
@@ -57,8 +69,7 @@ def get_legend_url( feature_service_url ):
     :type feature_service_url: str
     :returns: str -- A URL pointing to a legend request
     """
-    if feature_service_url.endswith('/'):
-        feature_service_url = feature_service_url[:-1]
+    feature_service_url = get_base_url( feature_service_url )
     return feature_service_url[:feature_service_url.rfind('/')] + '/legend?f=json'
 
 def get_legend_mapping( data, layer_id ):
@@ -127,6 +138,32 @@ def make_symbology( json_data, data ):
         symb['rangeMaps'] = range_maps
     return symb
 
+def test_small_layer( svc_url, svc_data ):
+    """
+    Test a service endpoint to see if the layer is small based on some simple rules.
+
+    :param svc_url: The URL pointing to the feature endpoint
+    :type svc_url: str
+    :param svc_data: A dictionary containing scraped data from an ESRI feature service endpoint
+    :type svc_data: dict
+    :returns: bool -- True if the layer is considered 'small'
+    """
+# FIXME needs refactoring, better error handling and better logic
+    try:
+        if svc_data['geometryType'] in ('esriGeometryPoint','esriGeometryMultipoint','esriGeometryEnvelope'):
+            count_query = '/query?where=1%3D1&returnCountOnly=true&f=pjson'
+            id_query = '/query?where=1%3D1&returnIdsOnly=true&f=json'
+            r = requests.get( get_base_url(svc_url) + count_query )
+            if 'count' in r.json():
+                return r.json()['count'] <= 2000
+            r = requests.get( get_base_url(svc_url) + id_query )
+            if 'objectIds' in r.json():
+                return len(r.json()['objectIds']) <= 2000
+    except:
+        pass
+    return False
+
+
 def make_node( data, id, config ):
     """
     Generate a RAMP layer entry for an ESRI feature service.
@@ -161,5 +198,7 @@ def make_node( data, id, config ):
         node['maxAllowableOffset'] = data['max_allowable_offset']
     if 'loading_mode' in data:
         node['mode'] = data['loading_mode']
+    elif test_small_layer( node['url'], svc_data ):
+        node['mode'] = 'snapshot'
     return node
 
