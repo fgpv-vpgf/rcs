@@ -16,4 +16,7 @@ def get_key( sender_id ):
     :returns: str -- the pre-shared key for the sender
     """
     global _db
-    return _db.get( sender_id )['key']
+    try:
+        return _db.get( sender_id )['key']
+    except pycouchdb.exceptions.NotFound as nfe:
+        return None
