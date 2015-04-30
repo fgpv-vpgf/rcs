@@ -59,7 +59,7 @@ Configure Python Environment
 
     * **DB_CONN** should match the account, password and host settings from the CouchDB installation
     * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_schema_v1.json``
-      -- use double backslashes to avoid string escape codes) 
+      -- use double backslashes to avoid string escape codes)
     * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs.log``)
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
@@ -119,15 +119,15 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
 
     * **DB_CONN** should match the account, password and host settings from the CouchDB installation
     * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_schema_v1.json``
-      -- use double backslashes to avoid string escape codes) 
+      -- use double backslashes to avoid string escape codes)
     * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs.log``)
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
 #. Test the installation ``python rcs.py`` (this will run a test server on localhost)
 #. Follow any other version specific upgrade notes in this section.
 
-Upgrading from 1.6 to 1.7 or 1.8
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Upgrading from 1.6 to 1.7
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Version 1.7 of RCS adds the capability to use a URL prefix for an RCS
 installation.  This makes it possible to deploy multiple copies of RCS side by
@@ -150,6 +150,13 @@ Upgrading from 1.7 to 1.9
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 RCS 1.8.0, 1.8.1 and 1.9.0 do not require any additional deployment changes.
+
+Upgrading from 1.7 to 1.10
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+RCS 1.10 adds an additional configuration option to log every access request.
+To enable this feature add **ACCESS_LOG** to the config.  This option should be an
+absolute path to a log file (separate from the primary log file).
 
 Verification
 ------------

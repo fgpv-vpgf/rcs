@@ -5,9 +5,9 @@ The RCS JSON Schema
 
 RCS uses a JSON schema to validate registration requests (see :ref:`contract`).
 The schema is written against draft 04 of `JSON Schema
-<http://json-schema.org/>`_ and is reproduced below: 
+<http://json-schema.org/>`_ and is reproduced below:
 
-.. literalinclude:: ../../schemas/rcs_reg_schema_v1_1_0.json
+.. literalinclude:: ../../schemas/rcs_reg_schema_v1_2_0.json
     :language: javascript
     :linenos:
 

@@ -11,6 +11,8 @@ LOG_BACKUPS
     Number of backups (rotated log files) to keep
 LOG_ROTATE_BYTES
     Size in bytes at which logs should be rotated
+ACCESS_LOG
+    Name of the access log file, if not present access requests will not be logged
 URL_PREFIX
     A general prefix for the application, useful if you want to have side by side installs
     of RCS.  It should include an opening / (e.g. ``/rcs_ecdmp``).

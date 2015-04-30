@@ -14,3 +14,9 @@ The `regparse` package.  Contains parsers for ESRI feature services and WMSes.
    :undoc-members:
    :private-members:
    :special-members:
+
+.. automodule:: regparse.sigcheck
+   :members:
+   :undoc-members:
+   :private-members:
+   :special-members:

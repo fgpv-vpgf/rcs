@@ -79,7 +79,7 @@ Error Conditions:
 - missing headers / unretrivable key: 401 Not Authorized
 - exception in processing: 500 Internal Server Error, empty body
 
-Registration requests are validated against 
+Registration requests are validated against
 The body of the request should conform to:
 
 .. code-block:: javascript
@@ -193,6 +193,7 @@ PUT ``/v1/simplification/[smallkey]``
 -------------------------------------
 
 *added in RCS 1.9.0*
+**DEPRECATED use /v1/updatefeature/[smallkey] instead**
 
 Success Code: 200
 
@@ -213,4 +214,36 @@ Error conditions:
 - smallkey not found: 404 Not Found
 - smallkey maps to non-feature layer: 400 Record is not a feature layer
 - factor is not an integer: 400 Invalid payload JSON
+- exception in processing: 500 Internal Server Error, empty body
+
+PUT ``/v1/updatefeature/[smallkey]``
+-------------------------------------
+
+*added in RCS 1.10.0*
+
+Success Code: 200
+
+Request Body: JSON Object
+
+Request Headers: Implement the :ref:`signing` protocol
+
+The body of the request should conform to one of:
+
+.. code-block:: javascript
+
+    {"en":(obj: config fragment), "fr":(obj: config fragment)}
+    {config fragment}
+
+Either a common configuration fragment to be applied to both the English and French
+configuration or separate sections which are updated separately.  The final configuration
+must be valid against the current configuration schema.
+
+Response Body: smallkey
+
+Error conditions:
+
+- smallkey not found: 404 {"errors":[]}
+- unparseable JSON: 400 {"errors":[]}
+- smallkey maps to non-feature layer: 400 {"errors":[]}
+- error in request validation: 400 {"errors":[]}
 - exception in processing: 500 Internal Server Error, empty body
