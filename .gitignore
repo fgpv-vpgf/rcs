@@ -3,6 +3,7 @@
 *~
 *.swp
 *.log
+*.log.*
 
 docs/_build
 dist/
