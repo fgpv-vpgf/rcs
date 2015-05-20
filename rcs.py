@@ -116,12 +116,37 @@ class Docs(Resource):
         :type lang: str
         :param smallkeylist: A comma separated string of short keys each of which identifies a single dataset
         :type smallkeylist: str
+        :param sorted: True if returned list should be sorted based on geometry
+        :type sorted: bool
         :returns: list -- an array of JSON configuration fragments (empty error objects are added where keys do not match)
         """
+        sorted = request.args.get('sorted')
         keys = [ x.strip() for x in smallkeylist.split(',') ]
-        docs = [ db.get_doc(smallkey, lang, self.version) for smallkey in keys ]
+        unsorted_docs = [ db.get_doc(smallkey, lang, self.version) for smallkey in keys ]
+        if sorted:
+            #used to retrieve geometryType
+            dbdata = [ db.get_raw(smallkey) for smallkey in keys ]
+            lines = []
+            polys = []
+            points = []
+            for rawdata,doc in zip(dbdata, unsorted_docs):
+                #Point
+                if dbdata["data"]["en"]["geometryType"] == "esriGeometryPoint":
+                    points.append(unsorted_docs[i])
+                #Polygon
+                elif dbdata[i]["data"]["en"]["geometryType"] == "esriGeometryPolygon":
+                    polys.append(unsorted_docs[i])
+                #line
+                else:
+                    lines.append(unsorted_docs[i])
+                i += 1
+            #concat lists (first in docs = bottom of layer list)
+            docs = polys + lines + points
+        else:
+            docs = unsorted_docs
         print( docs )
         return Response(json.dumps(docs),  mimetype='application/json')
+
 
 class DocV09(Doc):
     def __init__(self):
@@ -139,6 +164,11 @@ class DocsV09(Docs):
         self.version = '0.9'
 
 class DocsV1(Docs):
+    def __init__(self):
+        super(DocsV1,self).__init__()
+        self.version = '1'
+		
+class DocSort(Docs):
     def __init__(self):
         super(DocsV1,self).__init__()
         self.version = '1'
