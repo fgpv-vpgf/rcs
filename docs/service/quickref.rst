@@ -3,16 +3,17 @@ Service Quick Reference
 
 RCS currently exposes 6 REST endpoints.
 
-========================================  ==================================================================
-Endpoint                                  Description
-========================================  ==================================================================
-GET /doc/[lang]/[smallkey]                Retrieves a single configuration fragment
-GET /docs/[lang]/[smallkey]{,[smallkey]}  Retrieves multiple configuration fragments
-PUT /register/[smallkey]                  Stores a configuration fragment
-DELETE /register/[smallkey]               Deletes a configuration fragment
-POST /update/[age]                        Updates all cached fragements older than [age] days
-PUT /updatefeature/[smallkey]             Merge a configuration fragment with an existing ESRI Feature Layer
-========================================  ==================================================================
+====================================================  ==================================================================
+Endpoint                                              Description
+====================================================  ==================================================================
+GET /doc/[lang]/[smallkey]                            Retrieves a single configuration fragment
+GET /docs/[lang]/[smallkey]{,[smallkey]}{/[sortarg]}  Retrieves multiple configuration fragments, sorted by geometry type if sortarg = sort
+PUT /register/[smallkey]                              Stores a configuration fragment
+DELETE /register/[smallkey]                           Deletes a configuration fragment
+POST /update/[age]                                    Updates all cached fragements older than [age] days
+PUT /simplification/[smallkey]                        Add a geometry simplification factor to feature layer configuration fragment
+====================================================  ==================================================================
+
 
 *NOTE: deprecated endpoints are not included in the summary*
 

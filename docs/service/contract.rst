@@ -38,8 +38,8 @@ Error conditions:
 - invalid language code: 400 Bad Request, response body empty
 - smallkey not found: 404 Not Found, response body empty
 
-GET ``/v1/docs/[lang]/[smallkey]{,[smallkey]}``
------------------------------------------------
+GET ``/v1/docs/[lang]/[smallkey]{,[smallkey]}{/[sortarg]}``
+-----------------------------------------------------------
 
 Success Code: 200
 

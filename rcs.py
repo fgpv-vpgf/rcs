@@ -131,7 +131,7 @@ class Docs(Resource):
     """
 
     @jsonp
-    def get(self, lang, smallkeylist):
+    def get(self, lang, smallkeylist, sortarg=''):
         """
         A REST endpoint for fetching a single document from the doc store.
 
@@ -139,12 +139,35 @@ class Docs(Resource):
         :type lang: str
         :param smallkeylist: A comma separated string of short keys each of which identifies a single dataset
         :type smallkeylist: str
+        :param sortargs: 'sort' if returned list should be sorted based on geometry
+        :type sortargs: str
         :returns: list -- an array of JSON configuration fragments (empty error objects are added where keys do not match)
         """
         keys = [ x.strip() for x in smallkeylist.split(',') ]
-        docs = [ db.get_doc(smallkey, lang, self.version) for smallkey in keys ]
+        unsorted_docs = [ db.get_doc(smallkey, lang, self.version) for smallkey in keys ]
+        if sortarg == 'sort':
+            #used to retrieve geometryType
+            dbdata = [ db.get_raw(smallkey) for smallkey in keys ]
+            lines = []
+            polys = []
+            points = []
+            for rawdata,doc in zip(dbdata, unsorted_docs):
+                #Point
+                if rawdata["data"]["en"]["geometryType"] == "esriGeometryPoint":
+                    points.append(doc)
+                #Polygon
+                elif rawdata["data"]["en"]["geometryType"] == "esriGeometryPolygon":
+                    polys.append(doc)
+                #line
+                else:
+                    lines.append(doc)
+            #concat lists (first in docs = bottom of layer list)
+            docs = polys + lines + points
+        else:
+            docs = unsorted_docs
         print( docs )
         return Response(json.dumps(docs),  mimetype='application/json')
+
 
 class DocV09(Doc):
     def __init__(self):
@@ -272,7 +295,7 @@ class UpdateFeature(Resource):
             fragment['fr'].update(payload)
 
         dbdata = db.get_raw( smallkey )
-        
+
         if dbdata is None:
             return '{"errors":["Record not found in database"]}',404
         elif dbdata['type'] != 'feature':
@@ -293,7 +316,7 @@ class UpdateFeature(Resource):
             abort( 400, msg=mde.message )
 
         db.put_doc( smallkey, { 'type':data['request']['payload_type'], 'data':data } )
-        
+
         return smallkey, 200
 
 class Simplification(Resource):
@@ -314,41 +337,41 @@ class Simplification(Resource):
             payload = json.loads( request.data )
         except Exception:
             return '{"errors":["Unparsable json"]}',400
-        
+
         #check that our payload has a 'factor' property that contains an integer
         if not isinstance(payload['factor'], numbers.Integral):
             resp = { 'errors': ['Invalid payload JSON'] }
             app.logger.info( resp )
             return Response(json.dumps(resp),  mimetype='application/json', status=400)
-        
+
         intFactor = int( payload['factor'] )
-        
+
         #grab english and french doc fragments
         dbdata = db.get_raw( smallkey )
-        
+
         if dbdata is None:
             #smallkey/lang is not in the database
             return '{"errors":["Record not found in database"]}',404
-        
+
         elif dbdata['type'] != 'feature':
             #layer is not a feature layer
             return '{"errors":["Record is not a feature layer"]}',400
         else:
-            #add in new simplification factor            
+            #add in new simplification factor
             dbdata['data']['en']['maxAllowableOffset'] = intFactor
             dbdata['data']['fr']['maxAllowableOffset'] = intFactor
-            
+
             #also store factor in the request, so we can preserve the factor during an update
             dbdata['data']['request']['en']['max_allowable_offset'] = intFactor
             dbdata['data']['request']['fr']['max_allowable_offset'] = intFactor
-        
+
         #put back in the database
         db.put_doc( smallkey, { 'type':dbdata['type'], 'data':dbdata['data'] } )
-                     
+
         app.logger.info( 'updated simpification factor on smallkey %(s)s to %(f)d by %(u)s' % {"s":smallkey, "f": intFactor, "u": payload['user'] } )
         return smallkey, 200
-        
-        
+
+
 global_prefix = app.config.get('URL_PREFIX','')
 
 api_0_9_bp = Blueprint('api_0_9', __name__)
@@ -360,7 +383,7 @@ app.register_blueprint(api_0_9_bp, url_prefix=global_prefix+'/v0.9')
 api_1_bp = Blueprint('api_1', __name__)
 api_1 = Api(api_1_bp)
 api_1.add_resource(DocV1, '/doc/<string:lang>/<string:smallkey>')
-api_1.add_resource(DocsV1, '/docs/<string:lang>/<string:smallkeylist>')
+api_1.add_resource(DocsV1, '/docs/<string:lang>/<string:smallkeylist>', '/docs/<string:lang>/<string:smallkeylist>/<string:sortarg>')
 api_1.add_resource(Register, '/register/<string:smallkey>')
 api_1.add_resource(Update, '/update/<string:arg>')
 api_1.add_resource(Simplification, '/simplification/<string:smallkey>')

@@ -45,14 +45,14 @@ def make_data_grid( json_data ):
     g.append( make_grid_col(id="detailsCol", width="60px", title="Details", columnTemplate="details_button") )
     g.extend( [ make_grid_col(id=attrib['name'], fieldName=attrib['name'], width="400px",
                               orderable=True, alignment=1, title=attrib['name'],
-                              columnTemplate="unformatted_grid_value") 
+                              columnTemplate="unformatted_grid_value")
                 for attrib in json_data['fields'] if attrib['type'] != 'esriFieldTypeGeometry' ] )
     return { 'gridColumns':g }
 
 def get_base_url( feature_service_url ):
     """
     Strips trailing / from the feature service URL if present.
-    
+
     :param feature_service_url: A URL pointing to an ESRI feature service
     :type feature_service_url: str
     :returns: str -- A URL pointing to the base URL
@@ -64,7 +64,7 @@ def get_base_url( feature_service_url ):
 def get_legend_url( feature_service_url ):
     """
     Converts a feature service URL into a legend request.  Handles the optional '/' at the end of requests.
-    
+
     :param feature_service_url: A URL pointing to an ESRI feature service
     :type feature_service_url: str
     :returns: str -- A URL pointing to a legend request
@@ -92,9 +92,9 @@ def make_alias_mapping( json_data ):
     Generates a mapping of field names to field aliases.
 
     :param json_data: An array of field objects, taken from the fields property of an ESRI feature service endpoint
-    :type json_data: list   
+    :type json_data: list
     :returns: dict -- a mapping of 'name' => 'alias'
-    """    
+    """
     return { x['name']:x['alias'] for x in json_data }
 
 
@@ -193,12 +193,12 @@ def make_node( data, id, config ):
     node['datagrid'] = make_data_grid( svc_data )
     node['layerExtent'] = make_extent( svc_data )
     node['symbology'] = make_symbology( svc_data, data )
-    node['aliasMap'] = make_alias_mapping( svc_data['fields'] )    
+    node['aliasMap'] = make_alias_mapping( svc_data['fields'] )
     if 'max_allowable_offset' in data:
         node['maxAllowableOffset'] = data['max_allowable_offset']
     if 'loading_mode' in data:
         node['mode'] = data['loading_mode']
     elif test_small_layer( node['url'], svc_data ):
         node['mode'] = 'snapshot'
+    node['geometryType'] = svc_data['geometryType']
     return node
-
