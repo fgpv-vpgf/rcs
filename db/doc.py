@@ -62,6 +62,7 @@ def get_doc( key, lang, ver ):
             fragment = version_conversion( ver, fragment )
             result = { 'layers': {} }
             result['layers'][ o['type'] ] = [ fragment ]
+            del result['layers'][ o['type'] ][0]['geometryType']
             return result
     return None
 
@@ -70,7 +71,7 @@ def get_raw( key ):
     Fetch a record from the document store, no nonsense.
 
     :param key: The key to search the document store for
-    :type key: str   
+    :type key: str
     :returns: dict -- A dictionary representing the value in the database; None -- key not found
     """
     try:
