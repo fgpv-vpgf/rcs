@@ -120,7 +120,6 @@ class Doc(Resource):
         :returns: Response -- a JSON response object; None with a 404 code if the key was not matched
         """
         doc = db.get_doc( smallkey, lang, self.version )
-        print( doc )
         if doc is None:
             return None,404
         return Response(json.dumps(doc),  mimetype='application/json')
@@ -165,7 +164,6 @@ class Docs(Resource):
             docs = polys + lines + points
         else:
             docs = unsorted_docs
-        print( docs )
         return Response(json.dumps(docs),  mimetype='application/json')
 
 
