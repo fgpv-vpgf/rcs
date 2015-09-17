@@ -154,9 +154,11 @@ RCS 1.8.0, 1.8.1 and 1.9.0 do not require any additional deployment changes.
 Upgrading from 1.7 to 1.10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-RCS 1.10 adds an additional configuration option to log every access request.
-To enable this feature add **ACCESS_LOG** to the config.  This option should be an
-absolute path to a log file (separate from the primary log file).
+RCS 1.10 adds two additional configuration options.  **ACCESS_LOG** allows every
+request to be logged.  It can be set by adding an entry to the config pointing
+to an absolute path to the log file (this should be separate from the primary log file).
+**FEATURE_SERVICE_PROXY** forces the use of a proxy for the registration of ESRI feature
+layers.
 
 Verification
 ------------

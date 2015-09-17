@@ -255,9 +255,11 @@ may be any prefix identifying the RCS installation)</li>
 </div>
 <div class="section" id="upgrading-from-1-7-to-1-10">
 <h3>Upgrading from 1.7 to 1.10<a class="headerlink" href="#upgrading-from-1-7-to-1-10" title="Permalink to this headline">¶</a></h3>
-<p>RCS 1.10 adds an additional configuration option to log every access request.
-To enable this feature add <strong>ACCESS_LOG</strong> to the config.  This option should be an
-absolute path to a log file (separate from the primary log file).</p>
+<p>RCS 1.10 adds two additional configuration options.  <strong>ACCESS_LOG</strong> allows every
+request to be logged.  It can be set by adding an entry to the config pointing
+to an absolute path to the log file (this should be separate from the primary log file).
+<strong>FEATURE_SERVICE_PROXY</strong> forces the use of a proxy for the registration of ESRI feature
+layers.</p>
 </div>
 </div>
 <div class="section" id="verification">
