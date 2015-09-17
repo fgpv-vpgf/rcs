@@ -17,3 +17,5 @@ LOG_LEVEL=10
 REG_SCHEMA='schemas/rcs_reg_schema_v1_2_0.json'
 
 URL_PREFIX=''
+
+# FEATURE_SERVICE_PROXY='http://127.0.0.1:8001'

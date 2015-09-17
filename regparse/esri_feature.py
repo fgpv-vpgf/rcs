@@ -6,6 +6,8 @@ Most of the utility functions are exposed but most applications won't use them
 """
 import requests, metadata
 
+_proxies = {}
+
 def make_grid_col( **kw ):
     """
     Generate a RAMP compliant datagrid column object with the following defaults:
@@ -81,7 +83,8 @@ def get_legend_mapping( data, layer_id ):
     :param layer_id: The id of the layer to create the mapping for.
     :returns: dict -- a mapping of 'label' => 'data URI encoded image'
     """
-    legend_json = requests.get( get_legend_url( data['service_url'] ) ).json()
+    global _proxies
+    legend_json = requests.get(get_legend_url( data['service_url'] ), proxies=_proxies).json()
     for layer in legend_json['layers']:
         if layer['layerId'] == layer_id:
             break
@@ -149,14 +152,15 @@ def test_small_layer( svc_url, svc_data ):
     :returns: bool -- True if the layer is considered 'small'
     """
 # FIXME needs refactoring, better error handling and better logic
+    global _proxies
     try:
         if svc_data['geometryType'] in ('esriGeometryPoint','esriGeometryMultipoint','esriGeometryEnvelope'):
             count_query = '/query?where=1%3D1&returnCountOnly=true&f=pjson'
             id_query = '/query?where=1%3D1&returnIdsOnly=true&f=json'
-            r = requests.get( get_base_url(svc_url) + count_query )
+            r = requests.get( get_base_url(svc_url) + count_query, proxies=_proxies)
             if 'count' in r.json():
                 return r.json()['count'] <= 2000
-            r = requests.get( get_base_url(svc_url) + id_query )
+            r = requests.get( get_base_url(svc_url) + id_query, proxies=_proxies)
             if 'objectIds' in r.json():
                 return len(r.json()['objectIds']) <= 2000
     except:
@@ -175,7 +179,11 @@ def make_node( data, id, config ):
     :returns: dict -- a RAMP configuration fragment representing the ESRI layer
     """
     node = { 'id': id }
-    r = requests.get( data['service_url'] + '?f=json' )
+
+    global _proxies
+    if 'FEATURE_SERVICE_PROXY' in config:
+        _proxies = { 'http': config['FEATURE_SERVICE_PROXY'], 'https': config['FEATURE_SERVICE_PROXY']}
+    r = requests.get( data['service_url'] + '?f=json', proxies=_proxies )
     svc_data = r.json()
     node['url'] = data['service_url']
     node['displayName'] = data.get('service_name',None)
