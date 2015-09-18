@@ -1,6 +1,10 @@
 RAMP Configuration Service
 --------------------------
 
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/fgpv-vpgf/rcs
+   :target: https://gitter.im/fgpv-vpgf/rcs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 The RAMP Configuration Service (RCS) is a web service designed to work with the
 Reusable Accessible Mapping Platform `(RAMP) <http://ramp-pcar.github.io>`_ to support
 loading of map layers from data catalogues.
