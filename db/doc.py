@@ -62,7 +62,8 @@ def get_doc( key, lang, ver ):
             fragment = version_conversion( ver, fragment )
             result = { 'layers': {} }
             result['layers'][ o['type'] ] = [ fragment ]
-            del result['layers'][ o['type'] ][0]['geometryType']
+            if 'geometryType' in result['layers'][ o['type'] ][0]:
+                del result['layers'][ o['type'] ][0]['geometryType']
             return result
     return None
 
