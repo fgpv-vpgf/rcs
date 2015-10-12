@@ -1,4 +1,4 @@
-import json, os, unittest, requests, random
+import json, os, pytest, requests, random
 from jsonschema import validate, ValidationError
 
 doc_sample_v11 = """
@@ -50,31 +50,30 @@ doc_sample_v1 = """
     }
 """
 
-class SchemaTestCase(unittest.TestCase):
+@pytest.fixture
+def schema110():
+    return json.load( open(os.path.join('schemas','rcs_reg_schema_v1_1_0.json')) )
 
-    def setUp(self):
-        self.schema110 = json.load( open(os.path.join('schemas','rcs_reg_schema_v1_1_0.json')) )
-        self.schema100 = json.load( open(os.path.join('schemas','rcs_reg_schema_v1_0_0.json')) )
+@pytest.fixture
+def schema100():
+    return json.load( open(os.path.join('schemas','rcs_reg_schema_v1_0_0.json')) )
 
-    def test_doc_sample_forward_compat(self):
-        fragment = json.loads( doc_sample_v1 )
-        r = validate( fragment, self.schema110 )
-        self.assertEquals( r, None )
+def test_doc_sample_forward_compat(schema110):
+    fragment = json.loads( doc_sample_v1 )
+    r = validate( fragment, schema110 )
+    assert  r is None
 
-    def test_url_v11(self):
-        fragment = json.loads( doc_sample_url_v11 )
-        r = validate( fragment, self.schema110 )
-        self.assertEquals( r, None )
+def test_url_v11(schema110):
+    fragment = json.loads( doc_sample_url_v11 )
+    r = validate( fragment, schema110 )
+    assert  r is None
 
-    def test_doc_sample_v11(self):
-        fragment = json.loads( doc_sample_v11 )
-        r = validate( fragment, self.schema110 )
-        self.assertEquals( r, None )
+def test_doc_sample_v11(schema110):
+    fragment = json.loads( doc_sample_v11 )
+    r = validate( fragment, schema110 )
+    assert  r is None
 
-    def test_doc_sample_v1(self):
-        fragment = json.loads( doc_sample_v1 )
-        r = validate( fragment, self.schema100 )
-        self.assertEquals( r, None )
-
-if __name__ == '__main__':
-    unittest.main()
+def test_doc_sample_v1(schema100):
+    fragment = json.loads( doc_sample_v1 )
+    r = validate( fragment, schema100 )
+    assert  r is None
