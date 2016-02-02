@@ -14,5 +14,6 @@ lib64
 Scripts/
 bin/
 wheelhouse/
+.vagrant/
 
 MANIFEST

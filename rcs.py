@@ -391,4 +391,7 @@ app.register_blueprint(api_1_bp, url_prefix=global_prefix+'/v1')
 if __name__ == '__main__':
     for l in loggers:
         l.info( 'logger started' )
-    app.run(debug=True)
+    host = '127.0.0.1'
+    if '--listen-all' in sys.argv[1:]:
+        host = '0.0.0.0'
+    app.run(debug=True, host=host)
