@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name="rcs",
     description="RAMP Configuration Service",
-    version="1.10.1",
+    version="2.0.0",
     author="Environment Canada",
     author_email="mike.weech@ec.gc.ca",
     url="https://github.com/fgpv-vpgf/rcs",
