@@ -4,7 +4,8 @@ for RCS and this should eventually end up in separate modules or packages.
 """
 from __future__ import division, print_function, unicode_literals
 
-import json, pycouchdb, jsonschema, regparse, db, config, os, sys, logging, numbers, flask
+import json, pycouchdb, jsonschema, config, os, sys, logging, numbers, flask
+from services import regparse, db
 
 from functools import wraps
 from logging.handlers import RotatingFileHandler
@@ -169,22 +170,10 @@ class Docs(Resource):
         return Response(json.dumps(docs), mimetype='application/json')
 
 
-class DocV09(Doc):
-    def __init__(self):
-        super(DocV09, self).__init__()
-        self.version = '0.9'
-
-
 class DocV1(Doc):
     def __init__(self):
         super(DocV1, self).__init__()
         self.version = '1'
-
-
-class DocsV09(Docs):
-    def __init__(self):
-        super(DocsV09, self).__init__()
-        self.version = '0.9'
 
 
 class DocsV1(Docs):
@@ -379,12 +368,6 @@ class Simplification(Resource):
 
 
 global_prefix = app.config.get('URL_PREFIX', '')
-
-api_0_9_bp = Blueprint('api_0_9', __name__)
-api_0_9 = Api(api_0_9_bp)
-api_0_9.add_resource(DocV09, '/doc/<string:lang>/<string:smallkey>')
-api_0_9.add_resource(DocsV09, '/docs/<string:lang>/<string:smallkeylist>')
-app.register_blueprint(api_0_9_bp, url_prefix=global_prefix + '/v0.9')
 
 api_1_bp = Blueprint('api_1', __name__)
 api_1 = Api(api_1_bp)

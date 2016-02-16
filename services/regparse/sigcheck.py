@@ -4,7 +4,7 @@ Tests RCS request signatures for validity
 """
 from __future__ import division, print_function, unicode_literals
 
-import hashlib, hmac, base64, logging, flask, iso8601, datetime, db
+import hashlib, hmac, base64, logging, flask, iso8601, datetime, services.db
 
 from flask.ext.restful import abort
 from functools import wraps
@@ -51,7 +51,7 @@ def test_request(request):
         return False
     rqpath = request.path
     rqbody = request.data
-    psk = db.auth.get_key(cid)
+    psk = services.db.auth.get_key(cid)
 
     ref_sig = sign(psk, rqpath, cid, dt, rqbody)
     logger.info('Signature received: {0}  ##  Signature generated: {1}'.format(msg_sig, ref_sig))

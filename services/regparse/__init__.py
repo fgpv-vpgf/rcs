@@ -17,7 +17,7 @@ def make_id(key, lang):
 
 # TODO think about the best place for this function
 def refresh_records(day_limit, config):
-    import db, datetime, string
+    import services.db, datetime, string
     valid = []
     invalid = {}
     query = ""
@@ -27,7 +27,7 @@ def refresh_records(day_limit, config):
         min_age = datetime.date.today() - datetime.timedelta(days=day_limit)
         query = "function(doc) { if (doc.updated_at <= '$date') emit(doc._id, { updated: doc.updated_at, key: doc.data.key, request: doc.data.request }); }"  # NOQA
         query = string.Template(query).substitute(date=min_age)
-    results = db.query(query)
+    results = services.db.query(query)
     for r in results:
         key = r['id']
         print r
@@ -37,7 +37,7 @@ def refresh_records(day_limit, config):
         req = r['value']['request']
         try:
             data = make_record(key, req, config)
-            db.put_doc(key, {'type': req['payload_type'], 'data': data})
+            services.db.put_doc(key, {'type': req['payload_type'], 'data': data})
             valid.append(key)
         except Exception as e:
             invalid[key] = str(e)
