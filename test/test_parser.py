@@ -1,4 +1,4 @@
-import pytest, regparse.metadata as md
+import pytest, services.regparse.metadata as md
 
 config_1 = {'METADATA_URL': 'http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service={0}', 'CATALOGUE_URL': 'http://www.google.ca/'}  # NOQA
 config_2 = {'METADATA_URL': 'http://nowhere.example.com/{0}', 'CATALOGUE_URL': "{0}"}

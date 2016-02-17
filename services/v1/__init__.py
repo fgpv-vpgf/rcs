@@ -1,66 +1,11 @@
-"""
-The starter module for RCS.  Currently it contains most of the functional code
-for RCS and this should eventually end up in separate modules or packages.
-"""
-from __future__ import division, print_function, unicode_literals
+import json
 
-import json, pycouchdb, jsonschema, config, os, sys, logging, numbers, flask
 from services import regparse, db
-
 from functools import wraps
-from logging.handlers import RotatingFileHandler
-from flask import Flask, Blueprint, Response, current_app
+from flask import Blueprint, Response, current_app
 from flask.ext.restful import request, abort, Api, Resource
 
-# FIXME clean this up
-app = Flask(__name__)
-reload(sys)
-sys.setdefaultencoding('utf8')
-app.config.from_object(config)
-if os.environ.get('RCS_CONFIG'):
-    app.config.from_envvar('RCS_CONFIG')
-handler = RotatingFileHandler(app.config['LOG_FILE'],
-                              maxBytes=app.config.get('LOG_ROTATE_BYTES', 200000),
-                              backupCount=app.config.get('LOG_BACKUPS', 5))
-handler.setFormatter(logging.Formatter(
-    '%(asctime)s %(levelname)s: %(message)s '
-    '[in %(pathname)s:%(lineno)d]'
-))
-
-loggers = [app.logger, logging.getLogger('regparse.sigcheck')]
-for l in loggers:
-    l.setLevel(app.config['LOG_LEVEL'])
-    l.addHandler(handler)
-
-if 'ACCESS_LOG' in app.config:
-    acc_log = logging.getLogger('testlog')
-    acc_log.setLevel(logging.DEBUG)
-    acc_handler = RotatingFileHandler(app.config['ACCESS_LOG'],
-                                      maxBytes=app.config.get('LOG_ROTATE_BYTES', 200000),
-                                      backupCount=app.config.get('LOG_BACKUPS', 5))
-    acc_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s '))
-    acc_log.addHandler(acc_handler)
-
-    def log_request(sender):
-        acc_log.info('{ip} {method} {path} {agent}'.format(method=request.method,
-                                                           path=request.path,
-                                                           ip=request.remote_addr,
-                                                           agent=request.user_agent.string))
-        acc_log.debug(request.data)
-    flask.request_started.connect(log_request, app)
-
-    def log_response(sender, response):
-        acc_log.info('{code} {text}'.format(code=response.status_code, text=response.status))
-    flask.request_finished.connect(log_response, app)
-
-
-db.init_auth_db(app.config['DB_CONN'], app.config['AUTH_DB'])
-db.init_doc_db(app.config['DB_CONN'], app.config['STORAGE_DB'])
-# client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
-schema_path = app.config['REG_SCHEMA']
-if not os.path.exists(schema_path):
-    schema_path = os.path.join(sys.prefix, schema_path)
-validator = jsonschema.validators.Draft4Validator(json.load(open(schema_path)))
+_validator = None
 
 
 def log_exception(sender, exception):
@@ -73,7 +18,7 @@ def log_exception(sender, exception):
     :param exception: The exception that was triggered
     :type exception: Exception
     """
-    app.logger.error(
+    current_app.logger.error(
         """
 Request:   {method} {path}
 IP:        {ip}
@@ -85,7 +30,6 @@ Raw Agent: {agent}
             agent=request.user_agent.string,
         ), exc_info=exception
     )
-flask.got_request_exception.connect(log_exception, app)
 
 
 def jsonp(func):
@@ -201,22 +145,22 @@ class Register(Resource):
             s = json.loads(request.data)
         except Exception:
             return '{"errors":["Unparsable json"]}', 400
-        if not validator.is_valid(s):
-            resp = {'errors': [x.message for x in validator.iter_errors(s)]}
-            app.logger.info(resp)
+        if not _validator.is_valid(s):
+            resp = {'errors': [x.message for x in _validator.iter_errors(s)]}
+            current_app.logger.info(resp)
             return Response(json.dumps(resp), mimetype='application/json', status=400)
 
         data = dict(key=smallkey, request=s)
         try:
-            data = regparse.make_record(smallkey, s, app.config)
+            data = regparse.make_record(smallkey, s, current_app.config)
         except regparse.metadata.MetadataException as mde:
-            app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
+            current_app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
             abort(400, msg=mde.message)
 
-        app.logger.debug(data)
+        current_app.logger.debug(data)
 
         db.put_doc(smallkey, {'type': s['payload_type'], 'data': data})
-        app.logger.info('added a smallkey %s' % smallkey)
+        current_app.logger.info('added a smallkey %s' % smallkey)
         return smallkey, 201
 
     @regparse.sigcheck.validate
@@ -230,10 +174,10 @@ class Register(Resource):
         """
         try:
             db.delete_doc(smallkey)
-            app.logger.info('removed a smallkey %s' % smallkey)
+            current_app.logger.info('removed a smallkey %s' % smallkey)
             return '', 204
         except pycouchdb.exceptions.NotFound as nfe:
-            app.logger.info('smallkey was not found %s' % smallkey, exc_info=nfe)
+            current_app.logger.info('smallkey was not found %s' % smallkey, exc_info=nfe)
         return '', 404
 
 
@@ -260,7 +204,8 @@ class Update(Resource):
             pass
         if day_limit is None and arg != 'all' or day_limit is not None and day_limit < 1:
             return '{"error":"argument should be either \'all\' or a positive integer"}', 400
-        return Response(json.dumps(regparse.refresh_records(day_limit, app.config)), mimetype='application/json')
+        return Response(json.dumps(regparse.refresh_records(day_limit, current_app.config)),
+                        mimetype='application/json')
 
 
 class UpdateFeature(Resource):
@@ -299,15 +244,15 @@ class UpdateFeature(Resource):
         dbdata['data']['request']['en'].update(fragment['en'])
         dbdata['data']['request']['fr'].update(fragment['fr'])
 
-        if not validator.is_valid(dbdata['data']['request']):
-            resp = {'errors': [x.message for x in validator.iter_errors(dbdata['data']['request'])]}
-            app.logger.info(resp)
+        if not _validator.is_valid(dbdata['data']['request']):
+            resp = {'errors': [x.message for x in _validator.iter_errors(dbdata['data']['request'])]}
+            current_app.logger.info(resp)
             return Response(json.dumps(resp), mimetype='application/json', status=400)
 
         try:
-            data = regparse.make_record(smallkey, dbdata['data']['request'], app.config)
+            data = regparse.make_record(smallkey, dbdata['data']['request'], current_app.config)
         except regparse.metadata.MetadataException as mde:
-            app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
+            current_app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
             abort(400, msg=mde.message)
 
         db.put_doc(smallkey, {'type': data['request']['payload_type'], 'data': data})
@@ -337,7 +282,7 @@ class Simplification(Resource):
         # Check that our payload has a 'factor' property that contains an integer
         if not isinstance(payload['factor'], numbers.Integral):
             resp = {'errors': ['Invalid payload JSON']}
-            app.logger.info(resp)
+            current_app.logger.info(resp)
             return Response(json.dumps(resp), mimetype='application/json', status=400)
 
         intFactor = int(payload['factor'])
@@ -362,28 +307,22 @@ class Simplification(Resource):
         # Update the database record
         db.put_doc(smallkey, {'type': dbdata['type'], 'data': dbdata['data']})
 
-        app.logger.info('updated simpification factor on smallkey %(s)s to %(f)d by %(u)s'
-                        % {"s": smallkey, "f": intFactor, "u": payload['user']})
+        current_app.logger.info('updated simpification factor on smallkey %(s)s to %(f)d by %(u)s'
+                                % {"s": smallkey, "f": intFactor, "u": payload['user']})
         return smallkey, 200
 
 
-global_prefix = app.config.get('URL_PREFIX', '')
+def make_v1_blueprint(validator):
+    global _validator
+    _validator = validator
 
-api_1_bp = Blueprint('api_1', __name__)
-api_1 = Api(api_1_bp)
-api_1.add_resource(DocV1, '/doc/<string:lang>/<string:smallkey>')
-api_1.add_resource(DocsV1, '/docs/<string:lang>/<string:smallkeylist>',
-                   '/docs/<string:lang>/<string:smallkeylist>/<string:sortarg>')
-api_1.add_resource(Register, '/register/<string:smallkey>')
-api_1.add_resource(Update, '/update/<string:arg>')
-api_1.add_resource(Simplification, '/simplification/<string:smallkey>')
-api_1.add_resource(UpdateFeature, '/updatefeature/<string:smallkey>')
-app.register_blueprint(api_1_bp, url_prefix=global_prefix + '/v1')
-
-if __name__ == '__main__':
-    for l in loggers:
-        l.info('logger started')
-    host = '127.0.0.1'
-    if '--listen-all' in sys.argv[1:]:
-        host = '0.0.0.0'
-    app.run(debug=True, host=host)
+    api_v1_bp = Blueprint('api_v1', __name__)
+    api_1 = Api(api_v1_bp)
+    api_1.add_resource(DocV1, '/doc/<string:lang>/<string:smallkey>')
+    api_1.add_resource(DocsV1, '/docs/<string:lang>/<string:smallkeylist>',
+                       '/docs/<string:lang>/<string:smallkeylist>/<string:sortarg>')
+    api_1.add_resource(Register, '/register/<string:smallkey>')
+    api_1.add_resource(Update, '/update/<string:arg>')
+    api_1.add_resource(Simplification, '/simplification/<string:smallkey>')
+    api_1.add_resource(UpdateFeature, '/updatefeature/<string:smallkey>')
+    return api_v1_bp
