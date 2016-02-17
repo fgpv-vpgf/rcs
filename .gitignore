@@ -15,5 +15,7 @@ Scripts/
 bin/
 wheelhouse/
 .vagrant/
+.cache/
+rcs.egg-info/
 
 MANIFEST
