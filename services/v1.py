@@ -1,7 +1,7 @@
 import json, numbers
 
-from services import regparse, db, registration
-from services.utils import jsonp
+import regparse, db, registration
+from utils import jsonp
 from flask import Blueprint, Response, current_app
 from flask.ext.restful import request, Api, Resource
 
