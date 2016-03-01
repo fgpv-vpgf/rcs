@@ -2,7 +2,7 @@ STORAGE_DB = 'rcs_cache'
 AUTH_DB = 'rcs_auth'
 DB_CONN = 'http://localhost:5984/'
 
-SIG_CHECK = True
+SIG_CHECK = False
 METADATA_URL = 'http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service={0}'
 CATALOGUE_URL = 'http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service={0}'
 

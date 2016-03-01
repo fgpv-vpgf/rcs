@@ -5,7 +5,7 @@ for RCS and this should eventually end up in separate modules or packages.
 from __future__ import division, print_function, unicode_literals
 
 import json, jsonschema, config, os, sys, logging, flask
-from services import db, v1
+from services import db, v1, v2, utils
 
 from logging.handlers import RotatingFileHandler
 from flask import Flask
@@ -31,7 +31,7 @@ for l in loggers:
     l.setLevel(app.config['LOG_LEVEL'])
     l.addHandler(handler)
 
-flask.got_request_exception.connect(v1.log_exception, app)
+flask.got_request_exception.connect(utils.log_exception, app)
 if 'ACCESS_LOG' in app.config:
     acc_log = logging.getLogger('testlog')
     acc_log.setLevel(logging.DEBUG)
@@ -53,17 +53,22 @@ if 'ACCESS_LOG' in app.config:
         acc_log.info('{code} {text}'.format(code=response.status_code, text=response.status))
     flask.request_finished.connect(log_response, app)
 
-db.init_auth_db(app.config['DB_CONN'], app.config['AUTH_DB'])
-db.init_doc_db(app.config['DB_CONN'], app.config['STORAGE_DB'])
-# client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 schema_path = app.config['REG_SCHEMA']
 if not os.path.exists(schema_path):
     schema_path = os.path.join(sys.prefix, schema_path)
-validator = jsonschema.validators.Draft4Validator(json.load(open(schema_path)))
+with app.app_context():
+    flask.g.validator = jsonschema.validators.Draft4Validator(json.load(open(schema_path)))
+
+db.init_auth_db(app.config['DB_CONN'], app.config['AUTH_DB'])
+db.init_doc_db(app.config['DB_CONN'], app.config['STORAGE_DB'])
+# client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
 
 global_prefix = app.config.get('URL_PREFIX', '')
-api_v1_bp = v1.make_v1_blueprint(validator)
+api_v1_bp = v1.make_blueprint()
 app.register_blueprint(api_v1_bp, url_prefix=global_prefix + '/v1')
+
+api_v2_bp = v2.make_blueprint()
+app.register_blueprint(api_v2_bp, url_prefix=global_prefix + '/v2')
 
 if __name__ == '__main__':
     for l in loggers:

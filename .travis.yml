@@ -8,3 +8,8 @@ install:
 script:
     - flake8
     - py.test
+notifications:
+    webhooks:
+        urls:
+            - https://webhooks.gitter.im/e/7bd6d69bcfa59bddf1e2
+        on_start: never
