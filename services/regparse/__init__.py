@@ -1,5 +1,5 @@
 import wms, esri_feature, sigcheck
-__all__ = ['esri_feature', 'sigcheck', 'wms', 'make_id', 'refresh_records', 'make_record']
+__all__ = ['esri_feature', 'sigcheck', 'wms', 'make_id', 'make_record']
 
 
 def make_id(key, lang):
@@ -15,37 +15,10 @@ def make_id(key, lang):
     return "{0}.{1}.{2}".format('rcs', key, lang)
 
 
-# TODO think about the best place for this function
-def refresh_records(day_limit, config):
-    import services.db, datetime, string
-    valid = []
-    invalid = {}
-    query = ""
-    if day_limit is None:
-        query = "function(doc) { emit(doc._id, { updated: doc.updated_at, key: doc.data.key, request: doc.data.request }); }"  # NOQA
-    else:
-        min_age = datetime.date.today() - datetime.timedelta(days=day_limit)
-        query = "function(doc) { if (doc.updated_at <= '$date') emit(doc._id, { updated: doc.updated_at, key: doc.data.key, request: doc.data.request }); }"  # NOQA
-        query = string.Template(query).substitute(date=min_age)
-    results = services.db.query(query)
-    for r in results:
-        key = r['id']
-        print r
-        if 'request' not in r['value']:
-            invalid[key] = 'previous request was not cached (request caching added in 1.8.0)'
-            continue
-        req = r['value']['request']
-        try:
-            data = make_record(key, req, config)
-            services.db.put_doc(key, {'type': req['payload_type'], 'data': data})
-            valid.append(key)
-        except Exception as e:
-            invalid[key] = str(e)
-
-    return {"updated": valid, "errors": invalid}
-
-
 def make_record(key, request, config):
+    """
+    Determine the data type to generate the appropriate record entry.
+    """
     data = dict(key=key, request=request)
     if request['payload_type'] == 'wms':
         data['en'] = wms.make_node(request['en'], make_id(key, 'en'), config)
