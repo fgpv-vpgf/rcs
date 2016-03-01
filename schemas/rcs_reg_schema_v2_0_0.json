@@ -25,17 +25,17 @@
             "required": [ "service_url" ]
         },
 
-        "serviceNode": {
+        "service_node": {
             "oneOf": [
-                { "$ref": "#/defs/basicNode" },
-                { "$ref": "#/defs/featureNode" },
-                { "$ref": "#/defs/imageryNode" },
-                { "$ref": "#/defs/wmsNode" },
-                { "$ref": "#/defs/dynamicNode" }
+                { "$ref": "#/defs/basic_node" },
+                { "$ref": "#/defs/feature_node" },
+                { "$ref": "#/defs/imagery_node" },
+                { "$ref": "#/defs/wms_node" },
+                { "$ref": "#/defs/dynamic_node" }
             ]
         },
 
-        "basicNode": {
+        "basic_node": {
             "type": "object",
             "properties": {
                 "service_url": { "type": "string" },
@@ -46,7 +46,7 @@
             "additionalProperties": false
         },
 
-        "featureNode": {
+        "feature_node": {
             "type": "object",
             "properties": {
                 "service_url": { "type": "string", "description": "The service endpoint URL" },
@@ -55,14 +55,14 @@
                 "service_type": { "type": "string", "enum": ["esriFeature"], "description": "Service type of the endpoint" },
                 "display_field": { "type": "string", "description": "Default attribute for identifying features" },
                 "loading_mode": { "type": "string", "enum": ["ondemand","snapshot"], "description": "Specifies the layer loading mode: either snapshot (load all data upfront) or ondemand (load data as needed); when not specified RCS will probe the service and make an intelligent guesss" },
-                "max_allowable_offset": { "type": "integer", "minimum": 0, "description": "Simplification factor for the layer geometry" },
-                "tolerance": { "type": "integer", "minimum": 0, "description": "Tolerance (in pixels) of feature queries" }
+                "max_allowable_offset": { "type": "integer", "minimum": 0, "description": "Simplification factor for the layer geometry; may be omitted in which case no value will be provided in the output leaving the viewer to apply its own logic." },
+                "tolerance": { "type": "integer", "minimum": 0, "default": 5, "description": "Tolerance (in pixels) of feature queries" }
             },
             "required": [ "service_url", "service_type" ],
             "additionalProperties": false
         },
 
-        "imageryNode": {
+        "imagery_node": {
             "type": "object",
             "properties": {
                 "service_url": { "type": "string", "description": "The service endpoint URL" },
@@ -74,14 +74,14 @@
             "additionalProperties": false
         },
 
-        "wmsNode": {
+        "wms_node": {
             "type": "object",
             "properties": {
                 "service_url": { "type": "string", "description": "The service endpoint URL" },
                 "service_name": { "type": "string", "description": "Name of the service endpoint, used for display" },
                 "metadata": { "$ref": "#/defs/metadata" },
                 "service_type": { "type": "string", "enum": ["ogcWms"], "description": "Service type of the endpoint" },
-                "scrape_only": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+                "scrape_only": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "description": "If specified it indicates which Layer entries should be scraped by the RCS; all Layers should be identfied by their Name element.  When it is omitted RCS will attempt to scrape all Layer elements containing a Name entry." },
                 "legend_format": { "type": "string" },
                 "feature_info_format": { "type": "string", "enum": [ "text/html;fgpv=summary", "text/html", "text/plain", "application/json" ], "description": "If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested." }
             },
@@ -89,14 +89,14 @@
             "additionalProperties": false
         },
 
-        "dynamicNode": {
+        "dynamic_node": {
             "type": "object",
             "properties": {
                 "service_url": { "type": "string", "description": "The service endpoint URL" },
                 "service_name": { "type": "string", "description": "Name of the service endpoint, used for display" },
                 "metadata": { "$ref": "#/defs/metadata" },
                 "service_type": { "type": "string", "enum": ["esriDynamic"], "description": "Service type of the endpoint" },
-                "scrape_only": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "minItems": 1 }
+                "scrape_only": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "minItems": 1, "description": "If specified it indicates which indexes should be scraped by the RCS.  When it is omitted RCS will attempt to scrape all indexes within the endpoint." }
             },
             "required": [ "service_url", "service_type" ],
             "additionalProperties": false
@@ -106,8 +106,8 @@
 
     "properties": {
         "version": { "type": "string", "enum": [ "2.0" ] },
-        "en": {"$ref": "#/defs/serviceNode"},
-        "fr": {"$ref": "#/defs/serviceNode"}
+        "en": {"$ref": "#/defs/service_node"},
+        "fr": {"$ref": "#/defs/service_node"}
     },
     "required": ["version", "en", "fr"],
     "additionalProperties": false
