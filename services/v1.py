@@ -136,6 +136,9 @@ class Simplification(Resource):
 
 
 def make_blueprint():
+    """
+    Create a v1 Flask Blueprint
+    """
     api_v1_bp = Blueprint('api_v1', __name__)
     api_1 = Api(api_v1_bp)
     api_1.add_resource(DocV1, '/doc/<string:lang>/<string:smallkey>')
