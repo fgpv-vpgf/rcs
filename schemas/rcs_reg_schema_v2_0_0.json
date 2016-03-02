@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
     "title": "RCS Schema",
-    "description": "An RCS request object",
+    "description": "An RCS registration request",
     "version": "2.0.0",
 
     "defs": {
@@ -30,8 +30,8 @@
                 { "$ref": "#/defs/basic_node" },
                 { "$ref": "#/defs/feature_node" },
                 { "$ref": "#/defs/imagery_node" },
-                { "$ref": "#/defs/wms_node" },
-                { "$ref": "#/defs/dynamic_node" }
+                { "$ref": "#/defs/ogc_node" },
+                { "$ref": "#/defs/esri_map_node" }
             ]
         },
 
@@ -74,14 +74,15 @@
             "additionalProperties": false
         },
 
-        "wms_node": {
+        "ogc_node": {
             "type": "object",
             "properties": {
                 "service_url": { "type": "string", "description": "The service endpoint URL" },
                 "service_name": { "type": "string", "description": "Name of the service endpoint, used for display" },
                 "metadata": { "$ref": "#/defs/metadata" },
-                "service_type": { "type": "string", "enum": ["ogcWms"], "description": "Service type of the endpoint" },
+                "service_type": { "type": "string", "enum": ["ogcWms", "ogcWmts"], "description": "Service type of the endpoint" },
                 "scrape_only": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "description": "If specified it indicates which Layer entries should be scraped by the RCS; all Layers should be identfied by their Name element.  When it is omitted RCS will attempt to scrape all Layer elements containing a Name entry." },
+                "recursive": { "type": "boolean", "default": false, "description": "Indicates if children should be scraped by the RCS and may be made available as individual layers to the viewer (the endpoints necessary will not be available with the release of the new RCS)."},
                 "legend_format": { "type": "string" },
                 "feature_info_format": { "type": "string", "enum": [ "text/html;fgpv=summary", "text/html", "text/plain", "application/json" ], "description": "If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested." }
             },
@@ -89,14 +90,15 @@
             "additionalProperties": false
         },
 
-        "dynamic_node": {
+        "esri_map_node": {
             "type": "object",
             "properties": {
                 "service_url": { "type": "string", "description": "The service endpoint URL" },
                 "service_name": { "type": "string", "description": "Name of the service endpoint, used for display" },
                 "metadata": { "$ref": "#/defs/metadata" },
-                "service_type": { "type": "string", "enum": ["esriDynamic"], "description": "Service type of the endpoint" },
-                "scrape_only": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "minItems": 1, "description": "If specified it indicates which indexes should be scraped by the RCS.  When it is omitted RCS will attempt to scrape all indexes within the endpoint." }
+                "service_type": { "type": "string", "enum": ["esriMapServer", "esriFeatureServer"], "description": "Service type of the endpoint" },
+                "scrape_only": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "minItems": 1, "description": "If specified it indicates which indexes should be scraped by the RCS.  When it is omitted RCS will attempt to scrape all indexes within the endpoint." },
+                "recursive": { "type": "boolean", "default": false, "description": "Indicates if children should be scraped by the RCS and may be made available as individual layers to the viewer (the endpoints necessary will not be available with the release of the new RCS)."}
             },
             "required": [ "service_url", "service_type" ],
             "additionalProperties": false
