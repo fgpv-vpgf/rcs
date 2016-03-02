@@ -1,8 +1,8 @@
 import pytest, services.regparse.metadata as md
 
-config_1 = {'METADATA_URL': 'http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service={0}', 'CATALOGUE_URL': 'http://www.google.ca/'}  # NOQA
-config_2 = {'METADATA_URL': 'http://nowhere.example.com/{0}', 'CATALOGUE_URL': "{0}"}
-valid_url = {'metadata': {'metadata_url': 'http://www2.dmsolutions.ca/cgi-bin/mswfs_gmap?version=1.3.0&request=getcapabilities&service=wms', 'catalogue_url': 'http://www.google.ca/'}}  # NOQA
+config_1 = {'METADATA_URL': 'http://example.com/mswfs_gmap?version=1.3.0&request=getcapabilities&service={0}', 'CATALOGUE_URL': 'http://www.google.ca/'}  # NOQA
+config_2 = {'METADATA_URL': 'http://example.com/{0}', 'CATALOGUE_URL': '{0}'}
+valid_url = {'metadata': {'metadata_url': 'http://example.com/mswfs_gmap?version=1.3.0&request=getcapabilities&service=wms', 'catalogue_url': 'http://www.google.ca/'}}  # NOQA
 valid_uuid = {'metadata': {'uuid': 'wms'}}
 
 
