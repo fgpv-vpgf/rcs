@@ -1,7 +1,17 @@
-import regparse, db, json, flask, pycouchdb
+import regparse, db, json, flask, pycouchdb, requests
 
 from flask import Response, current_app
 from flask.ext.restful import request, abort, Resource
+
+
+class ServiceTypes:
+    WMS = 'ogcWms'
+    WMTS = 'ogcWmts'
+    MAP_SERVER = 'esriMapServer'
+    FEATURE_SERVER = 'esriFeatureServer'
+    FEATURE = 'esriFeature'
+    TILE = 'esriTile'
+    IMAGE = 'esriImage'
 
 
 def get_registration_errors(data):
@@ -12,6 +22,38 @@ def get_registration_errors(data):
     if not validator.is_valid(data):
         return [x.message for x in validator.iter_errors(data)]
     return []
+
+
+def get_endpoint_type(endpoint):
+    """
+    Determine the type of the endpoint
+    """
+    try:
+        r = requests.get(endpoint)
+        ct = r.headers['content-type']
+        if (ct == 'text/xml'):
+            # XML response means WMS or WMTS (latter is not implemented)
+            # FIXME type detection should be much more robust, add proper XML parsing, ...
+            return ServiceTypes.WMS
+        else:
+            r = requests.get(endpoint+'?f=json')
+            data = r.json()
+            if 'type' in data:
+                if data['type'] == 'Feature Layer': return ServiceTypes.FEATURE
+                elif data['type'] == 'Raster Layer': return ServiceTypes.MAP_SERVER
+                elif data['type'] == 'Group Layer': return ServiceTypes.MAP_SERVER
+            elif 'singleFusedMapCache' in data:
+                if data['singleFusedMapCache']:
+                    return ServiceTypes.TILE
+                else:
+                    return ServiceTypes.MAP_SERVER
+            elif 'allowGeometryUpdates' in data:
+                return ServiceTypes.FEATURE_SERVER
+            elif 'allowedMosaicMethods' in data:
+                return ServiceTypes.IMAGE
+    except:
+        pass
+    return None
 
 
 def refresh_records(day_limit, config):
@@ -70,6 +112,9 @@ class Register(Resource):
             return Response(json.dumps(resp), mimetype='application/json', status=400)
 
         data = dict(key=smallkey, request=s)
+        svc_type = get_endpoint_type(s['en']['service_url'])
+        data['type'] = svc_type
+        return svc_type
         try:
             data = regparse.make_record(smallkey, s, current_app.config)
         except regparse.metadata.MetadataException as mde:
