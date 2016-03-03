@@ -8,8 +8,9 @@ def get_registration_errors(data):
     """
     Test the schema for validity, return all errors found as a flat list of messages.
     """
-    if not flask.g.validator.is_valid(data):
-        return [x.message for x in flask.g.validator.iter_errors(data)]
+    validator = flask.g.get_validator()
+    if not validator.is_valid(data):
+        return [x.message for x in validator.iter_errors(data)]
     return []
 
 
@@ -59,7 +60,8 @@ class Register(Resource):
         """
         try:
             s = json.loads(request.data)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(e.message)
             return '{"errors":["Unparsable json"]}', 400
         errors = get_registration_errors(s)
         if errors:
