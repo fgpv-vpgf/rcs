@@ -91,7 +91,7 @@ class Register(Resource):
     """
 
     @regparse.sigcheck.validate
-    def put(self, smallkey):
+    def put(self, key):
         """
         A REST endpoint for adding or editing a single layer.
         All registration requests must contain entries for all languages and will be validated against a JSON schema.
@@ -101,31 +101,33 @@ class Register(Resource):
         :returns: JSON Response -- 201 on success; 400 with JSON payload of an errors array on failure
         """
         try:
-            s = json.loads(request.data)
+            req = json.loads(request.data)
         except Exception as e:
             current_app.logger.error(e.message)
             return '{"errors":["Unparsable json"]}', 400
-        errors = get_registration_errors(s)
+        errors = get_registration_errors(req)
         if errors:
             resp = {'errors': errors}
             current_app.logger.info(resp)
             return Response(json.dumps(resp), mimetype='application/json', status=400)
 
-        data = dict(key=smallkey, request=s)
-        svc_type = get_endpoint_type(s['en']['service_url'])
-        data['type'] = svc_type
-        return svc_type
+        remapped_types = {'esriMapServer': 'esriDynamic', 'esriFeatureServer': 'esriDynamic'}
+        config = {'en': {}, 'fr': {}}
+        svc_type = get_endpoint_type(req['en']['service_url'])
         try:
-            data = regparse.make_record(smallkey, s, current_app.config)
+            for lang in ['en','fr']:
+                config[lang]['id'] = regparse.make_id(key, lang)
+                config[lang]['name'] = regparse.make_id(key, lang)
+                config[lang]['layerType'] = remapped_types.get(svc_type, svc_type)
+                config[lang]['url'] = req[lang]['service_url']
         except regparse.metadata.MetadataException as mde:
             current_app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
             abort(400, msg=mde.message)
 
-        current_app.logger.debug(data)
-
-        db.put_doc(smallkey, {'type': s['payload_type'], 'data': data})
-        current_app.logger.info('added a smallkey %s' % smallkey)
-        return smallkey, 201
+        current_app.logger.debug(config)
+        db.put_doc(key, svc_type, req, config)
+        current_app.logger.info('added a smallkey %s' % key)
+        return key, 201
 
     @regparse.sigcheck.validate
     def delete(self, smallkey):
