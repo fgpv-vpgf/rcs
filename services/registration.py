@@ -39,9 +39,12 @@ def get_endpoint_type(endpoint):
             r = requests.get(endpoint+'?f=json')
             data = r.json()
             if 'type' in data:
-                if data['type'] == 'Feature Layer': return ServiceTypes.FEATURE
-                elif data['type'] == 'Raster Layer': return ServiceTypes.MAP_SERVER
-                elif data['type'] == 'Group Layer': return ServiceTypes.MAP_SERVER
+                if data['type'] == 'Feature Layer':
+                    return ServiceTypes.FEATURE
+                elif data['type'] == 'Raster Layer':
+                    return ServiceTypes.MAP_SERVER
+                elif data['type'] == 'Group Layer':
+                    return ServiceTypes.MAP_SERVER
             elif 'singleFusedMapCache' in data:
                 if data['singleFusedMapCache']:
                     return ServiceTypes.TILE
@@ -115,7 +118,7 @@ class Register(Resource):
         config = {'en': {}, 'fr': {}}
         svc_type = get_endpoint_type(req['en']['service_url'])
         try:
-            for lang in ['en','fr']:
+            for lang in ['en', 'fr']:
                 config[lang]['id'] = regparse.make_id(key, lang)
                 config[lang]['name'] = regparse.make_id(key, lang)
                 config[lang]['layerType'] = remapped_types.get(svc_type, svc_type)

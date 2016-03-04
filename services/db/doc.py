@@ -64,7 +64,7 @@ def get_doc(key, lang, ver):
     except pycouchdb.exceptions.NotFound:
         return None
     if o is not None:
-    # FIXME very hacky setup for integration testing, clean this up
+        # FIXME very hacky setup for integration testing, clean this up
         if ver == '2':
             fragment = o.get('layer_config', {}).get(lang, None)
             if fragment is not None:
@@ -101,7 +101,7 @@ def put_doc(key, svc_type, req, config):
     try:
         _db.delete(key)
     except pycouchdb.exceptions.NotFound:
-        doc['created_at'] =  datetime.date.today().isoformat()
+        doc['created_at'] = datetime.date.today().isoformat()
     doc['_id'] = key
     doc['request'] = req
     doc['version'] = '2.0'

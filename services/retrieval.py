@@ -2,7 +2,8 @@ import db, json
 
 from utils import jsonp
 from flask import Response
-from flask.ext.restful import request, Api, Resource
+from flask.ext.restful import Resource
+
 
 class Doc(Resource):
     """
