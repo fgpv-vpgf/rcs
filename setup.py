@@ -1,4 +1,8 @@
 from distutils.core import setup
+import os
+
+# http://bugs.python.org/issue8876#msg208792
+del os.link
 
 setup(
     name="rcs",
