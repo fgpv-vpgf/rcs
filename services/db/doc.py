@@ -64,6 +64,12 @@ def get_doc(key, lang, ver):
     except pycouchdb.exceptions.NotFound:
         return None
     if o is not None:
+    # FIXME very hacky setup for integration testing, clean this up
+        if ver == '2':
+            fragment = o.get('layer_config', {}).get(lang, None)
+            if fragment is not None:
+                result = dict(layers=[fragment])
+                return result
         fragment = o.get('data', {}).get(lang, None)
         if fragment is not None:
             fragment = version_conversion(ver, fragment)
