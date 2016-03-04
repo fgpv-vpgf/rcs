@@ -1,16 +1,62 @@
-import regparse, db, json, flask, pycouchdb
+import regparse, db, json, flask, pycouchdb, requests
 
 from flask import Response, current_app
 from flask.ext.restful import request, abort, Resource
+
+
+class ServiceTypes:
+    WMS = 'ogcWms'
+    WMTS = 'ogcWmts'
+    MAP_SERVER = 'esriMapServer'
+    FEATURE_SERVER = 'esriFeatureServer'
+    FEATURE = 'esriFeature'
+    TILE = 'esriTile'
+    IMAGE = 'esriImage'
 
 
 def get_registration_errors(data):
     """
     Test the schema for validity, return all errors found as a flat list of messages.
     """
-    if not flask.g.validator.is_valid(data):
-        return [x.message for x in flask.g.validator.iter_errors(data)]
+    validator = flask.g.get_validator()
+    if not validator.is_valid(data):
+        return [x.message for x in validator.iter_errors(data)]
     return []
+
+
+def get_endpoint_type(endpoint):
+    """
+    Determine the type of the endpoint
+    """
+    try:
+        r = requests.get(endpoint)
+        ct = r.headers['content-type']
+        if (ct == 'text/xml'):
+            # XML response means WMS or WMTS (latter is not implemented)
+            # FIXME type detection should be much more robust, add proper XML parsing, ...
+            return ServiceTypes.WMS
+        else:
+            r = requests.get(endpoint+'?f=json')
+            data = r.json()
+            if 'type' in data:
+                if data['type'] == 'Feature Layer':
+                    return ServiceTypes.FEATURE
+                elif data['type'] == 'Raster Layer':
+                    return ServiceTypes.MAP_SERVER
+                elif data['type'] == 'Group Layer':
+                    return ServiceTypes.MAP_SERVER
+            elif 'singleFusedMapCache' in data:
+                if data['singleFusedMapCache']:
+                    return ServiceTypes.TILE
+                else:
+                    return ServiceTypes.MAP_SERVER
+            elif 'allowGeometryUpdates' in data:
+                return ServiceTypes.FEATURE_SERVER
+            elif 'allowedMosaicMethods' in data:
+                return ServiceTypes.IMAGE
+    except:
+        pass
+    return None
 
 
 def refresh_records(day_limit, config):
@@ -48,7 +94,7 @@ class Register(Resource):
     """
 
     @regparse.sigcheck.validate
-    def put(self, smallkey):
+    def put(self, key):
         """
         A REST endpoint for adding or editing a single layer.
         All registration requests must contain entries for all languages and will be validated against a JSON schema.
@@ -58,27 +104,33 @@ class Register(Resource):
         :returns: JSON Response -- 201 on success; 400 with JSON payload of an errors array on failure
         """
         try:
-            s = json.loads(request.data)
-        except Exception:
+            req = json.loads(request.data)
+        except Exception as e:
+            current_app.logger.error(e.message)
             return '{"errors":["Unparsable json"]}', 400
-        errors = get_registration_errors(s)
+        errors = get_registration_errors(req)
         if errors:
             resp = {'errors': errors}
             current_app.logger.info(resp)
             return Response(json.dumps(resp), mimetype='application/json', status=400)
 
-        data = dict(key=smallkey, request=s)
+        remapped_types = {'esriMapServer': 'esriDynamic', 'esriFeatureServer': 'esriDynamic'}
+        config = {'en': {}, 'fr': {}}
+        svc_type = get_endpoint_type(req['en']['service_url'])
         try:
-            data = regparse.make_record(smallkey, s, current_app.config)
+            for lang in ['en', 'fr']:
+                config[lang]['id'] = regparse.make_id(key, lang)
+                config[lang]['name'] = regparse.make_id(key, lang)
+                config[lang]['layerType'] = remapped_types.get(svc_type, svc_type)
+                config[lang]['url'] = req[lang]['service_url']
         except regparse.metadata.MetadataException as mde:
             current_app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
             abort(400, msg=mde.message)
 
-        current_app.logger.debug(data)
-
-        db.put_doc(smallkey, {'type': s['payload_type'], 'data': data})
-        current_app.logger.info('added a smallkey %s' % smallkey)
-        return smallkey, 201
+        current_app.logger.debug(config)
+        db.put_doc(key, svc_type, req, config)
+        current_app.logger.info('added a smallkey %s' % key)
+        return key, 201
 
     @regparse.sigcheck.validate
     def delete(self, smallkey):

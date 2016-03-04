@@ -14,7 +14,7 @@ LOG_BACKUPS = 10
 # common options DEBUG 10; ERROR 40
 LOG_LEVEL = 10
 
-REG_SCHEMA = 'schemas/rcs_reg_schema_v1_2_0.json'
+REG_SCHEMA = 'schemas/rcs_reg_schema_v2_0_0.json'
 
 URL_PREFIX = ''
 

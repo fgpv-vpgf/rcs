@@ -56,8 +56,11 @@ if 'ACCESS_LOG' in app.config:
 schema_path = app.config['REG_SCHEMA']
 if not os.path.exists(schema_path):
     schema_path = os.path.join(sys.prefix, schema_path)
-with app.app_context():
-    flask.g.validator = jsonschema.validators.Draft4Validator(json.load(open(schema_path)))
+
+
+@app.before_request
+def before_request():
+    flask.g.get_validator = lambda: jsonschema.validators.Draft4Validator(json.load(open(schema_path)))
 
 db.init_auth_db(app.config['DB_CONN'], app.config['AUTH_DB'])
 db.init_doc_db(app.config['DB_CONN'], app.config['STORAGE_DB'])
