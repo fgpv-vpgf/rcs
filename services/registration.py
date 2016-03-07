@@ -123,6 +123,10 @@ class Register(Resource):
                 config[lang]['name'] = regparse.make_id(key, lang)
                 config[lang]['layerType'] = remapped_types.get(svc_type, svc_type)
                 config[lang]['url'] = req[lang]['service_url']
+                m_url, c_url = regparse.metadata.get_url(req[lang], current_app.config)
+                if c_url:
+                    config[lang]['metadata_url'] = m_url
+                    config[lang]['catalogue_url'] = c_url
         except regparse.metadata.MetadataException as mde:
             current_app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
             abort(400, msg=mde.message)
