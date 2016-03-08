@@ -15,6 +15,8 @@ LOG_BACKUPS = 10
 LOG_LEVEL = 10
 
 REG_SCHEMA = 'schemas/rcs_reg_schema_v2_0_0.json'
+# LANGS must match the languages required by the schema
+LANGS = ['en', 'fr']
 
 URL_PREFIX = ''
 
