@@ -14,33 +14,47 @@ def get_registration_errors(data):
     return []
 
 
-def refresh_records(day_limit, config):
+def refresh_records(day_limit, limit, config):
     import datetime, string
     valid = []
     invalid = {}
     query = ""
     if day_limit is None:
-        query = "function(doc) { emit(doc._id, { updated: doc.updated_at, key: doc.data.key, request: doc.data.request }); }"  # NOQA
+        query = "function(doc) { emit(doc._id, { updated: doc.updated_at, version: doc.version, request: doc.data ? doc.data.request : doc.request }); }"  # NOQA
     else:
         min_age = datetime.date.today() - datetime.timedelta(days=day_limit)
-        query = "function(doc) { if (doc.updated_at <= '$date') emit(doc._id, { updated: doc.updated_at, key: doc.data.key, request: doc.data.request }); }"  # NOQA
+        query = "function(doc) { if (doc.updated_at <= '$date') emit(doc._id, { updated: doc.updated_at, version: doc.version, request: doc.data ? doc.data.request : doc.request }); }"  # NOQA
         query = string.Template(query).substitute(date=min_age)
+    current_app.logger.debug('CouchDB Query {0}'.format(query))
     results = db.query(query)
+    count = 0
+    limit_reached = False
     for r in results:
+        if limit is not None:
+            # annoying count is necessary since we don't want to convert a generator into a list
+            count += 1
+            if count > limit:
+                limit_reached = True
+                break
+
         key = r['id']
-        print r
+        current_app.logger.info('refresh {0}'.format(key))
         if 'request' not in r['value']:
             invalid[key] = 'previous request was not cached (request caching added in 1.8.0)'
             continue
+        if r['value'].get('version', None) != '2.0':
+            invalid[key] = 'v1 record found; upgrading record types has not yet been implemented'
+            continue
         req = r['value']['request']
         try:
-            data = regparse.make_record(key, req, config)
-            db.put_doc(key, {'type': req['payload_type'], 'data': data})
+            data = regparse.make_basic_node(key, req, config)
+            db.put_doc(key, data.values()[0]['layerType'], req, data)
             valid.append(key)
         except Exception as e:
+            current_app.logger.warning('Error in refresh', exc_info=e)
             invalid[key] = str(e)
 
-    return {"updated": valid, "errors": invalid}
+    return {"updated": valid, "errors": invalid, 'limit_reached': limit_reached}
 
 
 class Register(Resource):
@@ -160,7 +174,7 @@ class Refresh(Resource):
     """
 
     @regparse.sigcheck.validate
-    def post(self, arg):
+    def post(self, arg, limit=None):
         """
         A REST endpoint for triggering cache updates.
         Walks through the database and updates cached data.
@@ -171,10 +185,18 @@ class Refresh(Resource):
         :returns: JSON Response -- 200 on success; 400 on malformed URL
         """
         day_limit = None
+        rec_limit = None
+
         try:
             day_limit = int(arg)
         except:
             pass
         if day_limit is None and arg != 'all' or day_limit is not None and day_limit < 1:
             return '{"error":"argument should be either \'all\' or a positive integer"}', 400
-        return Response(json.dumps(refresh_records(day_limit, current_app.config)), mimetype='application/json')
+
+        if limit is not None:
+            try:
+                rec_limit = int(limit)
+            except:
+                return '{"error":"limit must be positive integer if specified"}', 400
+        return Response(json.dumps(refresh_records(day_limit, rec_limit, current_app.config)), mimetype='application/json')
