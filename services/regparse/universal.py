@@ -1,4 +1,4 @@
-import metadata, requests, wms, esri_feature
+import metadata, requests, ogc, esri
 
 
 remapped_types = {'esriMapServer': 'esriDynamic', 'esriFeatureServer': 'esriDynamic'}
@@ -15,8 +15,13 @@ class ServiceTypes:
 
 
 parser_map = {
-    ServiceTypes.WMS: wms.make_node,
-    ServiceTypes.FEATURE: esri_feature.make_node,
+    ServiceTypes.WMS: ogc.make_wms_node,
+    ServiceTypes.WMTS: ogc.make_wms_node,
+    ServiceTypes.MAP_SERVER: esri.make_server_node,
+    ServiceTypes.FEATURE_SERVER: esri.make_server_node,
+    ServiceTypes.FEATURE: esri.make_feature_node,
+    ServiceTypes.TILE: lambda *args: {},
+    ServiceTypes.IMAGE: lambda *args: {},
 }
 
 
@@ -92,8 +97,8 @@ def make_node(key, json_request, config):
     for lang in langs:
         n = node[lang]
         n['id'] = make_id(key, lang)
-        ltype = remapped_types.get(svc_types[lang], svc_types[lang])
-        n['layerType'] = ltype
+        ltype = svc_types[lang]
+        n['layerType'] = remapped_types.get(ltype, ltype)
         if 'service_type' in json_request[lang] and json_request[lang]['service_type'] != svc_types[lang]:
             msg = 'Mismatched service type in {0} object, endpoint identified as {1} but provided as {2}' \
                   .format(lang, svc_types[lang], json_request[lang]['service_type'])
@@ -103,7 +108,7 @@ def make_node(key, json_request, config):
         if c_url:
             node[lang]['metadataUrl'] = m_url
             node[lang]['catalogueUrl'] = c_url
-        n.update(parser_map[ltype](json_request))
+        n.update(parser_map[ltype](json_request[lang]))
         if 'service_name' in json_request[lang]:
             # important to do this last so it overwrites anything scraped from the custom parser
             n['name'] = json_request[lang]['service_name']

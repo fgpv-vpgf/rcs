@@ -176,7 +176,7 @@ def test_small_layer(svc_url, svc_data):
     return False
 
 
-def make_node(data, id, config):
+def make_v1_feature_node(data, id, config):
     """
     Generate a RAMP layer entry for an ESRI feature service.
 
@@ -218,3 +218,25 @@ def make_node(data, id, config):
         node['mode'] = 'snapshot'
     node['geometryType'] = svc_data['geometryType']
     return node
+
+
+def make_feature_node(req):
+    """
+    Parse ESRI feature specific content from a given request
+    """
+    result = {}
+    if 'tolerance' in req:
+        result['tolerance'] = req['tolerance']
+    return result
+
+
+def make_server_node(req):
+    """
+    Parse ESRI MapServer / FeatureServer specific content from a given request
+    """
+    result = {}
+    if 'scrape_only' in req:
+        result['layerEntries'] = [{'index': index} for index in req['scrape_only']]
+    else:
+        result['layerEntries'] = []
+    return result

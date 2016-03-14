@@ -28,7 +28,7 @@ def make_feature_info(data):
     return None
 
 
-def make_v1_node(data, id, config=None):
+def make_v1_wms_node(data, id, config=None):
     """
     Generate a RAMP layer entry for a WMS.
 
@@ -57,7 +57,7 @@ def make_v1_node(data, id, config=None):
     return wms_node
 
 
-def make_node(req):
+def make_wms_node(req):
     """
     Parse WMS specific content from a given request
     """
@@ -68,7 +68,7 @@ def make_node(req):
     if legend_format in ['image/png', 'image/gif', 'image/jpeg', 'image/svg', 'image/svg+xml']:
         result['legendMimeType'] = legend_format
     if 'scrape_only' in req:
-        result['layerEntries'] = req['scrape_only']
+        result['layerEntries'] = [{'id': id} for id in req['scrape_only']]
     else:
         result['layerEntries'] = []
     return result
