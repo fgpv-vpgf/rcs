@@ -1,4 +1,4 @@
-import metadata, requests
+import metadata, requests, wms, esri_feature
 
 
 remapped_types = {'esriMapServer': 'esriDynamic', 'esriFeatureServer': 'esriDynamic'}
@@ -12,6 +12,12 @@ class ServiceTypes:
     FEATURE = 'esriFeature'
     TILE = 'esriTile'
     IMAGE = 'esriImage'
+
+
+parser_map = {
+    ServiceTypes.WMS: wms.make_node,
+    ServiceTypes.FEATURE: esri_feature.make_node,
+}
 
 
 class ServiceEndpointException(Exception):
@@ -74,7 +80,7 @@ def make_id(key, lang):
     return "{0}.{1}.{2}".format('rcs', key, lang)
 
 
-def make_basic_node(key, json_request, config):
+def make_node(key, json_request, config):
     """
     Construct a basic layer node which could be consumed by the viewer.
     """
@@ -84,17 +90,21 @@ def make_basic_node(key, json_request, config):
     if len(set(svc_types.values())) > 1:
         raise ServiceEndpointException('Mismatched service types across languages {0}'.format(svc_types.values()))
     for lang in langs:
-        node[lang]['id'] = make_id(key, lang)
-        if 'service_name' in json_request[lang]:
-            node[lang]['name'] = json_request[lang]['service_name']
-        node[lang]['layerType'] = remapped_types.get(svc_types[lang], svc_types[lang])
+        n = node[lang]
+        n['id'] = make_id(key, lang)
+        ltype = remapped_types.get(svc_types[lang], svc_types[lang])
+        n['layerType'] = ltype
         if 'service_type' in json_request[lang] and json_request[lang]['service_type'] != svc_types[lang]:
             msg = 'Mismatched service type in {0} object, endpoint identified as {1} but provided as {2}' \
                   .format(lang, svc_types[lang], json_request[lang]['service_type'])
             raise ServiceEndpointException(msg)
-        node[lang]['url'] = json_request[lang]['service_url']
+        n['url'] = json_request[lang]['service_url']
         m_url, c_url = metadata.get_url(json_request[lang], config)
         if c_url:
             node[lang]['metadataUrl'] = m_url
             node[lang]['catalogueUrl'] = c_url
+        n.update(parser_map[ltype](json_request))
+        if 'service_name' in json_request[lang]:
+            # important to do this last so it overwrites anything scraped from the custom parser
+            n['name'] = json_request[lang]['service_name']
     return node

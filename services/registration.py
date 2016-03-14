@@ -47,7 +47,7 @@ def refresh_records(day_limit, limit, config):
             continue
         req = r['value']['request']
         try:
-            data = regparse.make_basic_node(key, req, config)
+            data = regparse.make_node(key, req, config)
             db.put_doc(key, data.values()[0]['layerType'], req, data)
             valid.append(key)
         except Exception as e:
@@ -84,7 +84,7 @@ class Register(Resource):
             return Response(json.dumps(resp), mimetype='application/json', status=400)
 
         try:
-            config = regparse.make_basic_node(key, req, current_app.config)
+            config = regparse.make_node(key, req, current_app.config)
         except regparse.metadata.MetadataException as mde:
             current_app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
             abort(400, msg=mde.message)
