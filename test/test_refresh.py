@@ -1,4 +1,3 @@
-import pytest
 from services.registration import refresh_records
 from flask import Flask
 
@@ -14,7 +13,7 @@ def test_empty(monkeypatch):
 
 def test_single(monkeypatch):
     app = Flask('temp')
-    monkeypatch.setattr("services.db.query", lambda q: [{'id':'1', 'value': {'request': {}, 'updated': 3, 'version': '2.0'}}])  # noqa
+    monkeypatch.setattr("services.db.query", lambda q: [{'id': '1', 'value': {'request': {}, 'updated': 3, 'version': '2.0'}}])  # noqa
     monkeypatch.setattr("services.db.put_doc", lambda *args: args[0])
     monkeypatch.setattr("services.regparse.make_basic_node", lambda *args: {'en': {'layerType': 'random'}})
     with app.app_context():
@@ -25,18 +24,18 @@ def test_single(monkeypatch):
 
 def test_limit(monkeypatch):
     app = Flask('temp')
-    monkeypatch.setattr("services.db.query", lambda q: [{'id':'1', 'value': {'request': {}, 'updated': 3, 'version': '2.0'}}, {'id':'2', 'value': {'request': {}, 'updated': 5, 'version': '2.0'}}])  # noqa
+    monkeypatch.setattr("services.db.query", lambda q: [{'id': '1', 'value': {'request': {}, 'updated': 3, 'version': '2.0'}}, {'id': '2', 'value': {'request': {}, 'updated': 5, 'version': '2.0'}}])  # noqa
     monkeypatch.setattr("services.db.put_doc", lambda *args: args[0])
     monkeypatch.setattr("services.regparse.make_basic_node", lambda *args: {'en': {'layerType': 'random'}})
     with app.app_context():
         x = refresh_records(1, 1, {})
         assert x['updated'] == ['1']
-        assert x['limit_reached'] == True
+        assert x['limit_reached'] is True
 
 
 def test_old(monkeypatch):
     app = Flask('temp')
-    monkeypatch.setattr("services.db.query", lambda q: [{'id':'1', 'value': {'request': {}, 'updated': 3}}])  # noqa
+    monkeypatch.setattr("services.db.query", lambda q: [{'id': '1', 'value': {'request': {}, 'updated': 3}}])  # noqa
     monkeypatch.setattr("services.db.put_doc", lambda *args: '1')
     monkeypatch.setattr("services.regparse.make_basic_node", lambda *args: {'en': {'layerType': 'random'}})
     with app.app_context():
