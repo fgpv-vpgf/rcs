@@ -1,7 +1,8 @@
 """
 A WMS "parser" (barely does any parsing at the moment).
 """
-import metadata
+
+# TODO test me
 
 
 def make_feature_info(fi_type):

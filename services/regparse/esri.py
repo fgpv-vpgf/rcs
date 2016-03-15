@@ -4,9 +4,9 @@ An ESRI feature "parser" (really the  requests library does most of the actual p
 Most of the utility functions are exposed but most applications won't use them
 :func:make_node is generally the only point of interest here.
 """
-import requests, metadata
+import requests
 
-_proxies = {}
+# TODO test me
 
 
 def make_grid_col(**kw):
@@ -204,7 +204,7 @@ def make_v1_feature_node(json_request, v2_node):
     node['symbology'] = make_symbology(svc_data, v2_node['url'])
     node['aliasMap'] = make_alias_mapping(svc_data['fields'])
     if 'max_allowable_offset' in json_request:
-        node['maxAllowableOffset'] = data['max_allowable_offset']
+        node['maxAllowableOffset'] = json_request['max_allowable_offset']
     if 'loading_mode' in json_request:
         node['mode'] = json_request['loading_mode']
     elif test_small_layer(node['url'], svc_data):
