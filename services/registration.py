@@ -93,6 +93,7 @@ class Register(Resource):
             abort(400, msg=se.message)
 
         current_app.logger.debug(v2_node)
+        current_app.logger.debug(v1_node)
         db.put_doc(key, v2_node.values()[0]['layerType'], req, layer_config=v2_node, v1_config=v1_node)
         current_app.logger.info('added a key %s' % key)
         return Response(json.dumps(dict(key=key)), mimetype='application/json', status=201)

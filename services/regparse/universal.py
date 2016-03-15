@@ -95,6 +95,8 @@ def make_node(key, json_request, config):
     svc_types = {lang: get_endpoint_type(json_request[lang]['service_url']) for lang in langs}
     if len(set(svc_types.values())) > 1:
         raise ServiceEndpointException('Mismatched service types across languages {0}'.format(svc_types.values()))
+    if svc_types.values()[0] in [ServiceTypes.WMS]:
+        v1 = {lang: {} for lang in langs}
     for lang in langs:
         n = node[lang]
         n['id'] = make_id(key, lang)
@@ -114,5 +116,5 @@ def make_node(key, json_request, config):
             # important to do this last so it overwrites anything scraped from the custom parser
             n['name'] = json_request[lang]['service_name']
         if ltype == ServiceTypes.WMS:
-            v1 = ogc.make_v1_wms_node(json_request[lang], n)
+            v1[lang] = ogc.make_v1_wms_node(json_request[lang], n)
     return node, v1
