@@ -96,8 +96,11 @@ def get_raw(key):
     return o
 
 
-def put_doc(key, svc_type, req, config):
+def put_doc(key, svc_type, req, **kw):
     doc = {}
+    for k, v in kw.items():
+        if v is not None:
+            doc[k] = v
     try:
         _db.delete(key)
     except pycouchdb.exceptions.NotFound:
@@ -105,7 +108,6 @@ def put_doc(key, svc_type, req, config):
     doc['_id'] = key
     doc['request'] = req
     doc['version'] = '2.0'
-    doc['layer_config'] = config
     doc['service_type'] = svc_type
     doc['updated_at'] = datetime.date.today().isoformat()
     _db.save(doc)
