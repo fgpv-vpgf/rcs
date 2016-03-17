@@ -1,4 +1,4 @@
-import metadata, requests
+import metadata, requests, ogc, esri
 
 
 remapped_types = {'esriMapServer': 'esriDynamic', 'esriFeatureServer': 'esriDynamic'}
@@ -12,6 +12,17 @@ class ServiceTypes:
     FEATURE = 'esriFeature'
     TILE = 'esriTile'
     IMAGE = 'esriImage'
+
+
+parser_map = {
+    ServiceTypes.WMS: ogc.make_wms_node,
+    ServiceTypes.WMTS: ogc.make_wms_node,
+    ServiceTypes.MAP_SERVER: esri.make_server_node,
+    ServiceTypes.FEATURE_SERVER: esri.make_server_node,
+    ServiceTypes.FEATURE: esri.make_feature_node,
+    ServiceTypes.TILE: lambda *args: {},
+    ServiceTypes.IMAGE: lambda *args: {},
+}
 
 
 class ServiceEndpointException(Exception):
@@ -74,27 +85,38 @@ def make_id(key, lang):
     return "{0}.{1}.{2}".format('rcs', key, lang)
 
 
-def make_basic_node(key, json_request, config):
+def make_node(key, json_request, config):
     """
     Construct a basic layer node which could be consumed by the viewer.
     """
     langs = config['LANGS']
     node = {lang: {} for lang in langs}
+    v1 = None
     svc_types = {lang: get_endpoint_type(json_request[lang]['service_url']) for lang in langs}
     if len(set(svc_types.values())) > 1:
         raise ServiceEndpointException('Mismatched service types across languages {0}'.format(svc_types.values()))
+    if svc_types.values()[0] in [ServiceTypes.WMS, ServiceTypes.FEATURE]:
+        v1 = {lang: {} for lang in langs}
     for lang in langs:
-        node[lang]['id'] = make_id(key, lang)
-        if 'service_name' in json_request[lang]:
-            node[lang]['name'] = json_request[lang]['service_name']
-        node[lang]['layerType'] = remapped_types.get(svc_types[lang], svc_types[lang])
+        n = node[lang]
+        n['id'] = make_id(key, lang)
+        ltype = svc_types[lang]
+        n['layerType'] = remapped_types.get(ltype, ltype)
         if 'service_type' in json_request[lang] and json_request[lang]['service_type'] != svc_types[lang]:
             msg = 'Mismatched service type in {0} object, endpoint identified as {1} but provided as {2}' \
                   .format(lang, svc_types[lang], json_request[lang]['service_type'])
             raise ServiceEndpointException(msg)
-        node[lang]['url'] = json_request[lang]['service_url']
+        n['url'] = json_request[lang]['service_url']
         m_url, c_url = metadata.get_url(json_request[lang], config)
         if c_url:
             node[lang]['metadataUrl'] = m_url
             node[lang]['catalogueUrl'] = c_url
-    return node
+        n.update(parser_map[ltype](json_request[lang]))
+        if 'service_name' in json_request[lang]:
+            # important to do this last so it overwrites anything scraped from the custom parser
+            n['name'] = json_request[lang]['service_name']
+        if ltype == ServiceTypes.WMS:
+            v1[lang] = ogc.make_v1_wms_node(json_request[lang], n)
+        elif ltype == ServiceTypes.FEATURE:
+            v1[lang] = esri.make_v1_feature_node(json_request[lang], n)
+    return node, v1

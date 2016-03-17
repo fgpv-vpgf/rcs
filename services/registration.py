@@ -47,8 +47,8 @@ def refresh_records(day_limit, limit, config):
             continue
         req = r['value']['request']
         try:
-            data = regparse.make_basic_node(key, req, config)
-            db.put_doc(key, data.values()[0]['layerType'], req, data)
+            v2_node, v1_node = regparse.make_node(key, req, config)
+            db.put_doc(key, v2_node.values()[0]['layerType'], req, layer_config=v2_node, v1_config=v1_node)
             valid.append(key)
         except Exception as e:
             current_app.logger.warning('Error in refresh', exc_info=e)
@@ -84,7 +84,7 @@ class Register(Resource):
             return Response(json.dumps(resp), mimetype='application/json', status=400)
 
         try:
-            config = regparse.make_basic_node(key, req, current_app.config)
+            v2_node, v1_node = regparse.make_node(key, req, current_app.config)
         except regparse.metadata.MetadataException as mde:
             current_app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
             abort(400, msg=mde.message)
@@ -92,8 +92,9 @@ class Register(Resource):
             current_app.logger.warning('Problem reading service endpoints', exc_info=se)
             abort(400, msg=se.message)
 
-        current_app.logger.debug(config)
-        db.put_doc(key, config.values()[0]['layerType'], req, config)
+        current_app.logger.debug(v2_node)
+        current_app.logger.debug(v1_node)
+        db.put_doc(key, v2_node.values()[0]['layerType'], req, layer_config=v2_node, v1_config=v1_node)
         current_app.logger.info('added a key %s' % key)
         return Response(json.dumps(dict(key=key)), mimetype='application/json', status=201)
 

@@ -4,9 +4,9 @@ An ESRI feature "parser" (really the  requests library does most of the actual p
 Most of the utility functions are exposed but most applications won't use them
 :func:make_node is generally the only point of interest here.
 """
-import requests, metadata
+import requests
 
-_proxies = {}
+# TODO test me
 
 
 def make_grid_col(**kw):
@@ -80,17 +80,16 @@ def get_legend_url(feature_service_url):
     return feature_service_url[:feature_service_url.rfind('/')] + '/legend?f=json'
 
 
-def get_legend_mapping(data, layer_id):
+def get_legend_mapping(feature_url, layer_id):
     """
     Generates a mapping of layer labels to image data URLs.
 
-    :param data: The initial payload to RCS (should contain a 'service_url' entry)
-    :type data: dict
+    :param feature_url: The service endpoint URL for an ESRI feature layer
+    :type feature_url: str
     :param layer_id: The id of the layer to create the mapping for.
     :returns: dict -- a mapping of 'label' => 'data URI encoded image'
     """
-    global _proxies
-    legend_json = requests.get(get_legend_url(data['service_url']), proxies=_proxies).json()
+    legend_json = requests.get(get_legend_url(feature_url)).json()
     for layer in legend_json['layers']:
         if layer['layerId'] == layer_id:
             break
@@ -108,20 +107,20 @@ def make_alias_mapping(json_data):
     return {x['name']: x['alias'] for x in json_data}
 
 
-def make_symbology(json_data, data):
+def make_symbology(json_data, feature_url):
     """
     Generates a symbology node for the RAMP configuration.  Handles simple,
     unique value and class break renders; prefetches all symbology images.
 
     :param json_data: A dictionary containing scraped data from an ESRI feature service endpoint
     :type json_data: dict
-    :param data: The initial payload to RCS (should contain a 'service_url' entry)
-    :type data: dict
+    :param feature_service_url: A URL pointing to an ESRI feature service
+    :type feature_url: str
     :returns: dict -- a symbology node
     """
     render_json = json_data['drawingInfo']['renderer']
     symb = {'type': render_json['type']}
-    label_map = get_legend_mapping(data, json_data['id'])
+    label_map = get_legend_mapping(feature_url, json_data['id'])
 
     if render_json['type'] == 'simple':
         symb['imageUrl'] = label_map[render_json['label']]
@@ -176,7 +175,7 @@ def test_small_layer(svc_url, svc_data):
     return False
 
 
-def make_node(data, id, config):
+def make_v1_feature_node(json_request, v2_node):
     """
     Generate a RAMP layer entry for an ESRI feature service.
 
@@ -186,35 +185,51 @@ def make_node(data, id, config):
     :type id: str
     :returns: dict -- a RAMP configuration fragment representing the ESRI layer
     """
-    node = {'id': id}
+    steal_fields = ['id', 'url', 'metadataUrl', 'catalogueUrl']
+    node = {field: v2_node[field] for field in steal_fields if field in v2_node}
 
-    global _proxies
-    if 'FEATURE_SERVICE_PROXY' in config:
-        _proxies = {'http': config['FEATURE_SERVICE_PROXY'], 'https': config['FEATURE_SERVICE_PROXY']}
-    r = requests.get(data['service_url'] + '?f=json', proxies=_proxies)
+    r = requests.get(v2_node['url'] + '?f=json')
     svc_data = r.json()
-    node['url'] = data['service_url']
-    node['displayName'] = data.get('service_name', None)
-    node['nameField'] = data.get('display_field', None)
+    node['displayName'] = json_request.get('service_name', None)
+    node['nameField'] = json_request.get('display_field', None)
     if node.get('displayName', None) is None:
         node['displayName'] = svc_data['name']
     if node.get('nameField', None) is None:
         node['nameField'] = svc_data['displayField']
-    metadata_url, catalogue_url = metadata.get_url(data, config)
-    if metadata_url:
-        node['metadataUrl'] = metadata_url
-        node['catalogueUrl'] = catalogue_url
+
     node['minScale'] = svc_data.get('minScale', 0)
     node['maxScale'] = svc_data.get('maxScale', 0)
     node['datagrid'] = make_data_grid(svc_data)
     node['layerExtent'] = make_extent(svc_data)
-    node['symbology'] = make_symbology(svc_data, data)
+    node['symbology'] = make_symbology(svc_data, v2_node['url'])
     node['aliasMap'] = make_alias_mapping(svc_data['fields'])
-    if 'max_allowable_offset' in data:
-        node['maxAllowableOffset'] = data['max_allowable_offset']
-    if 'loading_mode' in data:
-        node['mode'] = data['loading_mode']
+    if 'max_allowable_offset' in json_request:
+        node['maxAllowableOffset'] = json_request['max_allowable_offset']
+    if 'loading_mode' in json_request:
+        node['mode'] = json_request['loading_mode']
     elif test_small_layer(node['url'], svc_data):
         node['mode'] = 'snapshot'
     node['geometryType'] = svc_data['geometryType']
     return node
+
+
+def make_feature_node(req):
+    """
+    Parse ESRI feature specific content from a given request
+    """
+    result = {}
+    if 'tolerance' in req:
+        result['tolerance'] = req['tolerance']
+    return result
+
+
+def make_server_node(req):
+    """
+    Parse ESRI MapServer / FeatureServer specific content from a given request
+    """
+    result = {}
+    if 'scrape_only' in req:
+        result['layerEntries'] = [{'index': index} for index in req['scrape_only']]
+    else:
+        result['layerEntries'] = []
+    return result

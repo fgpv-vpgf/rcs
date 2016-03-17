@@ -70,13 +70,17 @@ def get_doc(key, lang, ver):
             if fragment is not None:
                 result = dict(layers=[fragment])
                 return result
-        fragment = o.get('data', {}).get(lang, None)
+        fragment = o.get('v1_config', {}).get(lang, None)
         if fragment is not None:
+            map_types = {'ogcWms': 'wms', 'esriFeature': 'feature'}
             fragment = version_conversion(ver, fragment)
             result = {'layers': {}}
-            result['layers'][o['type']] = [fragment]
-            if 'geometryType' in result['layers'][o['type']][0]:
-                del result['layers'][o['type']][0]['geometryType']
+            svc_type = map_types.get(o['service_type'], None)
+            if svc_type is None:
+                return None
+            result['layers'][svc_type] = [fragment]
+            if 'geometryType' in result['layers'][svc_type][0]:
+                del result['layers'][svc_type][0]['geometryType']
             return result
     return None
 
@@ -96,8 +100,11 @@ def get_raw(key):
     return o
 
 
-def put_doc(key, svc_type, req, config):
+def put_doc(key, svc_type, req, **kw):
     doc = {}
+    for k, v in kw.items():
+        if v is not None:
+            doc[k] = v
     try:
         _db.delete(key)
     except pycouchdb.exceptions.NotFound:
@@ -105,7 +112,6 @@ def put_doc(key, svc_type, req, config):
     doc['_id'] = key
     doc['request'] = req
     doc['version'] = '2.0'
-    doc['layer_config'] = config
     doc['service_type'] = svc_type
     doc['updated_at'] = datetime.date.today().isoformat()
     _db.save(doc)
