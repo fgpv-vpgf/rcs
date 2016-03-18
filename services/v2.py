@@ -1,4 +1,5 @@
 from registration import Register, Refresh
+from upgrade import Upgrade
 from retrieval import DocV2, DocsV2
 
 from flask import Blueprint
@@ -15,4 +16,5 @@ def make_blueprint():
     api.add_resource(Refresh, '/refresh/<string:arg>', '/refresh/<string:arg>/<int:limit>')
     api.add_resource(DocV2, '/doc/<string:lang>/<string:smallkey>')
     api.add_resource(DocsV2, '/docs/<string:lang>/<string:smallkeylist>')
+    api.add_resource(Upgrade, '/upgrade/2.0/<string:key>')
     return bp

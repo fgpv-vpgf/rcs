@@ -16,7 +16,10 @@ def wms_upgrade(v1_request):
 
 
 def feat_upgrade(v1_request):
-    return {}
+    steal_fields = ['service_url', 'metadata', 'loading_mode', 'max_allowable_offset', 'display_field']
+    result = {x:v1_request[x] for x in steal_fields if x in v1_request}
+    result['service_type'] = regparse.ServiceTypes.FEATURE
+    return result
 
 
 class Upgrade(Resource):
