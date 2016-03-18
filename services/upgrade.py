@@ -42,17 +42,19 @@ class Upgrade(Resource):
             return '{"msg":"Record not found in database"}', 404
         elif dbdata.get('version') == '2.0':
             return '{"msg":"Already upgraded"}', 200
-        elif dbdata.get('request') is None:
+        elif dbdata['data'].get('request') is None:
             return '{"msg":"Previous request was not cached (request caching added in 1.8.0)"}', 409
 
         try:
-            v1_request = dbdata['request']
+            v1_request = dbdata['data']['request']
             upgrade_method = wms_upgrade if v1_request['payload_type'] == 'wms' else feat_upgrade
             v2_request = {lang: upgrade_method(v1_request[lang]) for lang in current_app.config['LANGS']}
+            print v2_request
             v2_node, v1_node = regparse.make_node(key, v2_request, current_app.config)
             db.put_doc(key, v2_node.values()[0]['layerType'], v2_request, layer_config=v2_node, v1_config=v1_node)
         except Exception as e:
             msg = {'msg': 'Error: {0}'.format(e.message)}
+            current_app.logger.error('Failed to upgrade {0}'.format(key), exc_info=e)
             return Response(json.dumps(msg), mimetype='application/json', status=400)
 
         success = {"msg": "Upgraded", "version": "2.0", "key":key}
