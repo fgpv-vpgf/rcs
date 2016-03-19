@@ -88,13 +88,13 @@ def get_doc(key, lang, ver):
 
         # attempt to get the v1 style data from a record that is still in the old DB format
         # this should be deprecated when v3 comes along
-        fragment = o.get('data',{}).get(lang,None)
+        fragment = o.get('data', {}).get(lang, None)
         if fragment is not None:
             fragment = version_conversion(ver, fragment)
             result = {'layers': {}}
             result['layers'][o['type']] = [fragment]
             if 'geometryType' in result['layers'][o['type']][0]:
-                del result['layers'][ o['type'] ][0]['geometryType']
+                del result['layers'][o['type']][0]['geometryType']
             return result
     return None
 
