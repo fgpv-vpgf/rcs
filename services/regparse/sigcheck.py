@@ -52,6 +52,8 @@ def test_request(request):
     rqpath = request.path
     rqbody = request.data
     psk = services.db.auth.get_key(cid)
+    if psk and flask.current_app.config.get('PROD') and cid in ['jstest', 'ecdmpdev']:
+        raise Exception('Production mode should never be enabled while connected to a database containing test keys')
 
     ref_sig = sign(psk, rqpath, cid, dt, rqbody)
     logger.info('Signature received: {0}  ##  Signature generated: {1}'.format(msg_sig, ref_sig))
