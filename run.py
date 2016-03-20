@@ -33,7 +33,7 @@ for l in loggers:
 
 flask.got_request_exception.connect(utils.log_exception, app)
 if 'ACCESS_LOG' in app.config:
-    acc_log = logging.getLogger('testlog')
+    acc_log = logging.getLogger('rcsaccesslog')
     acc_log.setLevel(logging.DEBUG)
     acc_handler = RotatingFileHandler(app.config['ACCESS_LOG'],
                                       maxBytes=app.config.get('LOG_ROTATE_BYTES', 200000),
@@ -63,6 +63,12 @@ def before_request():
     flask.g.get_validator = lambda: jsonschema.validators.Draft4Validator(json.load(open(schema_path)))
     # TODO this is probably a good place to attach proxies for feature retrieval
 
+if app.config.get('DEBUG_ENDPOINTS'):
+    @app.after_request
+    def after_request(response):
+        response.headers.add('RCS-Debug-Enabled', 'True')
+        return response
+
 db.init_auth_db(app.config['DB_CONN'], app.config['AUTH_DB'])
 db.init_doc_db(app.config['DB_CONN'], app.config['STORAGE_DB'])
 # client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
@@ -71,7 +77,7 @@ global_prefix = app.config.get('URL_PREFIX', '')
 api_v1_bp = v1.make_blueprint()
 app.register_blueprint(api_v1_bp, url_prefix=global_prefix + '/v1')
 
-api_v2_bp = v2.make_blueprint()
+api_v2_bp = v2.make_blueprint(app)
 app.register_blueprint(api_v2_bp, url_prefix=global_prefix + '/v2')
 
 if __name__ == '__main__':
