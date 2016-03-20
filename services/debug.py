@@ -1,5 +1,5 @@
 from flask import current_app, Response
-from flask.ext.restful import request, abort, Resource
+from flask.ext.restful import Resource
 
 
 class FetchFile(Resource):

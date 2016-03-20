@@ -73,8 +73,6 @@ if app.config.get('PROD'):
     if app.config.get('DEBUG_ENDPOINTS') or not app.config.get('SIG_CHECK'):
         raise Exception('PROD enabled while DEBUG_ENDPOINTS is True or SIG_CHECK is False.  I hope that was a typo.')
 
-
-
 db.init_auth_db(app.config['DB_CONN'], app.config['AUTH_DB'])
 db.init_doc_db(app.config['DB_CONN'], app.config['STORAGE_DB'])
 # client[app.config['DB_NAME']].authenticate( app.config['DB_USER'], app.config['DB_PASS'] )
