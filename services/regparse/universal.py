@@ -44,7 +44,7 @@ def get_endpoint_type(endpoint):
     try:
         r = requests.get(endpoint)
         ct = r.headers['content-type']
-        if (ct == 'text/xml'):
+        if (ct in ['text/xml', 'application/xml']):
             # XML response means WMS or WMTS (latter is not implemented)
             # FIXME type detection should be much more robust, add proper XML parsing, ...
             return ServiceTypes.WMS
