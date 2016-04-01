@@ -1,4 +1,4 @@
-import metadata, requests, ogc, esri
+import metadata, requests, ogc, esri, re
 
 
 remapped_types = {'esriMapServer': 'esriDynamic', 'esriFeatureServer': 'esriDynamic'}
@@ -42,6 +42,10 @@ def get_endpoint_type(endpoint):
     Determine the type of the endpoint
     """
     try:
+        esri_regex = re.compile('/(mapserver|featureserver)/?\d*$', re.IGNORECASE)
+        if '?' not in endpoint and not esri_regex.search(endpoint):
+            # probably isn't an ESRI endpoint so try GetCapabilities
+            endpoint += '?VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=wms'
         r = requests.get(endpoint)
         ct = r.headers['content-type']
         if (ct in ['text/xml', 'application/xml']):
@@ -68,7 +72,7 @@ def get_endpoint_type(endpoint):
             elif 'allowedMosaicMethods' in data:
                 return ServiceTypes.IMAGE
     except Exception as e:
-        raise ServiceEndpointException('Problem communicating with service endpoint {0}'.format(e.message), e)
+        raise ServiceEndpointException('Problem communicating with service endpoint {0} {1}'.format(endpoint, e.message), e)
     raise ServiceEndpointException('Endpoint({0}) did not match any known service type'.format(endpoint))
 
 
