@@ -72,7 +72,8 @@ def get_endpoint_type(endpoint):
             elif 'allowedMosaicMethods' in data:
                 return ServiceTypes.IMAGE
     except Exception as e:
-        raise ServiceEndpointException('Problem communicating with service endpoint {0} {1}'.format(endpoint, e.message), e)
+        raise ServiceEndpointException('Problem communicating with service endpoint {0} {1}'
+                                       .format(endpoint, e.message), e)
     raise ServiceEndpointException('Endpoint({0}) did not match any known service type'.format(endpoint))
 
 
