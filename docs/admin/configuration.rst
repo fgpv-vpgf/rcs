@@ -32,3 +32,5 @@ CATALOGUE_URL
     Template URL for the catalogue page, should include a ``{0}`` parameter for string replacement
 REG_SCHEMA
     Path to the JSON schema to be used for validating PUT requests
+LANGS
+    Must match the languages required by the schema (e.g. 'en', 'fr')
