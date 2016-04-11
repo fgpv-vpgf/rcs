@@ -99,7 +99,7 @@ class Register(Resource):
         return Response(json.dumps(dict(key=key)), mimetype='application/json', status=201)
 
     @regparse.sigcheck.validate
-    def delete(self, smallkey):
+    def delete(self, key):
         """
         A REST endpoint for removing a layer.
 
@@ -108,11 +108,11 @@ class Register(Resource):
         :returns: JSON Response -- 204 on success; 500 on failure
         """
         try:
-            db.delete_doc(smallkey)
-            current_app.logger.info('removed a smallkey %s' % smallkey)
+            db.delete_doc(key)
+            current_app.logger.info('removed a key %s' % key)
             return '', 204
         except pycouchdb.exceptions.NotFound as nfe:
-            current_app.logger.info('smallkey was not found %s' % smallkey, exc_info=nfe)
+            current_app.logger.info('key was not found %s' % key, exc_info=nfe)
         return '', 404
 
 

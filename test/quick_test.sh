@@ -4,6 +4,14 @@ curl http://localhost:6101/v2/doc/en/test
 echo
 echo
 
+curl -X PUT http://localhost:6101/v2/register/test -H 'Content-type: application/json' -d '{ "fr": { "feature_info_format": "text/plain", "service_url": "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_fr", "service_type": "ogcWms", "legend_format": "image/gif", "scrape_only": [ "frontieres" ], "service_name": "WMS french" }, "en": { "feature_info_format": "text/plain", "service_url": "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", "service_type": "ogcWms", "legend_format": "image/gif", "scrape_only": [ "structures" ], "service_name": "WMS english" }, "version": "2.0" }'
+curl http://localhost:6101/v2/doc/en/test
+curl -X DELETE http://localhost:6101/v2/register/test
+curl http://localhost:6101/v2/doc/en/test
+curl -X DELETE http://localhost:6101/v2/register/test
+echo
+echo
+
 curl -X PUT http://localhost:6101/v2/register/testsc -H 'Content-type: application/json' -d '{"version":"2.0", "en":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en?VERSION=1.1.1&request=GetCapabilities&service=wms", "service_type":"ogcWms", "scrape_only": ["railway"]}, "fr":{"service_url":"http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en?VERSION=1.1.1&request=GetCapabilities&service=wms"}}'
 
 curl http://localhost:6101/v2/doc/en/testsc
