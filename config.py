@@ -23,4 +23,5 @@ URL_PREFIX = ''
 DEBUG_ENDPOINTS = True
 PROD = False
 
-# FEATURE_SERVICE_PROXY='http://127.0.0.1:8001'
+#Leave blank if no proxy required
+HTTP_PROXY = 'http://localhost:8899' 
