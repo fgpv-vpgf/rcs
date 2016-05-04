@@ -23,5 +23,5 @@ URL_PREFIX = ''
 DEBUG_ENDPOINTS = True
 PROD = False
 
-#Leave blank if no proxy required
-HTTP_PROXY = 'http://localhost:8899' 
+# Leave blank if no proxy required
+HTTP_PROXY = 'http://localhost:8899'

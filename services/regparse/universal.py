@@ -4,6 +4,7 @@ import metadata, requests, ogc, esri, re, config
 remapped_types = {'esriMapServer': 'esriDynamic', 'esriFeatureServer': 'esriDynamic'}
 _proxies = {'http': config.HTTP_PROXY, 'https': config.HTTP_PROXY}
 
+
 class ServiceTypes:
     WMS = 'ogcWms'
     WMTS = 'ogcWmts'
@@ -60,7 +61,7 @@ def get_endpoint_type(endpoint, type_hint=None):
             # FIXME type detection should be much more robust, add proper XML parsing, ...
             return ServiceTypes.WMS
         elif is_esri:
-            r = requests.get(endpoint+'?f=json',  proxies=_proxies )
+            r = requests.get(endpoint+'?f=json', proxies=_proxies)
             data = r.json()
             if 'type' in data:
                 if data['type'] == 'Feature Layer':

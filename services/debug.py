@@ -2,6 +2,7 @@ from flask import current_app, Response
 from flask.ext.restful import Resource
 import db, json
 
+
 class FetchFile(Resource):
 
     def get(self, index=None):

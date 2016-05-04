@@ -1,7 +1,7 @@
 """
 Methods for dealing with DB document requests
 """
-import pycouchdb, datetime, json, re
+import pycouchdb, datetime
 
 
 _db = None
@@ -120,7 +120,8 @@ def get_all():
         p = ''
         for smallkey in o:
             p = p + '{key:' + o[int(smallkey)] + '},'
-        if p.endswith(","): p = p[:-1]
+        if p.endswith(","):
+            p = p[:-1]
         p = '[' + p + ']'
     except pycouchdb.exceptions.NotFound:
         return None

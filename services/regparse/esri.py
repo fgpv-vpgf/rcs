@@ -9,6 +9,7 @@ import requests, config
 # TODO test me
 _proxies = {'http': config.HTTP_PROXY, 'https': config.HTTP_PROXY}
 
+
 def make_grid_col(**kw):
     """
     Generate a RAMP compliant datagrid column object with the following defaults:
@@ -187,7 +188,7 @@ def make_v1_feature_node(json_request, v2_node):
     """
     steal_fields = ['id', 'url', 'metadataUrl', 'catalogueUrl']
     node = {field: v2_node[field] for field in steal_fields if field in v2_node}
-    r = requests.get(v2_node['url'] + '?f=json', proxies=_proxies )
+    r = requests.get(v2_node['url'] + '?f=json', proxies=_proxies)
     svc_data = r.json()
     node['displayName'] = json_request.get('service_name', None)
     node['nameField'] = json_request.get('display_field', None)
