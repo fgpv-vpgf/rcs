@@ -4,10 +4,10 @@ An ESRI feature "parser" (really the  requests library does most of the actual p
 Most of the utility functions are exposed but most applications won't use them
 :func:make_node is generally the only point of interest here.
 """
-import requests, config
+import requests, flask
+
 
 # TODO test me
-_proxies = {'http': config.HTTP_PROXY, 'https': config.HTTP_PROXY}
 
 
 def make_grid_col(**kw):
@@ -90,7 +90,7 @@ def get_legend_mapping(feature_url, layer_id):
     :param layer_id: The id of the layer to create the mapping for.
     :returns: dict -- a mapping of 'label' => 'data URI encoded image'
     """
-    legend_json = requests.get(get_legend_url(feature_url), proxies=_proxies).json()
+    legend_json = requests.get(get_legend_url(feature_url), proxies=flask.g.proxies).json()
     for layer in legend_json['layers']:
         if layer['layerId'] == layer_id:
             break
@@ -160,15 +160,14 @@ def test_small_layer(svc_url, svc_data):
     :returns: bool -- True if the layer is considered 'small'
     """
 # FIXME needs refactoring, better error handling and better logic
-    global _proxies
     try:
         if svc_data['geometryType'] in ('esriGeometryPoint', 'esriGeometryMultipoint', 'esriGeometryEnvelope'):
             count_query = '/query?where=1%3D1&returnCountOnly=true&f=pjson'
             id_query = '/query?where=1%3D1&returnIdsOnly=true&f=json'
-            r = requests.get(get_base_url(svc_url) + count_query, proxies=_proxies)
+            r = requests.get(get_base_url(svc_url) + count_query, proxies=flask.g.proxies)
             if 'count' in r.json():
                 return r.json()['count'] <= 2000
-            r = requests.get(get_base_url(svc_url) + id_query, proxies=_proxies)
+            r = requests.get(get_base_url(svc_url) + id_query, proxies=flask.g.proxies)
             if 'objectIds' in r.json():
                 return len(r.json()['objectIds']) <= 2000
     except:
@@ -188,7 +187,7 @@ def make_v1_feature_node(json_request, v2_node):
     """
     steal_fields = ['id', 'url', 'metadataUrl', 'catalogueUrl']
     node = {field: v2_node[field] for field in steal_fields if field in v2_node}
-    r = requests.get(v2_node['url'] + '?f=json', proxies=_proxies)
+    r = requests.get(v2_node['url'] + '?f=json', proxies=flask.g.proxies)
     svc_data = r.json()
     node['displayName'] = json_request.get('service_name', None)
     node['nameField'] = json_request.get('display_field', None)

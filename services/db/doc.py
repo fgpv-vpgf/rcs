@@ -116,16 +116,10 @@ def get_raw(key):
 
 def get_all():
     try:
-        o = _db.all(None, "_id", "True")
-        p = ''
-        for smallkey in o:
-            p = p + '{key:' + o[int(smallkey)] + '},'
-        if p.endswith(","):
-            p = p[:-1]
-        p = '[' + p + ']'
+        return [{'key': key} for key in _db.all(None, '_id', 'True')]
     except pycouchdb.exceptions.NotFound:
-        return None
-    return p
+        pass
+    return None
 
 
 def put_doc(key, svc_type, req, **kw):
