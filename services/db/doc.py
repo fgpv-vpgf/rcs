@@ -1,7 +1,7 @@
 """
 Methods for dealing with DB document requests
 """
-import pycouchdb, datetime
+import pycouchdb, datetime, json, re
 
 
 _db = None
@@ -112,6 +112,19 @@ def get_raw(key):
     except pycouchdb.exceptions.NotFound:
         return None
     return o
+
+
+def get_all():
+    try:
+        o = _db.all(None, "_id", "True")
+        p = ''
+        for smallkey in o:
+            p = p + '{key:' + o[int(smallkey)] + '},'
+        if p.endswith(","): p = p[:-1]
+        p = '[' + p + ']'
+    except pycouchdb.exceptions.NotFound:
+        return None
+    return p
 
 
 def put_doc(key, svc_type, req, **kw):

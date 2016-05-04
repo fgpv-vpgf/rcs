@@ -1,6 +1,6 @@
 from flask import current_app, Response
 from flask.ext.restful import Resource
-
+import db, json
 
 class FetchFile(Resource):
 
@@ -26,3 +26,12 @@ class Log(FetchFile):
     def __init__(self):
         super(Log, self).__init__()
         self.file_param = 'LOG_FILE'
+
+
+class AllKeys(Resource):
+
+    def get(self, lang):
+        doc = db.get_all()
+        if doc is None:
+            return None, 404
+        return Response(json.dumps(doc), mimetype='application/json')
