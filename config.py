@@ -24,4 +24,4 @@ DEBUG_ENDPOINTS = True
 PROD = False
 
 # Leave blank if no proxy required
-HTTP_PROXY = 'http://localhost:8899'
+HTTP_PROXY = ''
