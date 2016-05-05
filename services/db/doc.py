@@ -114,9 +114,17 @@ def get_raw(key):
     return o
 
 
-def get_all():
+def get_all(lang):
+    """
+    Display all keys and their service URLs.
+    """
     try:
-        return [{'key': key} for key in _db.all(None, '_id', 'True')]
+        allkeys = [{'key': key} for key in _db.all(None, None, 'True')]
+        ids_and_urls = []
+        for i in allkeys:
+            for key, elem in i.items():
+                ids_and_urls.append({elem['_id']: elem['request'][lang]['service_url']})
+        return ids_and_urls
     except pycouchdb.exceptions.NotFound:
         pass
     return None

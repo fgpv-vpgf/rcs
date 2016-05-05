@@ -32,7 +32,7 @@ class Log(FetchFile):
 class AllKeys(Resource):
 
     def get(self, lang):
-        doc = db.get_all()
+        doc = db.get_all(lang)
         if doc is None:
             return None, 404
         return Response(json.dumps(doc), mimetype='application/json')
