@@ -13,8 +13,6 @@ LOG_ROTATE_BYTES
     Size in bytes at which logs should be rotated
 ACCESS_LOG
     Name of the access log file, if not present access requests will not be logged
-FEATURE_SERVICE_PROXY
-    A proxy URL to be used when registering ESRI feature layers.  Should be in the form of ``http://[server]:[port]``.
 URL_PREFIX
     A general prefix for the application, useful if you want to have side by side installs
     of RCS.  It should include an opening / (e.g. ``/rcs_ecdmp``).
@@ -34,3 +32,5 @@ REG_SCHEMA
     Path to the JSON schema to be used for validating PUT requests
 LANGS
     Must match the languages required by the schema (e.g. 'en', 'fr')
+HTTP_PROXY
+    A proxy URL to be used when registering layers.  Should be in the form of ``http://[server]:[port]``.

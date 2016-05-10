@@ -17,5 +17,5 @@ wheelhouse/
 .vagrant/
 .cache/
 rcs.egg-info/
-
+local/
 MANIFEST
