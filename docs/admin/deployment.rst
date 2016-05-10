@@ -38,14 +38,14 @@ Configure Python Environment
 
 #. Ensure python is a 2.7.x release
 #. Get an RCS release package ``rcs-X.Y.Z.zip``
-#. Extract the release package, it should be somewhere IIS can be configured to read from ``c:\inetpub\rcs-X.Y.Z``
+#. Extract the release package, it should be somewhere IIS can be configured to read from ``c:\inetpub\rcs``
 #. [Optional] Get prepackaged dependencies (should be a directory full of ``.whl`` files)
 #. Install pip (https://pip.pypa.io/en/latest/installing.html)
 #. Install virtualenv ``pip install virtualenv``
 #. Create python virtual environment in the release location and activate it
     .. code-block:: bat
 
-        cd c:\inetpub\rcs-X.Y.Z
+        cd c:\inetpub\rcs
         virtualenv .
         scripts\activate
 #. Install the project dependencies (perform only one of the following steps):
@@ -58,13 +58,13 @@ Configure Python Environment
    full description for all options, at a minimum update the following:
 
     * **DB_CONN** should match the account, password and host settings from the CouchDB installation
-    * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_schema_v1.json``
+    * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_reg_schema_v2_0_0.json``
       -- use double backslashes to avoid string escape codes)
     * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs.log``)
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
-#. Test the installation ``python rcs.py`` (this will run a test server on localhost)
-#. Seed the database ``python seed_qa_keys.py`` (**do not perform this in pproduction**)
+#. Test the installation ``python run.py`` (this will run a test server on localhost)
+#. Seed the database ``python seed_qa_keys.py`` (**change these values before running on Production!**)
 
 IIS Integration
 ^^^^^^^^^^^^^^^
@@ -85,9 +85,9 @@ IIS Integration
     .. code-block:: yaml
 
         PYTHONPATH: C:\inetpub\rcs\
-        WSGI_HANDLER: rcs.app
+        WSGI_HANDLER: run.app
 
-Upgrading from 1.x on Windows (IIS + FastCgi)
+Upgrading from 1.8+ on Windows (IIS + FastCgi)
 ---------------------------------------------
 
 Upgrading RCS can be performed in place wihtout the need to change the IIS
@@ -118,47 +118,14 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
 #. Update the following in ``config.py`` or the file pointed to by the enviornment variable ``RCS_CONFIG``:
 
     * **DB_CONN** should match the account, password and host settings from the CouchDB installation
-    * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_schema_v1.json``
+    * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_reg_schema_v2_0_0.json``
       -- use double backslashes to avoid string escape codes)
     * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs.log``)
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
 #. Test the installation ``python rcs.py`` (this will run a test server on localhost)
 #. Follow any other version specific upgrade notes in this section.
-
-Upgrading from 1.6 to 1.7
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Version 1.7 of RCS adds the capability to use a URL prefix for an RCS
-installation.  This makes it possible to deploy multiple copies of RCS side by
-side in IIS.  To prefix an existing RCS install please follow the steps.
-
-#. Select a common directory for the various RCS installations to share (this
-   is only necessary if IIS needs to serve up static files)
-#. Create or copy RCS installations into various subfolders (e.g. ``rcs1`` and
-   ``rcs2``)
-#. In IIS create or modify a website to be the root for the various RCS installations
-#. (Optional) The root directory should point to the common directory for the
-   RCS installations
-#. For each RCS installation add a handler as described above using a Request
-   Path of ``/<subfolder name>/*`` (if static files are not needed the prefix
-   may be any prefix identifying the RCS installation)
-#. In the RCS installation set the configuration parameter **URL_PREFIX** (e.g.
-   ``/rcs1`` for a request path of ``/rcs1/*``)
-
-Upgrading from 1.7 to 1.9
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-RCS 1.8.0, 1.8.1 and 1.9.0 do not require any additional deployment changes.
-
-Upgrading from 1.7 to 1.10
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-RCS 1.10 adds two additional configuration options.  **ACCESS_LOG** allows every
-request to be logged.  It can be set by adding an entry to the config pointing
-to an absolute path to the log file (this should be separate from the primary log file).
-**FEATURE_SERVICE_PROXY** forces the use of a proxy for the registration of ESRI feature
-layers.
+#. Update IIS's FastCGI Environment variables collection: change WSGI_HANDLER's value from ``rcs.app`` to ``run.app``.
 
 Verification
 ------------

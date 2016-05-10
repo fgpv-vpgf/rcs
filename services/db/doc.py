@@ -114,6 +114,22 @@ def get_raw(key):
     return o
 
 
+def get_all(lang):
+    """
+    Display all keys and their service URLs.
+    :param lang: A two letter language code identifying the language for the response
+    :type lang: str
+    :returns: dict -- A dictionary representing  smallkeys and their respective registered service URLs
+    """
+    try:
+        ids_and_urls = [{'key': entry['_id'], 'url': entry['layer_config'][lang]['url']}
+                        for entry in _db.all(None, None, 'True') if 'layer_config' in entry]
+        return ids_and_urls
+    except pycouchdb.exceptions.NotFound:
+        pass
+    return None
+
+
 def put_doc(key, svc_type, req, **kw):
     doc = {}
     for k, v in kw.items():

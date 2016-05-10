@@ -1,7 +1,7 @@
 from registration import Register, Refresh
 from upgrade import Upgrade
 from retrieval import DocV2, DocsV2
-from debug import AccessLog, Log
+from debug import AccessLog, Log, AllKeys
 
 from flask import Blueprint
 from flask.ext.restful import Api
@@ -21,4 +21,5 @@ def make_blueprint(app):
     if app.config.get('DEBUG_ENDPOINTS'):
         api.add_resource(AccessLog, '/accesslog', '/accesslog/<int:index>')
         api.add_resource(Log, '/log', '/log/<int:index>')
+        api.add_resource(AllKeys, '/all_keys', '/all_keys/<string:lang>')
     return bp

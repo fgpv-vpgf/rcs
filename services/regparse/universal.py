@@ -1,4 +1,4 @@
-import metadata, requests, ogc, esri, re
+import metadata, requests, ogc, esri, re, flask
 
 
 remapped_types = {'esriMapServer': 'esriDynamic', 'esriFeatureServer': 'esriDynamic'}
@@ -24,6 +24,9 @@ parser_map = {
     ServiceTypes.IMAGE: lambda *args: {},
 }
 
+esri_types = [ServiceTypes.MAP_SERVER, ServiceTypes.FEATURE_SERVER, ServiceTypes.FEATURE, ServiceTypes.TILE,
+              ServiceTypes.IMAGE]
+
 
 class ServiceEndpointException(Exception):
     """
@@ -37,23 +40,27 @@ class ServiceEndpointException(Exception):
         return 'ServiceEndpointException {0}'.format(self.message)
 
 
-def get_endpoint_type(endpoint):
+def get_endpoint_type(endpoint, type_hint=None):
     """
     Determine the type of the endpoint
     """
     try:
         esri_regex = re.compile('/(mapserver|featureserver)/?\d*$', re.IGNORECASE)
-        if '?' not in endpoint and not esri_regex.search(endpoint):
+        xml_regex = re.compile('(text|application)/.*xml', re.IGNORECASE)
+        is_esri = esri_regex.search(endpoint) or type_hint in esri_types
+        if '?' not in endpoint and not is_esri:
             # probably isn't an ESRI endpoint so try GetCapabilities
             endpoint += '?VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=wms'
         r = requests.get(endpoint)
+        print r.status_code
+        print r.headers
         ct = r.headers['content-type']
-        if (ct in ['text/xml', 'application/xml']):
+        if (xml_regex.search(ct)):
             # XML response means WMS or WMTS (latter is not implemented)
             # FIXME type detection should be much more robust, add proper XML parsing, ...
             return ServiceTypes.WMS
-        else:
-            r = requests.get(endpoint+'?f=json')
+        elif is_esri:
+            r = requests.get(endpoint+'?f=json', proxies=flask.g.proxies)
             data = r.json()
             if 'type' in data:
                 if data['type'] == 'Feature Layer':
@@ -97,7 +104,8 @@ def make_node(key, json_request, config):
     langs = config['LANGS']
     node = {lang: {} for lang in langs}
     v1 = None
-    svc_types = {lang: get_endpoint_type(json_request[lang]['service_url']) for lang in langs}
+    svc_types = {lang: get_endpoint_type(json_request[lang]['service_url'], json_request[lang].get('service_type'))
+                 for lang in langs}
     if len(set(svc_types.values())) > 1:
         raise ServiceEndpointException('Mismatched service types across languages {0}'.format(svc_types.values()))
     if svc_types.values()[0] in [ServiceTypes.WMS, ServiceTypes.FEATURE]:

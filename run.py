@@ -61,7 +61,7 @@ if not os.path.exists(schema_path):
 @app.before_request
 def before_request():
     flask.g.get_validator = lambda: jsonschema.validators.Draft4Validator(json.load(open(schema_path)))
-    # TODO this is probably a good place to attach proxies for feature retrieval
+    flask.g.proxies = {'http': app.config['HTTP_PROXY'], 'https': app.config['HTTP_PROXY']}
 
 if app.config.get('DEBUG_ENDPOINTS'):
     @app.after_request
