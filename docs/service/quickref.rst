@@ -14,6 +14,15 @@ POST /update/[age]                                    Updates all cached frageme
 PUT /simplification/[smallkey]                        Add a geometry simplification factor to feature layer configuration fragment
 ====================================================  ==================================================================
 
+RCS also has 3 debug endpoints. These are enabled by setting the DEBUG_ENDPOINTS variable to True in config.py. 
+
+====================================================  ==================================================================
+Endpoint                                              Description
+====================================================  ==================================================================
+GET /accesslog/[index]                                Retrieves the RCS access logs. [index] specifies the index of the log file if multiple exist
+GET /log/[index]                                      Retrieves the error log for the RCS
+GET /all_keys/[lang]                                  Displays a list of registered smallkeys and their related service, by language
+====================================================  ==================================================================
 
 *NOTE: deprecated endpoints are not included in the summary*
 

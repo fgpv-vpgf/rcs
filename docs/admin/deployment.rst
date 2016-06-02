@@ -88,7 +88,7 @@ IIS Integration
         WSGI_HANDLER: run.app
 
 Upgrading from 1.8+ on Windows (IIS + FastCgi)
----------------------------------------------
+------------------------------------------------
 
 Upgrading RCS can be performed in place wihtout the need to change the IIS
 configuration.  If you are upgrading from a post 1.5 release then there is
