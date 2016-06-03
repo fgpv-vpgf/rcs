@@ -1,6 +1,6 @@
 .. _config:
 
-RCS Configration Options
+RCS Configuration Options
 ========================
 
 LOG_FILE
@@ -34,3 +34,5 @@ LANGS
     Must match the languages required by the schema (e.g. 'en', 'fr')
 HTTP_PROXY
     A proxy URL to be used when registering layers.  Should be in the form of ``http://[server]:[port]``.
+PROD
+    Not sure!
