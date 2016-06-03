@@ -35,4 +35,6 @@ LANGS
 HTTP_PROXY
     A proxy URL to be used when registering layers.  Should be in the form of ``http://[server]:[port]``.
 PROD
-    Not sure!
+    Adds checks for production systems to ensure test keys like ``jstest`` and ``ecdmpdev`` are not used, and ensures that DEBUG_ENDPOINTS and SIG_CHECK are set to false and true, respectively.
+DEBUG_ENDPOINTS
+    Enables the /accesslog, /logs, and /all_keys endpoints, should be turned off in Production environments.
