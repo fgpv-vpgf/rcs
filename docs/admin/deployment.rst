@@ -56,13 +56,18 @@ Configure Python Environment
 #. Update the configuration in ``config.py`` or set the environment variable ``RCS_CONFIG``
    to point to a config which overrides the defaults set in ``config.py``.  See :ref:`config` for a
    full description for all options, at a minimum update the following:
-
+   
     * **DB_CONN** should match the account, password and host settings from the CouchDB installation
     * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_reg_schema_v2_0_0.json``
       -- use double backslashes to avoid string escape codes)
     * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs.log``)
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
+    * **DEBUG_ENDPOINTS** should be set to False in Production, enables the /accesslog, /log, and /all_keys endpoints when True
+    * **PROD** should be set to True only in a Production environment, BUT WHAT DOES IT DO???
+    * **HTTP_PROXY**
+    * **URL_PREFIX** A general prefix for the application, useful if you want to have side by side installs of RCS
+
 #. Test the installation ``python run.py`` (this will run a test server on localhost)
 #. Seed the database ``python seed_qa_keys.py`` (**change these values before running on Production!**)
 
@@ -88,7 +93,7 @@ IIS Integration
         WSGI_HANDLER: run.app
 
 Upgrading from 1.8+ on Windows (IIS + FastCgi)
----------------------------------------------
+------------------------------------------------
 
 Upgrading RCS can be performed in place wihtout the need to change the IIS
 configuration.  If you are upgrading from a post 1.5 release then there is
@@ -123,6 +128,11 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
     * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs.log``)
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
+    * **DEBUG_ENDPOINTS** should be set to False in Production, enables the /accesslog, /log, and /all_keys endpoints when True
+    * **PROD** should be set to True only in a Production environment, BUT WHAT DOES IT DO???
+    * **HTTP_PROXY**
+    * **URL_PREFIX** A general prefix for the application, useful if you want to have side by side installs of RCS
+
 #. Test the installation ``python rcs.py`` (this will run a test server on localhost)
 #. Follow any other version specific upgrade notes in this section.
 #. Update IIS's FastCGI Environment variables collection: change WSGI_HANDLER's value from ``rcs.app`` to ``run.app``.
@@ -137,7 +147,7 @@ This is a small test that can verify if all the major components have been insta
    available at :ref:`contract`
 #. In a browser, load up http://rcs.localhost/static/test.html (replacing the
    hostname with the correct path to rcs)
-#. Enter a smallkey value (e.g. “test”)
+#. Enter a key value (e.g. “test”)
 #. Press the *Feature* button in the second row of buttons
 #. Press *PUT*
 #. If successful you will see a ``201`` code that the service was properly added to the database

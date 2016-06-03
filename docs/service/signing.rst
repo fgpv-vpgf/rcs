@@ -22,7 +22,7 @@ characters stripped from the end.  The encoded signature should be attached to t
 HTTP request along with the following custom HTTP headers ::
 
     Authorization: <signature as encoded above>
-    TimeStamp: <ISO 8601 date and time, must match the exact text used for signing> 
+    TimeStamp: <ISO 8601 date and time, must match the exact text used for signing>
     Sender: <pre-shared identifier with RCS>
 
 Once computed, the signature is considered valid for +/- 2 minutes of the time
@@ -106,9 +106,9 @@ Code Example
 ------------
 
 Here’s a sample code from our Python unit test ::
-    
-    smallkey = str(random.randint(100, 1000000))
-        
+
+    key = str(random.randint(100, 1000000))
+
     payload = json.loads('{"version": "1.0.0", "payload_type": "feature", "en": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }, "fr": { "service_url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/RAMP/RAMP_ResearchCentres/MapServer/0" }}')
 
     #add timeStamp to the put requeset
@@ -116,7 +116,7 @@ Here’s a sample code from our Python unit test ::
     timeStamp = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     # construct msg for signing
-    msg = '/v1/register/'+smallkey + self.sender + timeStamp + json.dumps(payload)       
+    msg = '/v1/register/'+key + self.sender + timeStamp + json.dumps(payload)
 
     #generate hash
     h = hmac.new( str(self.key), msg, digestmod=hashlib.sha256 )
@@ -126,7 +126,7 @@ Here’s a sample code from our Python unit test ::
     headers = {"contentType": "application/json; charset=utf-8", "dataType": "text", "Sender": self.sender, "Authorization": signature, "TimeStamp": timeStamp}
 
     # run put and get response
-    putResponse = requests.put(self.service + 'v1/register/' + smallkey, json=payload, headers=headers)
-    
+    putResponse = requests.put(self.service + 'v1/register/' + key, json=payload, headers=headers)
+
     # status code should be 201
     assert putResponse.status_code == 201
