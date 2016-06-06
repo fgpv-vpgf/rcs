@@ -25,6 +25,7 @@ RAMP Setup
 Connecting to RCS
 -----------------
 
-#. Edit the ``RAMP-starter.js`` file in the root of your RAMP install
-#. Set the ``configServiceURL`` to point to your RCS installation (please
-   include a trailing slash)
+#. Edit the ``index-one.html`` or the .html relevant to your deployment needs,
+in the root of your RAMP installation
+#. Set the ``rv-service-endpoint`` to point to your RCS installation (please include a trailing slash)
+#. Set ``rv-keys`` optionally to include an array of pre-registered RCS entries to display on map load.

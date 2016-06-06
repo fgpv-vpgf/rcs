@@ -1,19 +1,29 @@
 Service Quick Reference
 =======================
 
-RCS currently exposes 6 REST endpoints.
+RCS currently exposes 7 REST endpoints.
 
 ====================================================  ==================================================================
 Endpoint                                              Description
 ====================================================  ==================================================================
-GET /doc/[lang]/[smallkey]                            Retrieves a single configuration fragment
-GET /docs/[lang]/[smallkey]{,[smallkey]}{/[sortarg]}  Retrieves multiple configuration fragments, sorted by geometry type if sortarg = sort
-PUT /register/[smallkey]                              Stores a configuration fragment
-DELETE /register/[smallkey]                           Deletes a configuration fragment
-POST /update/[age]                                    Updates all cached fragements older than [age] days
-PUT /simplification/[smallkey]                        Add a geometry simplification factor to feature layer configuration fragment
+GET /doc/[lang]/[key]                                 Retrieves a single configuration fragment
+GET /docs/[lang]/[key]{,[key]}{/[sortarg]}            Retrieves multiple configuration fragments, sorted by geometry type if sortarg = sort
+PUT /register/[key]                                   Stores a configuration fragment
+DELETE /register/[key]                                Deletes a configuration fragment
+PUT /register/refresh/[key]                           Stores a configuration fragment
+POST /refresh/[args]                                  Refreshes existing records, use "all" or an integer specifying minimum age
+POST /upgrade/[key]                                   Upgrades a registered v1 key to a v2 record
 ====================================================  ==================================================================
 
+RCS also has 3 debug endpoints. These are enabled by setting the DEBUG_ENDPOINTS variable to True in config.py.
+
+====================================================  ==================================================================
+Endpoint                                              Description
+====================================================  ==================================================================
+GET /accesslog/[index]                                Retrieves the RCS access logs. [index] specifies the index of the log file if multiple exist
+GET /log/[index]                                      Retrieves the error log for the RCS
+GET /all_keys/[lang]                                  Displays a list of registered keys and their related service, by language
+====================================================  ==================================================================
 
 *NOTE: deprecated endpoints are not included in the summary*
 
