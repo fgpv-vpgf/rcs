@@ -4,7 +4,7 @@ An ESRI feature "parser" (really the  requests library does most of the actual p
 Most of the utility functions are exposed but most applications won't use them
 :func:make_node is generally the only point of interest here.
 """
-import requests, flask
+import requests, flask, json, urllib2
 
 
 # TODO test me
@@ -229,6 +229,20 @@ def make_server_node(req):
     result = {}
     if 'scrape_only' in req:
         result['layerEntries'] = [{'index': index} for index in req['scrape_only']]
+    elif 'recursive' in req:
+        query_service = urllib2.Request(req['service_url'] + "?f=pjson")
+        opener = urllib2.build_opener()
+        f = opener.open(query_service)
+        service_json = json.loads(f.read())
+        if service_json['type'] == 'Group Layer':
+            print req['service_url'][:-1]
+            result['service_url'] = req['service_url'][:-1]
+            result['url'] = req['service_url'][:-1]
+        sublayer_json = service_json['subLayers']
+        sub_layers = []
+        for i in sublayer_json:
+            sub_layers.append(i['id'])
+        result['layerEntries'] = [{"index": i} for i in sub_layers]
     else:
         result['layerEntries'] = []
     return result
