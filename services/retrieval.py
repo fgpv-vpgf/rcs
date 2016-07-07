@@ -1,4 +1,4 @@
-import db, json
+import db, json, flask
 
 from utils import jsonp
 from flask import Response
@@ -92,3 +92,8 @@ class DocsV2(Docs):
     def __init__(self):
         super(DocsV2, self).__init__()
         self.version = '2'
+
+
+class Version(Doc):
+    def get(self):
+        return flask.g.version_no

@@ -4,7 +4,7 @@ for RCS and this should eventually end up in separate modules or packages.
 """
 from __future__ import division, print_function, unicode_literals
 
-import json, jsonschema, config, os, sys, logging, flask
+import json, jsonschema, config, os, sys, logging, flask, re
 from services import db, v1, v2, utils
 
 from logging.handlers import RotatingFileHandler
@@ -13,6 +13,7 @@ from flask.ext.restful import request
 
 # FIXME clean this up
 app = Flask(__name__)
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 app.config.from_object(config)
@@ -62,6 +63,10 @@ if not os.path.exists(schema_path):
 def before_request():
     flask.g.get_validator = lambda: jsonschema.validators.Draft4Validator(json.load(open(schema_path)))
     flask.g.proxies = {'http': app.config['HTTP_PROXY'], 'https': app.config['HTTP_PROXY']}
+    with open("setup.py") as f:
+        for line in f:
+            if "version" in line:
+                 flask.g.version_no = re.findall("\d+\.\d+.\d+", line)
 
 if app.config.get('DEBUG_ENDPOINTS'):
     @app.after_request
