@@ -66,7 +66,7 @@ def before_request():
     with open("setup.py") as f:
         for line in f:
             if "version" in line:
-                 flask.g.version_no = re.findall("\d+\.\d+.\d+", line)
+                flask.g.version_no = re.findall("\d+\.\d+.\d+", line)
 
 if app.config.get('DEBUG_ENDPOINTS'):
     @app.after_request
