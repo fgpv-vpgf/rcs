@@ -102,6 +102,8 @@
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Class Breaks)" data-obj="sampleFeature2" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Specific Sublayers)" data-obj="sampleScrapeOnly" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (w/ Metadata)" data-obj="sampleCatalogue" />
+            <input type="button" class="btn btn-default samplejson" value="esri Group Layer (recursive)" data-obj="sampleRecursive" />
+            <input type="button" class="btn btn-default samplejson" value="ogcWMS Group Layer (recursive)" data-obj="sampleRecursiveWMS" />
         </div>
     </div>
     <div class="row"><div id="log" class="form-group col-md-12">
@@ -225,7 +227,7 @@
         	},
         	"version": "2.0"
         },
-        sampleCatalogue =   {
+        sampleCatalogue = {
             "version": "2.0",
           	"fr": {
           		"service_url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/ClassBreaks/MapServer/0",
@@ -245,6 +247,40 @@
                       "metadata_url": "https://gcgeo.gc.ca/geonetwork/srv/eng/xml.metadata.download?uuid=ce7873ff-fbc0-4864-946e-6a1b4d739154&fromWorkspace="
                   }
           	}
+        },
+        sampleRecursive = {
+          	"fr": {
+          		"service_url": "http://ec.gc.ca/arcgis/rest/services/CESI_FGP_All_Layers/MapServer/0",
+          		"recursive": true,
+          		"service_type": "esriMapServer",
+          		"service_name": "CESI: Protected areas, Canada"
+          	},
+          	"en": {
+          		"service_url": "http://ec.gc.ca/arcgis/rest/services/CESI_FGP_All_Layers/MapServer/0",
+          		"recursive": true,
+          		"service_type": "esriMapServer",
+          		"service_name": "CESI: Protected areas, Canada"
+          	},
+          	"version": "2.0"
+        },
+        sampleRecursiveWMS = {
+        	"fr": {
+        		"feature_info_format": "text/plain",
+        		"service_url": "http://maps.geogratis.gc.ca/wms/railway_en",
+        		"service_type": "ogcWms",
+        		"legend_format": "image/png",
+        		"recursive": true,
+        		"service_name": "WMS french"
+        	},
+        	"en": {
+        		"feature_info_format": "text/plain",
+        		"service_url": "http://maps.geogratis.gc.ca/wms/railway_en",
+        		"service_type": "ogcWms",
+        		"legend_format": "image/png",
+        		"recursive": true,
+        		"service_name": "WMS english"
+        	},
+        	"version": "2.0"
         };
 
     function get_versioned_url() {

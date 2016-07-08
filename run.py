@@ -13,6 +13,7 @@ from flask.ext.restful import request
 
 # FIXME clean this up
 app = Flask(__name__)
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 app.config.from_object(config)

@@ -1,6 +1,6 @@
-from registration import Register, Refresh
+from registration import Register, Refresh, Update
 from upgrade import Upgrade
-from retrieval import DocV2, DocsV2
+from retrieval import DocV2, DocsV2, Version
 from debug import AccessLog, Log, AllKeys
 
 from flask import Blueprint
@@ -18,6 +18,8 @@ def make_blueprint(app):
     api.add_resource(DocV2, '/doc/<string:lang>/<string:smallkey>')
     api.add_resource(DocsV2, '/docs/<string:lang>/<string:smallkeylist>')
     api.add_resource(Upgrade, '/upgrade/2.0/<string:key>')
+    api.add_resource(Update, '/update/2.0/<string:key>')
+    api.add_resource(Version, '/version/')
     if app.config.get('DEBUG_ENDPOINTS'):
         api.add_resource(AccessLog, '/accesslog', '/accesslog/<int:index>')
         api.add_resource(Log, '/log', '/log/<int:index>')

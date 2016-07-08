@@ -1,3 +1,6 @@
+import requests
+from xml.dom import minidom
+
 """
 A WMS "parser" (barely does any parsing at the moment).
 """
@@ -65,6 +68,12 @@ def make_wms_node(req):
         result['legendMimeType'] = legend_format
     if 'scrape_only' in req:
         result['layerEntries'] = [{'id': id} for id in req['scrape_only']]
+    elif 'recursive' in req:
+        query_service = requests.get(req['service_url'] + '?SERVICE=WMS&REQUEST=GetCapabilities').content
+        xmldoc = minidom.parseString(query_service)
+        layers = xmldoc.getElementsByTagName('Layer')
+        result['layerEntries'] = [{"id": i.getElementsByTagName('Name')[0].firstChild.data,
+                                   "name": i.getElementsByTagName('Title')[0].firstChild.data} for i in layers]
     else:
         result['layerEntries'] = []
     return result
