@@ -1,4 +1,4 @@
-import db, json, flask
+import db, json, re
 
 from utils import jsonp
 from flask import Response
@@ -96,4 +96,8 @@ class DocsV2(Docs):
 
 class Version(Doc):
     def get(self):
-        return flask.g.version_no
+        with open("setup.py") as f:
+            for line in f:
+                if "version" in line:
+                    version_no = re.findall("\d+\.\d+.\d+", line)
+        return version_no
