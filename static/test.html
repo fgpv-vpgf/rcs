@@ -104,6 +104,7 @@
             <input type="button" class="btn btn-default samplejson" value="esriFeature (w/ Metadata)" data-obj="sampleCatalogue" />
             <input type="button" class="btn btn-default samplejson" value="esri Group Layer (recursive)" data-obj="sampleRecursive" />
             <input type="button" class="btn btn-default samplejson" value="ogcWMS Group Layer (recursive)" data-obj="sampleRecursiveWMS" />
+            <input type="button" class="btn btn-default samplejson" value="esriFeature (Display Field)" data-obj="sampleDisplayField" />
         </div>
     </div>
     <div class="row"><div id="log" class="form-group col-md-12">
@@ -281,6 +282,21 @@
         		"service_name": "WMS english"
         	},
         	"version": "2.0"
+        },
+        sampleDisplayField = {
+            "fr": {
+                "service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_fr/MapServer/20",
+                "service_type": "esriFeature",
+                "display_field": "siteShortName_fr",
+                "service_name": "Surveillance de la situation et des tendances d'oiseaux terrestres inscrits rares et difficiles à surveiller"
+            },
+            "en": {
+                "service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/20",
+                "service_type": "esriFeature",
+                "display_field": "siteShortName_en",
+                "service_name": "Status and Trend Monitoring of Listed, Rare, and Difficult-to-Monitor Landbirds"
+            },
+            "version": "2.0"
         };
 
     function get_versioned_url() {

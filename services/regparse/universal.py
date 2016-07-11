@@ -124,6 +124,8 @@ def make_node(key, json_request, config):
         if c_url:
             node[lang]['metadataUrl'] = m_url
             node[lang]['catalogueUrl'] = c_url
+        if 'display_field' in json_request[lang]:
+            n['nameField'] = json_request[lang]['display_field']
         n.update(parser_map[ltype](json_request[lang]))
         if 'service_name' in json_request[lang]:
             # important to do this last so it overwrites anything scraped from the custom parser
