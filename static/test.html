@@ -103,6 +103,7 @@
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Specific Sublayers)" data-obj="sampleScrapeOnly" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (w/ Metadata)" data-obj="sampleCatalogue" />
             <input type="button" class="btn btn-default samplejson" value="esri Group Layer (recursive)" data-obj="sampleRecursive" />
+            <input type="button" class="btn btn-default samplejson" value="esriMapService (recursive)" data-obj="sampleRecursiveMapservice" />
             <input type="button" class="btn btn-default samplejson" value="ogcWMS Group Layer (recursive)" data-obj="sampleRecursiveWMS" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Display Field)" data-obj="sampleDisplayField" />
         </div>
@@ -297,6 +298,21 @@
                 "service_name": "Status and Trend Monitoring of Listed, Rare, and Difficult-to-Monitor Landbirds"
             },
             "version": "2.0"
+        },
+        sampleRecursiveMapservice = {
+          "en": {
+              "service_url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NorthAmerica/energy_infrastructure_of_north_america_en/MapServer",
+              "recursive": true,
+              "service_type": "esriMapServer",
+              "service_name": "Energy Infrastructure of North America"
+          },
+          "fr": {
+              "service_url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NorthAmerica/energy_infrastructure_of_north_america_fr/MapServer",
+              "recursive": true,
+              "service_type": "esriMapServer",
+              "service_name": "Infrastructure énergétique d'Amérique du Nord"
+          },
+          "version": "2.0"
         };
 
     function get_versioned_url() {
