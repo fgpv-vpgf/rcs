@@ -236,9 +236,7 @@ def make_server_node(req):
         result['url'] = req['service_url'].rstrip('1234567890')
         sublayer_json = []
         if 'type' not in service_json:
-            for x in service_json['layers']:
-                if x['parentLayerId'] == -1:
-                    sublayer_json.append(x)
+            sublayer_json = [x for x in service_json['layers'] if x['parentLayerId'] == -1]
         else:
             sublayer_json = service_json['subLayers']
         result['layerEntries'] = [{'index': sl['id']} for sl in sublayer_json]

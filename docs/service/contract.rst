@@ -135,8 +135,6 @@ The feature payload should conform to:
         may be omitted in which case no value will be provided in the output
         leaving the viewer to apply its own logic.),
         "tolerance": (int: Tolerance, in pixels, of feature queries),
-        "recursive": (bool: Indicates if children should be scraped and made available
-        as individual layers to the viewer),
         "metadata": {
             "uuid": (str: a unique identifier),
             "catalogue_url": (str: URL describing the layer in full detail)
