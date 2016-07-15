@@ -232,10 +232,13 @@ def make_server_node(req):
     elif 'recursive' in req:
         query_service = requests.get(req['service_url'] + "?f=pjson", proxies=flask.g.proxies)
         service_json = query_service.json()
-        if service_json['type'] == 'Group Layer':
-            result['service_url'] = req['service_url'].rstrip('1234567890')
-            result['url'] = req['service_url'].rstrip('1234567890')
-        sublayer_json = service_json['subLayers']
+        result['service_url'] = req['service_url'].rstrip('1234567890')
+        result['url'] = req['service_url'].rstrip('1234567890')
+        sublayer_json = []
+        if 'type' not in service_json:
+            sublayer_json = [x for x in service_json['layers'] if x['parentLayerId'] == -1]
+        else:
+            sublayer_json = service_json['subLayers']
         result['layerEntries'] = [{'index': sl['id']} for sl in sublayer_json]
     else:
         result['layerEntries'] = []
