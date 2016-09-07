@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Service Quick Reference &mdash; RAMP Configuration Service 1.10.0 documentation</title>
+    <title>Service Quick Reference &mdash; RAMP Configuration Service 2.0.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.10.0',
+        VERSION:     '2.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,13 +24,13 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="RAMP Configuration Service 1.10.0 documentation" href="../index.html" />
+    <link rel="top" title="RAMP Configuration Service 2.0.0 documentation" href="../index.html" />
     <link rel="up" title="Using RCS Endpoints" href="index.html" />
-    <link rel="next" title="RCS Service Contract" href="contract.html" />
+    <link rel="next" title="RCS v2 Service Contract" href="contract.html" />
     <link rel="prev" title="Using RCS Endpoints" href="index.html" />
    
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body role="document">  
@@ -42,7 +42,7 @@
             
   <div class="section" id="service-quick-reference">
 <h1>Service Quick Reference<a class="headerlink" href="#service-quick-reference" title="Permalink to this headline">¶</a></h1>
-<p>RCS currently exposes 6 REST endpoints.</p>
+<p>RCS currently exposes 7 REST endpoints.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="38%" />
@@ -54,23 +54,49 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>GET /doc/[lang]/[smallkey]</td>
+<tr class="row-even"><td>GET /doc/[lang]/[key]</td>
 <td>Retrieves a single configuration fragment</td>
 </tr>
-<tr class="row-odd"><td>GET /docs/[lang]/[smallkey]{,[smallkey]}{/[sortarg]}</td>
+<tr class="row-odd"><td>GET /docs/[lang]/[key]{,[key]}{/[sortarg]}</td>
 <td>Retrieves multiple configuration fragments, sorted by geometry type if sortarg = sort</td>
 </tr>
-<tr class="row-even"><td>PUT /register/[smallkey]</td>
+<tr class="row-even"><td>PUT /register/[key]</td>
 <td>Stores a configuration fragment</td>
 </tr>
-<tr class="row-odd"><td>DELETE /register/[smallkey]</td>
+<tr class="row-odd"><td>DELETE /register/[key]</td>
 <td>Deletes a configuration fragment</td>
 </tr>
-<tr class="row-even"><td>POST /update/[age]</td>
-<td>Updates all cached fragements older than [age] days</td>
+<tr class="row-even"><td>PUT /register/refresh/[key]</td>
+<td>Stores a configuration fragment</td>
 </tr>
-<tr class="row-odd"><td>PUT /simplification/[smallkey]</td>
-<td>Add a geometry simplification factor to feature layer configuration fragment</td>
+<tr class="row-odd"><td>POST /refresh/[args]</td>
+<td>Refreshes existing records, use &#8220;all&#8221; or an integer specifying minimum age</td>
+</tr>
+<tr class="row-even"><td>POST /upgrade/[key]</td>
+<td>Upgrades a registered v1 key to a v2 record</td>
+</tr>
+</tbody>
+</table>
+<p>RCS also has 3 debug endpoints. These are enabled by setting the DEBUG_ENDPOINTS variable to True in config.py.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Endpoint</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET /accesslog/[index]</td>
+<td>Retrieves the RCS access logs. [index] specifies the index of the log file if multiple exist</td>
+</tr>
+<tr class="row-odd"><td>GET /log/[index]</td>
+<td>Retrieves the error log for the RCS</td>
+</tr>
+<tr class="row-even"><td>GET /all_keys/[lang]</td>
+<td>Displays a list of registered keys and their related service, by language</td>
 </tr>
 </tbody>
 </table>
@@ -81,7 +107,7 @@ for the retrieval of generic configuration as well.</p>
 <p>The data catalogue is intended to call the PUT, POST and DELETE endpoints for storing
 data.  Currently registration will accept ESRI feature service endpoints and WMS
 endpoints.</p>
-<p>More details are available on the <a class="reference internal" href="contract.html#contract"><span>RCS Service Contract</span></a> page.</p>
+<p>More details are available on the <a class="reference internal" href="endpoint_10.html#contract"><span>RCS Service Contract</span></a> page.</p>
 </div>
 
 
@@ -95,7 +121,7 @@ endpoints.</p>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">Using RCS Endpoints</a><ul>
       <li>Previous: <a href="index.html" title="previous chapter">Using RCS Endpoints</a></li>
-      <li>Next: <a href="contract.html" title="next chapter">RCS Service Contract</a></li>
+      <li>Next: <a href="contract.html" title="next chapter">RCS v2 Service Contract</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -129,7 +155,7 @@ endpoints.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
       <a href="../_sources/service/quickref.txt"
