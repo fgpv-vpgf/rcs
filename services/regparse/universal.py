@@ -121,6 +121,9 @@ def make_node(key, json_request, config):
             raise ServiceEndpointException(msg)
         n['url'] = json_request[lang]['service_url']
         m_url, c_url = metadata.get_url(json_request[lang], config)
+        if n['url'].endswith("FeatureServer"):
+            msg = 'FeatureServer registration must specify a feature layer'
+            raise ServiceEndpointException(msg)
         if c_url:
             node[lang]['metadataUrl'] = m_url
             node[lang]['catalogueUrl'] = c_url
