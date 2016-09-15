@@ -5,7 +5,7 @@ from flask.ext.restful import Resource
 
 
 def wms_upgrade(v1_request):
-    steal_fields = ['service_url', 'metadata', 'legend_format']
+    steal_fields = ['service_url', 'service_name', 'metadata', 'legend_format']
     result = {x: v1_request[x] for x in steal_fields if x in v1_request}
     result['service_type'] = regparse.ServiceTypes.WMS
     fi_type = v1_request.get('feature_info_type')
@@ -16,7 +16,7 @@ def wms_upgrade(v1_request):
 
 
 def feat_upgrade(v1_request):
-    steal_fields = ['service_url', 'metadata', 'loading_mode', 'max_allowable_offset', 'display_field']
+    steal_fields = ['service_url', 'metadata', 'loading_mode', 'max_allowable_offset', 'display_field', 'service_name']
     result = {x: v1_request[x] for x in steal_fields if x in v1_request}
     result['service_type'] = regparse.ServiceTypes.FEATURE
     return result
