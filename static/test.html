@@ -78,8 +78,7 @@
             <button class="btn btn-default" id='deltest'>DELETE (register)</button>
             <button class="btn btn-default" id='upgradetest'>Upgrade (register)</button>
             <button class="btn btn-default" id='refreshalltest'>Refresh All</button>
-
-            <!--button class="btn btn-default" id='ufput'>PUT (update feature)</button-->
+            <button class="btn btn-default" id='updatetest'>Update (register)</button>
             <!--button class="btn btn-default" id='signput'>Sign PUT</button-->
             <!--button class="btn btn-default" id='signdel'>Sign DELETE</button-->
         </div>
@@ -94,18 +93,20 @@
             <!--input type="button" class="btn btn-default sampledata" value="JOSM Unique"
                    data-url="http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/0" /-->
             <!--input type="button" class="btn btn-default samplejson" value="Full WMS" data-obj="fullWMS" /-->
-            <input type="button" class="btn btn-default samplejson" value="ogcWMS" data-obj="sampleWMS" />
-            <input type="button" class="btn btn-default samplejson" value="esriImage" data-obj="sampleImage" />
-            <input type="button" class="btn btn-default samplejson" value="esriTile" data-obj="sampleTile" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature" data-obj="sampleFeature" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Zoom Scale)" data-obj="sampleZoomScale" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Class Breaks)" data-obj="sampleFeature2" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Specific Sublayers)" data-obj="sampleScrapeOnly" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (w/ Metadata)" data-obj="sampleCatalogue" />
-            <input type="button" class="btn btn-default samplejson" value="esri Group Layer (recursive)" data-obj="sampleRecursive" />
-            <input type="button" class="btn btn-default samplejson" value="esriMapService (recursive)" data-obj="sampleRecursiveMapservice" />
-            <input type="button" class="btn btn-default samplejson" value="ogcWMS Group Layer (recursive)" data-obj="sampleRecursiveWMS" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Display Field)" data-obj="sampleDisplayField" />
+            <input type="button" class="btn btn-default samplejson" value="esriFeature (Update)" data-obj="sampleUpdateFeature" /><br/><br/>
+            <input type="button" class="btn btn-default samplejson" value="esriImage" data-obj="sampleImage" />
+            <input type="button" class="btn btn-default samplejson" value="esriTile" data-obj="sampleTile" />
+            <input type="button" class="btn btn-default samplejson" value="esri Group Layer (recursive)" data-obj="sampleRecursive" />
+            <input type="button" class="btn btn-default samplejson" value="esriMapService (recursive)" data-obj="sampleRecursiveMapservice" /><br/><br/>
+            <input type="button" class="btn btn-default samplejson" value="ogcWMS" data-obj="sampleWMS" />
+            <input type="button" class="btn btn-default samplejson" value="ogcWMS Group Layer (recursive)" data-obj="sampleRecursiveWMS" />
+            <input type="button" class="btn btn-default samplejson" value="ogcWMS (Update)" data-obj="sampleUpdateWMS" />
         </div>
     </div>
     <div class="row"><div id="log" class="form-group col-md-12">
@@ -145,12 +146,12 @@
         },
         sampleZoomScale = {
           "fr": {
-            "service_url": "http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/2",
+            "service_url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2",
             "service_type": "esriFeature",
             "service_name": "ESRI french"
           },
           "en": {
-            "service_url": "http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/2",
+            "service_url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2",
             "service_type": "esriFeature",
             "service_name": "ESRI english"
           },
@@ -313,6 +314,32 @@
               "service_name": "Infrastructure énergétique d'Amérique du Nord"
           },
           "version": "2.0"
+        },
+        sampleUpdateFeature = {
+          	"fr": {
+          		"service_name": "SHABA",
+          		"service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/20",
+          		"service_type": "esriFeature",
+          		"display_field": "siteFullName_fr",
+          		"metadata": {
+          			"catalogue_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/metadata/eng/ada015be-5e32-4815-9607-3edfb9f674bf",
+          			"metadata_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/srv/eng/xml.metadata.get?uuid=ada015be-5e32-4815-9607-3edfb9f674bf&fromWorkspace="
+          		}
+          	},
+          	"en": {
+          		"service_name": "SHABA",
+          		"service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/20",
+          		"service_type": "esriFeature",
+          		"display_field": "siteFullName_en",
+          		"metadata": {
+          			"catalogue_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/metadata/eng/ada015be-5e32-4815-9607-3edfb9f674bf",
+          			"metadata_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/srv/eng/xml.metadata.get?uuid=ada015be-5e32-4815-9607-3edfb9f674bf&fromWorkspace="
+          		}
+          	},
+          	"version": "2.0"
+        },
+        sampleUpdateWMS = {
+
         };
 
     function get_versioned_url() {
@@ -425,8 +452,8 @@
                 log_err(err.responseText);
                 console.log(err);
             });
-
         });
+
         $('#deltest').click( function() {
             var s = get_sig_params(),
                 sig = sign( s.key, s.path, s.id, s.isodate, '' ),
@@ -442,8 +469,8 @@
                 log_err('del failed '+err.status+' '+err.responseText);
                 console.log(err);
             });
-
         });
+
         $('#signdel').click( function() {
             var s = get_sig_params(),
                 sig = sign( s.key, s.path, s.id, s.isodate, '' ),
@@ -454,6 +481,7 @@
             log_info( curlcmd );
 
         });
+
         $('#signput').click( function() {
             var s = get_sig_params(),
                 sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
@@ -466,32 +494,43 @@
             log_info( curlcmd );
         });
 
-        $('#ufput').click( function() {
-            var s = get_sig_params('updatefeature'),
-                sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
-                h = make_headers(s, sig),
-                curlcmd = 'curl -v -X PUT ';
-
-            curlcmd += make_curl_header_opts(h);
-            curlcmd += ' -d "'+ s.body +'" ';
-            curlcmd += get_abs_path(s.target);
-            log_info( 'headers: '+JSON.stringify(h) );
-            log_info( curlcmd );
-            $.ajax({
-                type: "PUT",
-                url: s.target,
-                contentType: "application/json; charset=utf-8",
-                dataType: "text",
-                data: s.body,
-                headers: h,
-            }).done(function (data, status, xhr) {
-                log_info('update done '+xhr.status);
-                log_info(data);
-            }).fail(function (err) {
-                log_err('update failed '+err.status+' '+err.responseText);
-                console.log(err);
-            });
-
+        $('#updatetest').click( function() {
+          /*
+          var u = '/v2/update/' + $('#smallkey').val();
+          log_info('Update URL: '+u);
+          $.ajax({
+              type: "POST",
+              url: u,
+              dataType: "json",
+          }).done(function (data) {
+              log_info('Update done');
+              log_info(JSON.stringify(data));
+              $('#data').val(JSON.stringify(data));
+          }).fail(function (err) {
+              log_err('Update failed '+err.status);
+              log_err(JSON.stringify(err));
+              console.log(err);
+          });
+          */
+          var s = get_sig_params("update"),
+              sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
+              h = make_headers(s,sig);
+          console.log(h);
+          $.ajax({
+              type: "PUT",
+              contentType: "application/json; charset=utf-8",
+              url: s.target,
+              data: s.body,
+              dataType: "text",
+              headers: h,
+          }).done(function (data, status, xhr) {
+              log_info('put done '+xhr.status);
+              log_info(data);
+          }).fail(function (err) {
+              log_err('put failed '+err.status);
+              log_err(err.responseText);
+              console.log(err);
+          });
         });
 
         $('#refreshalltest').click( function() {
@@ -516,7 +555,7 @@
             var u = '/v2/upgrade/2.0/' + $('#smallkey').val();
             log_info('Upgrade URL: '+u);
             $.ajax({
-                type: "POST",
+                type: "PUT",
                 url: u,
                 dataType: "json",
             }).done(function (data) {
