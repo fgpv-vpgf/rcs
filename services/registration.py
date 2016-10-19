@@ -116,59 +116,6 @@ class Register(Resource):
         return '', 404
 
 
-class Update(Resource):
-    """
-    Handles updates to an ESRI feature entry
-    """
-
-    @regparse.sigcheck.validate
-    def post(self, smallkey):
-        """
-        A REST endpoint for updating details in a feature layer.
-
-        :param smallkey: A unique identifier for the dataset (can be any unique string, but preferably should be short)
-        :type smallkey: str
-        :returns: JSON Response -- 200 on success; 400 with JSON payload of an errors array on failure
-        """
-        try:
-            payload = json.loads(request.data)
-        except Exception:
-            return '{"errors":["Unparsable json"]}', 400
-
-        fragment = {'en': {}, 'fr': {}}
-        if len(payload) == 2 and 'en' in payload and 'fr' in payload:
-            fragment = payload
-        else:
-            fragment['en'].update(payload)
-            fragment['fr'].update(payload)
-
-        dbdata = db.get_raw(smallkey)
-
-        if dbdata is None:
-            return '{"errors":["Record not found in database"]}', 404
-        elif dbdata['type'] != 'feature':
-            return '{"errors":["Record is not a feature layer"]}', 400
-
-        dbdata['data']['request']['en'].update(fragment['en'])
-        dbdata['data']['request']['fr'].update(fragment['fr'])
-
-        errors = get_registration_errors(payload)
-        if errors:
-            resp = {'errors': errors}
-            current_app.logger.info(resp)
-            return Response(json.dumps(resp), mimetype='application/json', status=400)
-
-        try:
-            data = regparse.make_record(smallkey, dbdata['data']['request'], current_app.config)
-        except regparse.metadata.MetadataException as mde:
-            current_app.logger.warning('Metadata could not be retrieved for layer', exc_info=mde)
-            abort(400, msg=mde.message)
-
-        db.put_doc(smallkey, {'type': data['request']['payload_type'], 'data': data})
-
-        return smallkey, 200
-
-
 class Refresh(Resource):
     """
     Handles cache maintenance requests

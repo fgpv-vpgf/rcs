@@ -273,7 +273,26 @@ in days of a record before it should be updated
 
 Response Body: ``{"updated":["0"],"errors":{},"limit_reached":false}``
 
+POST ``/v2/update/[key]``
+--------------------------
 
+Success Code: 200
+
+Request Body: Empty
+
+Request Headers: Implement the :ref:`signing` protocol
+
+Request Params: Only the fields that require updating on a pre-registered entry.
+"service_type" is a mandatory field, if trying to change this, please re-register entirely.
+
+Response Body: ``{ "success": ["key", …], "errors": {"key": "message", …} }``
+
+Error conditions:
+
+- key not found: 404 Not Found
+- invalid timestamp format: 400 Bad Request
+- missing headers / unretrivable key: 401 Not Authorized
+- exception in processing: 500 Internal Server Error, empty body
 
 RCS v1 Endpoints
 ================
