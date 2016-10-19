@@ -60,20 +60,22 @@ def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
 
 
-def get_queryable(query_service, id):
+def parseCapabilities(capabilties_xml_string):
     """
-    Reads WMS capabilities doc to determine if specified layer is queryable or not
+    Parses a Capabilities document for fields we need for registration.
 
-    :param query_service: The service Capabilities doc
-    :type str
-    :param id: The name of the layer
-    :type str
+    :param capabilties_xml_string: The URL to the service's Capabilities document
+    :type capabilties_xml_string: str
+    :returns: dict -- the Name, Title, and Queryable values of all layers in the service.
     """
-    xmldoc = minidom.parseString(query_service)
-    layers = xmldoc.getElementsByTagName('Layer')
-    for i in layers:
-        if i.getElementsByTagName('Name')[0].firstChild.data == id:
-            return str2bool(i.getAttribute('queryable'))
+    ret = {}
+    xmldoc = minidom.parseString(capabilties_xml_string)
+    for layer in xmldoc.getElementsByTagName('Layer'):
+        id = layer.getElementsByTagName('Name')[0].firstChild.data
+        title = layer.getElementsByTagName('Title')[0].firstChild.data
+        queryable = str2bool(layer.getAttribute('queryable'))
+        ret[id] = dict(id=id, title=title, queryable=queryable)
+    return ret
 
 
 def make_wms_node(req):
@@ -82,21 +84,20 @@ def make_wms_node(req):
     """
     result = {}
     query_service = requests.get(req['service_url'] + '?SERVICE=WMS&REQUEST=GetCapabilities').content
+    layer_params = parseCapabilities(query_service)
     if 'feature_info_format' in req:
         result['featureInfoMimeType'] = req['feature_info_format']
     legend_format = req.get('legend_format', None)
     if legend_format in ['image/png', 'image/gif', 'image/jpeg', 'image/svg', 'image/svg+xml']:
         result['legendMimeType'] = legend_format
     if 'scrape_only' in req:
-        result['layerEntries'] = [{'id': id, 'queryable': get_queryable(query_service, id)}
+        result['layerEntries'] = [{'id': id, 'queryable': layer_params[id]['queryable']}
                                   for id in req['scrape_only']]
     elif 'recursive' in req:
-        xmldoc = minidom.parseString(query_service)
-        layers = xmldoc.getElementsByTagName('Layer')
         result['layerEntries'] = [{
-                                  'id': i.getElementsByTagName('Name')[0].firstChild.data,
-                                  'name': i.getElementsByTagName('Title')[0].firstChild.data,
-                                  'queryable': str2bool(i.getAttribute('queryable'))} for i in layers]
+                                  'id': layer_params[i]['id'],
+                                  'name': layer_params[i]['title'],
+                                  'queryable': layer_params[i]['queryable']} for i in layer_params]
     else:
         result['layerEntries'] = []
     return result
