@@ -26,7 +26,7 @@ class Update(Resource):
                 return '{"msg":"Record not found in database"}', 404
         except Exception as e:
             msg = {'msg': 'Error: {0}'.format(e.message)}
-            return Response(json.dumps(msg), mimetype='application/json', status=404)
+            return Response(json.dumps(msg), mimetype='application/json', status=500)
 
         try:
             payload = json.loads(request.data)
@@ -62,7 +62,7 @@ class Update(Resource):
             db.put_doc(key, payload[x]["service_type"], dbdata["request"], layer_config=v2_node, v1_config=v1_node)
         except Exception as e:
             msg = {'msg': 'Error: {0}'.format(e.message)}
-            return Response(json.dumps(msg), mimetype='application/json', status=400)
+            return Response(json.dumps(msg), mimetype='application/json', status=500)
 
         success = {"msg": "Updated", "key": key}
         return Response(json.dumps(success), mimetype='application/json', status=200)

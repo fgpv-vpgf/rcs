@@ -56,7 +56,7 @@ Configure Python Environment
 #. Update the configuration in ``config.py`` or set the environment variable ``RCS_CONFIG``
    to point to a config which overrides the defaults set in ``config.py``.  See :ref:`config` for a
    full description for all options, at a minimum update the following:
-   
+
     * **DB_CONN** should match the account, password and host settings from the CouchDB installation
     * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_reg_schema_v2_0_0.json``
       -- use double backslashes to avoid string escape codes)
@@ -64,7 +64,7 @@ Configure Python Environment
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
     * **DEBUG_ENDPOINTS** should be set to False in Production, enables the /accesslog, /log, and /all_keys endpoints when True
-    * **PROD** should be set to True only in a Production environment, BUT WHAT DOES IT DO???
+    * **PROD** should be set to True only in a Production environment
     * **HTTP_PROXY**
     * **URL_PREFIX** A general prefix for the application, useful if you want to have side by side installs of RCS
 
@@ -129,7 +129,7 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
     * **DEBUG_ENDPOINTS** should be set to False in Production, enables the /accesslog, /log, and /all_keys endpoints when True
-    * **PROD** should be set to True only in a Production environment, BUT WHAT DOES IT DO???
+    * **PROD** should be set to True only in a Production environment
     * **HTTP_PROXY**
     * **URL_PREFIX** A general prefix for the application, useful if you want to have side by side installs of RCS
 

@@ -316,30 +316,46 @@
           "version": "2.0"
         },
         sampleUpdateFeature = {
-          	"fr": {
-          		"service_name": "SHABA",
-          		"service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/20",
-          		"service_type": "esriFeature",
-          		"display_field": "siteFullName_fr",
-          		"metadata": {
-          			"catalogue_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/metadata/eng/ada015be-5e32-4815-9607-3edfb9f674bf",
-          			"metadata_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/srv/eng/xml.metadata.get?uuid=ada015be-5e32-4815-9607-3edfb9f674bf&fromWorkspace="
-          		}
-          	},
-          	"en": {
-          		"service_name": "SHABA",
-          		"service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/20",
-          		"service_type": "esriFeature",
-          		"display_field": "siteFullName_en",
-          		"metadata": {
-          			"catalogue_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/metadata/eng/ada015be-5e32-4815-9607-3edfb9f674bf",
-          			"metadata_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/srv/eng/xml.metadata.get?uuid=ada015be-5e32-4815-9607-3edfb9f674bf&fromWorkspace="
-          		}
-          	},
-          	"version": "2.0"
+        	"fr": {
+        		"service_name": "SHABA",
+        		"service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/21",
+        		"service_type": "esriFeature",
+        		"display_field": "siteShortName_fr",
+        		"metadata": {
+        			"catalogue_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/metadata/eng/ada015be-5e32-4815-9607-3edfb9f674bf",
+        			"metadata_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/srv/eng/xml.metadata.get?uuid=ada015be-5e32-4815-9607-3edfb9f674bf&fromWorkspace="
+        		}
+        	},
+        	"en": {
+        		"service_name": "SHABA",
+        		"service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/21",
+        		"service_type": "esriFeature",
+        		"display_field": "siteShortName_en",
+        		"metadata": {
+        			"catalogue_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/metadata/eng/ada015be-5e32-4815-9607-3edfb9f674bf",
+        			"metadata_url": "http://intranet.ecdmp-dev.cmc.ec.gc.ca/geonetwork/srv/eng/xml.metadata.get?uuid=ada015be-5e32-4815-9607-3edfb9f674bf&fromWorkspace="
+        		}
+        	},
+        	"version": "2.0"
         },
         sampleUpdateWMS = {
-
+          	"fr": {
+          		"feature_info_format": "text/html",
+          		"service_url": "http://maps.geogratis.gc.ca/wms/railway_en",
+          		"service_type": "ogcWms",
+          		"legend_format": "image/gif",
+          		"recursive": true,
+          		"service_name": "Les chemins de fer"
+          	},
+          	"en": {
+          		"feature_info_format": "text/html",
+          		"service_url": "http://maps.geogratis.gc.ca/wms/railway_en",
+          		"service_type": "ogcWms",
+          		"legend_format": "image/gif",
+          		"recursive": true,
+          		"service_name": "Railways"
+          	},
+          	"version": "2.0"
         };
 
     function get_versioned_url() {
@@ -495,23 +511,6 @@
         });
 
         $('#updatetest').click( function() {
-          /*
-          var u = '/v2/update/' + $('#smallkey').val();
-          log_info('Update URL: '+u);
-          $.ajax({
-              type: "POST",
-              url: u,
-              dataType: "json",
-          }).done(function (data) {
-              log_info('Update done');
-              log_info(JSON.stringify(data));
-              $('#data').val(JSON.stringify(data));
-          }).fail(function (err) {
-              log_err('Update failed '+err.status);
-              log_err(JSON.stringify(err));
-              console.log(err);
-          });
-          */
           var s = get_sig_params("update"),
               sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
               h = make_headers(s,sig);
