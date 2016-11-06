@@ -14,8 +14,8 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/rcs" ] && [ -n "$TRAVIS_TAG" ]; then
     make html
     git clone --depth=1 git@github.com:fgpv-vpgf/rcs.git -b gh-pages ghdocs
     mkdir -p ghdocs/$TRAVIS_TAG
-    rsync -av --delete docbuild/ ghdocs/$TRAVIS_TAG/
-    bash ./docs/make_doc_index.sh ghdocs/ > ghdocs/index.html
+    rsync -av --delete _build/html/ ghdocs/$TRAVIS_TAG/
+    bash make_doc_index.sh ghdocs/ > ghdocs/index.html
 
     cd ghdocs
     git add $TRAVIS_TAG
