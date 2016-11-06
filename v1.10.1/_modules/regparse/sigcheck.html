@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>regparse.sigcheck &mdash; RAMP Configuration Service 1.10.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.10.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="RAMP Configuration Service 1.10.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for regparse.sigcheck</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tests RCS request signatures for validity</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">hashlib</span><span class="o">,</span> <span class="nn">hmac</span><span class="o">,</span> <span class="nn">base64</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">flask</span><span class="o">,</span> <span class="nn">iso8601</span><span class="o">,</span> <span class="nn">datetime</span><span class="o">,</span> <span class="nn">db</span>
+
+<span class="kn">from</span> <span class="nn">flask.ext.restful</span> <span class="kn">import</span> <span class="n">abort</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+<div class="viewcode-block" id="get_logger"><a class="viewcode-back" href="../../dev/parsers.html#regparse.sigcheck.get_logger">[docs]</a><span class="k">def</span> <span class="nf">get_logger</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This function does not deserve a comment&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">current_app</span><span class="o">.</span><span class="n">logger</span>
+</div>
+<div class="viewcode-block" id="sign"><a class="viewcode-back" href="../../dev/parsers.html#regparse.sigcheck.sign">[docs]</a><span class="k">def</span> <span class="nf">sign</span><span class="p">(</span> <span class="n">key</span><span class="p">,</span> <span class="o">*</span><span class="n">parts</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates an HMAC_SHA256 signature from a key and a set of message parts</span>
+
+<span class="sd">    :param key: The signing key to use</span>
+<span class="sd">    :type key: str</span>
+<span class="sd">    :returns: str -- a URL safe base64 encoded signature</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">u8parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">]</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">u8parts</span> <span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="n">msg</span> <span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">msg</span><span class="p">,</span> <span class="n">digestmod</span><span class="o">=</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span> <span class="n">h</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span> <span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="test_request"><a class="viewcode-back" href="../../dev/parsers.html#regparse.sigcheck.test_request">[docs]</a><span class="k">def</span> <span class="nf">test_request</span><span class="p">(</span> <span class="n">request</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test the signature of a given request.</span>
+
+<span class="sd">    Pulls the signature components from the request and generates a reference signature.</span>
+<span class="sd">    Tests if the reference signature matches the Authorization header in the request.</span>
+
+<span class="sd">    :param request: A flask request object containing the request to validate</span>
+<span class="sd">    :returns: bool -- if the generated signature matches the authorization header</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="s1">&#39;Authorization TimeStamp Sender&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="n">h</span><span class="o">+</span><span class="s1">&#39;: &#39;</span><span class="o">+</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="s1">&#39;MISSING&#39;</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s1">&#39;TimeStamp&#39;</span><span class="p">,</span> <span class="bp">None</span> <span class="p">)</span>
+    <span class="n">cid</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s1">&#39;Sender&#39;</span><span class="p">,</span> <span class="bp">None</span> <span class="p">)</span>
+    <span class="n">msg_sig</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Authorization&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dt</span> <span class="ow">and</span> <span class="n">cid</span> <span class="ow">and</span> <span class="n">msg_sig</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span> <span class="s1">&#39;Missing data from headers, sig check failed&#39;</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="n">rqpath</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
+    <span class="n">rqbody</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span>
+    <span class="n">psk</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">get_key</span><span class="p">(</span><span class="n">cid</span><span class="p">)</span>
+
+    <span class="n">ref_sig</span> <span class="o">=</span> <span class="n">sign</span><span class="p">(</span> <span class="n">psk</span><span class="p">,</span> <span class="n">rqpath</span><span class="p">,</span> <span class="n">cid</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">rqbody</span> <span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;Signature received: {0}  ##  Signature generated: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg_sig</span><span class="p">,</span><span class="n">ref_sig</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ref_sig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">ref_sig</span> <span class="o">==</span> <span class="n">msg_sig</span>
+</div>
+<div class="viewcode-block" id="validate"><a class="viewcode-back" href="../../dev/parsers.html#regparse.sigcheck.validate">[docs]</a><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wraps a service endpoint and checks the authentication headers.</span>
+
+<span class="sd">    Tests the signature on the request and ensures the request time is current.</span>
+<span class="sd">    Failure results in a 401 HTTP error if SIG_CHECK is enabled, if not validation</span>
+<span class="sd">    will always pass.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">validation_fail</span><span class="p">(</span> <span class="n">msg</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="n">flask</span><span class="o">.</span><span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SIG_CHECK&#39;</span><span class="p">]:</span>
+            <span class="n">abort</span><span class="p">(</span><span class="mi">401</span><span class="p">,</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># be vocal if SIG_CHECK is accidentally set to False in production</span>
+            <span class="n">get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Authorization failure [{0}] ignored: SIG_CHECK is off in the config&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">decorated_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">test_request</span><span class="p">(</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span> <span class="p">):</span>
+            <span class="n">validation_fail</span><span class="p">(</span> <span class="s1">&#39;Invalid signature&#39;</span> <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">check_time</span><span class="p">(</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span> <span class="p">):</span>
+                <span class="n">validation_fail</span><span class="p">(</span> <span class="s1">&#39;Request time out of sync&#39;</span> <span class="p">)</span>
+        <span class="k">except</span> <span class="n">iso8601</span><span class="o">.</span><span class="n">ParseError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">flask</span><span class="o">.</span><span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SIG_CHECK&#39;</span><span class="p">]:</span>
+                <span class="n">abort</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Unparsable timestamp&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Timestamp parse failure ignored: SIG_CHECK is off in the config&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">decorated_function</span>
+</div>
+<div class="viewcode-block" id="check_time"><a class="viewcode-back" href="../../dev/parsers.html#regparse.sigcheck.check_time">[docs]</a><span class="k">def</span> <span class="nf">check_time</span><span class="p">(</span> <span class="n">request</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensure the sent time is within 2 minutes of the current time</span>
+
+<span class="sd">    :param sent: An ISO8601 encoded date</span>
+<span class="sd">    :type sent: str</span>
+<span class="sd">    :raises: ParseError -- if the datetime cannot be parsed</span>
+<span class="sd">    :returns: bool -- sent time is within 2 minutes of the current time</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+    <span class="n">sent</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s1">&#39;TimeStamp&#39;</span> <span class="p">)</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">iso8601</span><span class="o">.</span><span class="n">parse_date</span><span class="p">(</span> <span class="n">sent</span> <span class="p">)</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span> <span class="n">iso8601</span><span class="o">.</span><span class="n">iso8601</span><span class="o">.</span><span class="n">Utc</span><span class="p">()</span> <span class="p">)</span>
+    <span class="n">two_min</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;Header date: {0}  ##  Current timestamp: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sent</span><span class="p">,</span><span class="n">now</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">two_min</span> <span class="o">&lt;</span> <span class="n">now</span><span class="o">-</span><span class="n">dt</span> <span class="o">&lt;</span> <span class="n">two_min</span>
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="s1">&#39;2007-01-25T12:00:00Z&#39;</span>
+    <span class="n">psk</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span>
+    <span class="n">cid</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+    <span class="n">rqpath</span> <span class="o">=</span> <span class="s1">&#39;/register/22&#39;</span>
+    <span class="n">rqbody</span> <span class="o">=</span> <span class="s1">&#39;{&quot;a&quot;:1}&#39;</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">sign</span><span class="p">(</span> <span class="n">psk</span><span class="p">,</span> <span class="n">rqpath</span><span class="p">,</span> <span class="n">cid</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">rqbody</span> <span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span> <span class="n">sig</span> <span class="p">)</span>
+    <span class="n">REQUEST_PATH</span> <span class="o">=</span> <span class="s1">&#39;/register/23ax5t&#39;</span>
+    <span class="n">SENDER_ID</span> <span class="o">=</span> <span class="s1">&#39;jstest&#39;</span>
+    <span class="n">TIME_STAMP</span> <span class="o">=</span> <span class="s1">&#39;2014-12-05T18:28:56.714Z&#39;</span>
+    <span class="n">REQUEST_BODY</span> <span class="o">=</span>  <span class="s1">&#39;&#39;&#39;{&quot;version&quot;:&quot;1.0.0&quot;,&quot;payload_type&quot;:&quot;wms&quot;,&quot;en&quot;:{&quot;service_url&quot;:&quot;http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en&quot;,&quot;service_name&quot;:&quot;Key Areas for Birds in Coastal Regions of the Canadian Beaufort Sea - la Mue ou l&#39;élevage des couvées (de la mi-juillet à la mi-août)&quot;,&quot;layer&quot;:&quot;limits&quot;},&quot;fr&quot;:{&quot;service_url&quot;:&quot;http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en&quot;,&quot;layer&quot;:&quot;limits&quot;}}&#39;&#39;&#39;</span>
+    <span class="n">psk</span> <span class="o">=</span> <span class="s1">&#39;test_-k&#39;</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">sign</span><span class="p">(</span> <span class="n">psk</span><span class="p">,</span> <span class="n">REQUEST_PATH</span><span class="p">,</span> <span class="n">SENDER_ID</span><span class="p">,</span> <span class="n">TIME_STAMP</span><span class="p">,</span> <span class="n">REQUEST_BODY</span> <span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span> <span class="n">sig</span> <span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Environment Canada.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

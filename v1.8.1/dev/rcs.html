@@ -1,0 +1,450 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>RCS &mdash; RAMP Configuration Service 1.8.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="RAMP Configuration Service 1.8.1 documentation" href="../index.html" />
+    <link rel="up" title="Module and Package Docs" href="api.html" />
+    <link rel="next" title="Parsers" href="parsers.html" />
+    <link rel="prev" title="Module and Package Docs" href="api.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="parsers.html" title="Parsers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="Module and Package Docs"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RAMP Configuration Service 1.8.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Developer Docs</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="api.html" accesskey="U">Module and Package Docs</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="rcs">
+<h1>RCS<a class="headerlink" href="#rcs" title="Permalink to this headline">¶</a></h1>
+<p>The main <cite>rcs.py</cite> module.</p>
+<span class="target" id="module-rcs"></span><p>The starter module for RCS.  Currently it contains most of the functional code
+for RCS and this should eventually end up in separate modules or packages.</p>
+<dl class="class">
+<dt id="rcs.Doc">
+<em class="property">class </em><code class="descclassname">rcs.</code><code class="descname">Doc</code><a class="reference internal" href="../_modules/rcs.html#Doc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.Doc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container class for all web requests for single documents</p>
+<dl class="attribute">
+<dt id="rcs.Doc.__module__">
+<code class="descname">__module__</code><em class="property"> = 'rcs'</em><a class="headerlink" href="#rcs.Doc.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.Doc.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#Doc.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.Doc.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for fetching a single document from the doc store.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lang</strong> &#8211; A two letter language code for the response</li>
+<li><strong>smallkey</strong> (<em>str</em>) &#8211; A short key which uniquely identifies the dataset</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Response &#8211; a JSON response object; None with a 404 code if the key was not matched</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.Doc.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#rcs.Doc.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rcs.DocV09">
+<em class="property">class </em><code class="descclassname">rcs.</code><code class="descname">DocV09</code><a class="reference internal" href="../_modules/rcs.html#DocV09"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.DocV09" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="rcs.DocV09.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#DocV09.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.DocV09.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocV09.__module__">
+<code class="descname">__module__</code><em class="property"> = 'rcs'</em><a class="headerlink" href="#rcs.DocV09.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocV09.endpoint">
+<code class="descname">endpoint</code><em class="property"> = 'docv09'</em><a class="headerlink" href="#rcs.DocV09.endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.DocV09.mediatypes">
+<code class="descname">mediatypes</code><span class="sig-paren">(</span><em>resource_cls</em><span class="sig-paren">)</span><a class="headerlink" href="#rcs.DocV09.mediatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocV09.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#rcs.DocV09.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rcs.DocV1">
+<em class="property">class </em><code class="descclassname">rcs.</code><code class="descname">DocV1</code><a class="reference internal" href="../_modules/rcs.html#DocV1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.DocV1" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="rcs.DocV1.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#DocV1.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.DocV1.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocV1.__module__">
+<code class="descname">__module__</code><em class="property"> = 'rcs'</em><a class="headerlink" href="#rcs.DocV1.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocV1.endpoint">
+<code class="descname">endpoint</code><em class="property"> = 'docv1'</em><a class="headerlink" href="#rcs.DocV1.endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.DocV1.mediatypes">
+<code class="descname">mediatypes</code><span class="sig-paren">(</span><em>resource_cls</em><span class="sig-paren">)</span><a class="headerlink" href="#rcs.DocV1.mediatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocV1.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#rcs.DocV1.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rcs.Docs">
+<em class="property">class </em><code class="descclassname">rcs.</code><code class="descname">Docs</code><a class="reference internal" href="../_modules/rcs.html#Docs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.Docs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container class for all web requests for sets of documents</p>
+<dl class="attribute">
+<dt id="rcs.Docs.__module__">
+<code class="descname">__module__</code><em class="property"> = 'rcs'</em><a class="headerlink" href="#rcs.Docs.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.Docs.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#Docs.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.Docs.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for fetching a single document from the doc store.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lang</strong> (<em>str</em>) &#8211; A two letter language code for the response</li>
+<li><strong>smallkeylist</strong> (<em>str</em>) &#8211; A comma separated string of short keys each of which identifies a single dataset</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list &#8211; an array of JSON configuration fragments (empty error objects are added where keys do not match)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.Docs.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#rcs.Docs.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rcs.DocsV09">
+<em class="property">class </em><code class="descclassname">rcs.</code><code class="descname">DocsV09</code><a class="reference internal" href="../_modules/rcs.html#DocsV09"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.DocsV09" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="rcs.DocsV09.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#DocsV09.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.DocsV09.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocsV09.__module__">
+<code class="descname">__module__</code><em class="property"> = 'rcs'</em><a class="headerlink" href="#rcs.DocsV09.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocsV09.endpoint">
+<code class="descname">endpoint</code><em class="property"> = 'docsv09'</em><a class="headerlink" href="#rcs.DocsV09.endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.DocsV09.mediatypes">
+<code class="descname">mediatypes</code><span class="sig-paren">(</span><em>resource_cls</em><span class="sig-paren">)</span><a class="headerlink" href="#rcs.DocsV09.mediatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocsV09.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#rcs.DocsV09.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rcs.DocsV1">
+<em class="property">class </em><code class="descclassname">rcs.</code><code class="descname">DocsV1</code><a class="reference internal" href="../_modules/rcs.html#DocsV1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.DocsV1" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="rcs.DocsV1.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#DocsV1.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.DocsV1.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocsV1.__module__">
+<code class="descname">__module__</code><em class="property"> = 'rcs'</em><a class="headerlink" href="#rcs.DocsV1.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocsV1.endpoint">
+<code class="descname">endpoint</code><em class="property"> = 'docsv1'</em><a class="headerlink" href="#rcs.DocsV1.endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.DocsV1.mediatypes">
+<code class="descname">mediatypes</code><span class="sig-paren">(</span><em>resource_cls</em><span class="sig-paren">)</span><a class="headerlink" href="#rcs.DocsV1.mediatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.DocsV1.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#rcs.DocsV1.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rcs.Register">
+<em class="property">class </em><code class="descclassname">rcs.</code><code class="descname">Register</code><a class="reference internal" href="../_modules/rcs.html#Register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.Register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container class for all catalog requests for registering new features</p>
+<dl class="attribute">
+<dt id="rcs.Register.__module__">
+<code class="descname">__module__</code><em class="property"> = 'rcs'</em><a class="headerlink" href="#rcs.Register.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.Register.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#Register.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.Register.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for removing a layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>smallkey</strong> (<em>str</em>) &#8211; A unique identifier for the dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">JSON Response &#8211; 204 on success; 500 on failure</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.Register.endpoint">
+<code class="descname">endpoint</code><em class="property"> = 'register'</em><a class="headerlink" href="#rcs.Register.endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.Register.mediatypes">
+<code class="descname">mediatypes</code><span class="sig-paren">(</span><em>resource_cls</em><span class="sig-paren">)</span><a class="headerlink" href="#rcs.Register.mediatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.Register.methods">
+<code class="descname">methods</code><em class="property"> = ['DELETE', 'PUT']</em><a class="headerlink" href="#rcs.Register.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.Register.put">
+<code class="descname">put</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#Register.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.Register.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for adding or editing a single layer.
+All registration requests must contain entries for all languages and will be validated against a JSON schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>smallkey</strong> (<em>str</em>) &#8211; A unique identifier for the dataset (can be any unique string, but preferably should be short)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">JSON Response &#8211; 201 on success; 400 with JSON payload of an errors array on failure</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rcs.Update">
+<em class="property">class </em><code class="descclassname">rcs.</code><code class="descname">Update</code><a class="reference internal" href="../_modules/rcs.html#Update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.Update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles cache maintenance requests</p>
+<dl class="attribute">
+<dt id="rcs.Update.__module__">
+<code class="descname">__module__</code><em class="property"> = 'rcs'</em><a class="headerlink" href="#rcs.Update.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.Update.endpoint">
+<code class="descname">endpoint</code><em class="property"> = 'update'</em><a class="headerlink" href="#rcs.Update.endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.Update.mediatypes">
+<code class="descname">mediatypes</code><span class="sig-paren">(</span><em>resource_cls</em><span class="sig-paren">)</span><a class="headerlink" href="#rcs.Update.mediatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="rcs.Update.methods">
+<code class="descname">methods</code><em class="property"> = ['POST']</em><a class="headerlink" href="#rcs.Update.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rcs.Update.post">
+<code class="descname">post</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#Update.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.Update.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for triggering cache updates.
+Walks through the database and updates cached data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>arg</strong> &#8211; Either &#8216;all&#8217; or a positive integer indicating the minimum</td>
+</tr>
+</tbody>
+</table>
+<p>age in days of a record before it should be updated
+:type arg: str
+:returns: JSON Response &#8211; 200 on success; 400 on malformed URL</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="rcs.jsonp">
+<code class="descclassname">rcs.</code><code class="descname">jsonp</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#jsonp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.jsonp" title="Permalink to this definition">¶</a></dt>
+<dd><p>A decorator function that wraps JSONified output for JSONP requests.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rcs.log_exception">
+<code class="descclassname">rcs.</code><code class="descname">log_exception</code><span class="sig-paren">(</span><em>sender</em>, <em>exception</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rcs.html#log_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcs.log_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detailed error logging function.  Designed to attach to Flask exception
+events and logs a bit of extra infomration about the request that triggered
+the exception.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sender</strong> &#8211; The sender for the exception (we don&#8217;t use this and log everyhing against app right now)</li>
+<li><strong>exception</strong> (<em>Exception</em>) &#8211; The exception that was triggered</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="previous chapter">Module and Package Docs</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="parsers.html"
+                        title="next chapter">Parsers</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/dev/rcs.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="parsers.html" title="Parsers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="Module and Package Docs"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RAMP Configuration Service 1.8.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Developer Docs</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="api.html" >Module and Package Docs</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Environment Canada.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

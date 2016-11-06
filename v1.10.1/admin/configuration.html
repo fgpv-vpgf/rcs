@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>RCS Configration Options &mdash; RAMP Configuration Service 1.10.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.10.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="RAMP Configuration Service 1.10.1 documentation" href="../index.html" />
+    <link rel="up" title="Administrator’s Guide" href="index.html" />
+    <link rel="next" title="Using RCS Endpoints" href="../service/index.html" />
+    <link rel="prev" title="Replication" href="replication.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="rcs-configration-options">
+<span id="config"></span><h1>RCS Configration Options<a class="headerlink" href="#rcs-configration-options" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>LOG_FILE</dt>
+<dd>Name of the log file</dd>
+<dt>LOG_LEVEL</dt>
+<dd>Follows <a class="reference external" href="https://docs.python.org/2/library/logging.html#levels">Python log levels</a></dd>
+<dt>LOG_BACKUPS</dt>
+<dd>Number of backups (rotated log files) to keep</dd>
+<dt>LOG_ROTATE_BYTES</dt>
+<dd>Size in bytes at which logs should be rotated</dd>
+<dt>ACCESS_LOG</dt>
+<dd>Name of the access log file, if not present access requests will not be logged</dd>
+<dt>FEATURE_SERVICE_PROXY</dt>
+<dd>A proxy URL to be used when registering ESRI feature layers.  Should be in the form of <code class="docutils literal"><span class="pre">http://[server]:[port]</span></code>.</dd>
+<dt>URL_PREFIX</dt>
+<dd>A general prefix for the application, useful if you want to have side by side installs
+of RCS.  It should include an opening / (e.g. <code class="docutils literal"><span class="pre">/rcs_ecdmp</span></code>).</dd>
+<dt>STORAGE_DB</dt>
+<dd>The name of the couchdb database for storing the cached requests</dd>
+<dt>AUTH_DB</dt>
+<dd>Name of the database holding the API signing keys</dd>
+<dt>DB_CONN</dt>
+<dd>A database connection string (typically an http url, ex: <code class="docutils literal"><span class="pre">http://localhost:5984/</span></code>)</dd>
+<dt>SIG_CHECK</dt>
+<dd>Boolean value indicating if signature verification should be done on requests</dd>
+<dt>METADATA_URL</dt>
+<dd>Template URL for metadata, should include a <code class="docutils literal"><span class="pre">{0}</span></code> parameter for string replacement</dd>
+<dt>CATALOGUE_URL</dt>
+<dd>Template URL for the catalogue page, should include a <code class="docutils literal"><span class="pre">{0}</span></code> parameter for string replacement</dd>
+<dt>REG_SCHEMA</dt>
+<dd>Path to the JSON schema to be used for validating PUT requests</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Administrator&#8217;s Guide</a><ul>
+      <li>Previous: <a href="replication.html" title="previous chapter">Replication</a></li>
+      <li>Next: <a href="../service/index.html" title="next chapter">Using RCS Endpoints</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/admin/configuration.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Environment Canada.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/admin/configuration.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
