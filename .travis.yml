@@ -1,14 +1,17 @@
-language: python
-python:
-    - "2.7"
+env:
+  global:
+    secure: L/XoO6PXazMX+mHN8e+csS0hduu0o6IAE5Z9ypa1hN8HZJ0airpGqmD7wGoyhY4d/p3ujf+uyrLvOz/CGuEhSjhp9BDC8Y73h+LQEGsqDHQEV2w9d18jg2HU9WKORWBoAHXf78Us47s74uJsH8+s6gD+1pqVpIBVjuyn+C5+mVQVLSRhT3tbwYpGmA2EY7s9RihJICI/qNGx1xAlx/kF+hd2Z+RbBJLhyyuEDWPbhFCMhJ/9pTynDA1qhW8cJHTA3TYO+506+2GJKUroFlg3vo5iMJ33pw6p40oGQlZq+p/FbtxkgdfQnw//XJLzfFaFBhi4sbMLSMiD5FqazhARjH8Bd5UHZg4ZumqYqIMYOPa5RqEWWiJ6cvSRfxEGajnkQDU45F/8lefYl6QfBdnHwDQwoBB2S+nozf1ARW4xZ8Q2BLgrT4zd9C+eKDU6XvtxN9I55GaD0gOUpTeXJCpde1oEtRhPqQWkOn6ij5px7peRf+XAzvGyFiIusKEUUUbUzbGsDcMfY969ckxFVhINQnmGkQuFvdfScYcPX7JHOVdYK3TGNlme4NGrAJVmnnPr8EeNYXM1rg2tFwOV2G8m4XdsYPx4jUuJVpIsbtfzXGb8oZwBxjPJPia3quLrG89QulWJSIlHLD52yf15AxUFm0PN79eahkJf+VfqwQgxuyo=
 install:
-    - pip install -r requirements.txt
-    - pip install -r requirements-dev.txt
-    - pip install -e .
-script:
-    - make check
+- pip install -r requirements.txt
+- pip install -r requirements-dev.txt
+- pip install -e .
+language: python
 notifications:
-    webhooks:
-        urls:
-            - https://webhooks.gitter.im/e/7bd6d69bcfa59bddf1e2
-        on_start: never
+  webhooks:
+    on_start: never
+    urls:
+    - https://webhooks.gitter.im/e/7bd6d69bcfa59bddf1e2
+python:
+- '2.7'
+script:
+- make check
