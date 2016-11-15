@@ -7,5 +7,5 @@ see how poorly commented RCS is.
 .. toctree::
     :maxdepth: 2
 
-    rcs
-    parsers
+    run
+    services
