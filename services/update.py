@@ -28,41 +28,28 @@ class Update(Resource):
             msg = {'msg': 'Error: {0}'.format(e.message)}
             return Response(json.dumps(msg), mimetype='application/json', status=500)
 
+        def replace_if_set(params):
+            for p in params:
+                if p in payload_seg:
+                    request_seg[p] = payload_seg[p]
+
         try:
             payload = json.loads(request.data)
-            for x in langs:
-                # The generic fields to update
-                if "service_url" in payload[x]:
-                    dbdata["request"][x]["service_url"] = payload[x]["service_url"]
-                if "service_name" in payload[x]:
-                    dbdata["request"][x]["service_name"] = payload[x]["service_name"]
-                if "metadata" in payload[x]:
-                    dbdata["request"][x]["metadata"] = payload[x]["metadata"]
-                # If it's a flavour of Esri feature layer...
-                if "esriFeature" or "esriImage" or "esriTile" in payload[x]["service_type"]:
-                    if "display_field" in payload[x]:
-                        dbdata["request"][x]["display_field"] = payload[x]["display_field"]
-                # Or an Esri group layer...
-                elif payload[x]["service_type"] == "esriMapServer":
-                    if "scrape_only" in payload[x]:
-                        dbdata["request"][x]["scrape_only"] = payload[x]["scrape_only"]
-                    if "recursive" in payload[x]:
-                        dbdata["request"][x]["recursive"] = payload[x]["recursive"]
-                # Or a WMS layer/service
-                elif payload[x]["service_type"] == "ogcWms":
-                    if "legend_format" in payload[x]:
-                        dbdata["request"][x]["legend_format"] = payload[x]["legend_format"]
-                    if "feature_info_format" in payload[x]:
-                        dbdata["request"][x]["feature_info_format"] = payload[x]["feature_info_format"]
-                    if "scrape_only" in payload[x]:
-                        dbdata["request"][x]["scrape_only"] = payload[x]["scrape_only"]
-                    if "recursive" in payload[x]:
-                        dbdata["request"][x]["recursive"] = payload[x]["recursive"]
-            v2_node, v1_node = regparse.make_node(key, dbdata["request"], current_app.config)
-            db.put_doc(key, payload[x]["service_type"], dbdata["request"], layer_config=v2_node, v1_config=v1_node)
+            for lang in langs:
+                request_seg = dbdata['request'][lang]
+                payload_seg = payload[lang]
+                replace_if_set(['service_url', 'service_name', 'metadata'])
+                if payload_seg['service_type'] in ['esriFeature', 'esriImage', 'esriTile']:
+                    replace_if_set(['display_field'])
+                elif payload_seg['service_type'] == 'esriMapServer':
+                    replace_if_set(['scrape_only', 'recursive'])
+                elif payload_seg['service_type'] == 'ogcWms':
+                    replace_if_set(['scrape_only', 'recursive', 'legend_format', 'feature_info_format'])
+                v2_node, v1_node = regparse.make_node(key, dbdata["request"], current_app.config)
+                db.put_doc(key, payload[lang]["service_type"], dbdata["request"],
+                           layer_config=v2_node, v1_config=v1_node)
         except Exception as e:
             msg = {'msg': 'Error: {0}'.format(e.message)}
             return Response(json.dumps(msg), mimetype='application/json', status=500)
-
         success = {"msg": "Updated", "key": key}
         return Response(json.dumps(success), mimetype='application/json', status=200)
