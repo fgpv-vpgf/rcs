@@ -96,10 +96,11 @@
             <input type="button" class="btn btn-default samplejson" value="esriFeature" data-obj="sampleFeature" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Zoom Scale)" data-obj="sampleZoomScale" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Class Breaks)" data-obj="sampleFeature2" />
-            <input type="button" class="btn btn-default samplejson" value="esriFeature (Specific Sublayers)" data-obj="sampleScrapeOnly" />
+            <input type="button" class="btn btn-default samplejson" value="esriDynamic (Specific Sublayers)" data-obj="sampleScrapeOnly" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (w/ Metadata)" data-obj="sampleCatalogue" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Display Field)" data-obj="sampleDisplayField" />
             <input type="button" class="btn btn-default samplejson" value="esriFeature (Update)" data-obj="sampleUpdateFeature" /><br/><br/>
+            <input type="button" class="btn btn-default samplejson" value="esriDynamic (Single FeatureLayer)" data-obj="sampleDynamic" />
             <input type="button" class="btn btn-default samplejson" value="esriImage" data-obj="sampleImage" />
             <input type="button" class="btn btn-default samplejson" value="esriTile" data-obj="sampleTile" />
             <input type="button" class="btn btn-default samplejson" value="esri Group Layer (recursive)" data-obj="sampleRecursive" />
@@ -356,6 +357,19 @@
           		"service_name": "Railways"
           	},
           	"version": "2.0"
+        },
+        sampleDynamic = {
+        	"fr": {
+        		"service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_fr/MapServer/20",
+        		"service_type": "esriMapServer",
+        		"service_name": "Surveillance de la situation et des tendances d'oiseaux terrestres inscrits rares et difficiles à surveiller"
+        	},
+        	"en": {
+        		"service_url": "http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/20",
+        		"service_type": "esriMapServer",
+        		"service_name": "Status and Trend Monitoring of Listed, Rare, and Difficult-to-Monitor Landbirds"
+        	},
+        	"version": "2.0"
         };
 
     function get_versioned_url() {
@@ -399,6 +413,10 @@
         return '/' + $('[name=ver]:checked').val() + '/register/' + $('#smallkey').val();
     }
 
+    function get_upgrade_url(ver) {
+        return '/' + $('[name=ver]:checked').val() + '/upgrade/2.0/' + $('#smallkey').val();
+    }
+
     function get_update_url(ver) {
         return '/' + $('[name=ver]:checked').val() + '/update/' + $('#smallkey').val();
     }
@@ -415,6 +433,8 @@
         ret.isodate = $('#timeStamp').val();
         if ( urlType === 'update' ) {
             ret.path = get_update_url();
+        } else if ( urlType === 'upgrade' ) {
+            ret.path = get_upgrade_url();
         } else if ( urlType === 'updatefeature' ) {
             ret.path = get_updatefeature_url();
         } else {
@@ -512,7 +532,7 @@
 
         $('#updatetest').click( function() {
           var s = get_sig_params("update"),
-              sig = sign( s.key, s.path, s.id, s.isodate, s.body ),
+              sig = sign( s.key, s.path, s.id, s.isodate, '' ),
               h = make_headers(s,sig);
           console.log(h);
           $.ajax({
@@ -551,21 +571,24 @@
         });
 
         $('#upgradetest').click( function() {
-            var u = '/v2/upgrade/2.0/' + $('#smallkey').val();
-            log_info('Upgrade URL: '+u);
-            $.ajax({
-                type: "PUT",
-                url: u,
-                dataType: "json",
-            }).done(function (data) {
-                log_info('Upgrade done');
-                log_info(JSON.stringify(data));
-                $('#data').val(JSON.stringify(data));
-            }).fail(function (err) {
-                log_err('Upgrade failed '+err.status);
-                log_err(JSON.stringify(err));
-                console.log(err);
-            });
+          var s = get_sig_params("upgrade"),
+              sig = sign( s.key, s.path, s.id, s.isodate, '' ),
+              h = make_headers(s,sig);
+          console.log(h);
+          $.ajax({
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              url: s.target,
+              headers: h
+          }).done(function (data) {
+            log_info('Upgrade done');
+            log_info(JSON.stringify(data));
+            $('#data').val(JSON.stringify(data));
+          }).fail(function (err) {
+            log_err('Upgrade failed '+err.status);
+            log_err(JSON.stringify(err));
+            console.log(err);
+          });
         });
 
         $('#logclear').click( function() { $('#log').html(''); } );
