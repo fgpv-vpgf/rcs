@@ -7,7 +7,7 @@ del os.link
 setup(
     name="rcs",
     description="RAMP Configuration Service",
-    version="2.2.1",
+    version="2.2.2",
     author="Environment and Climate Change Canada",
     author_email="mike.weech@canada.ca",
     url="https://github.com/fgpv-vpgf/rcs",
