@@ -115,11 +115,19 @@ def make_node(key, json_request, config):
         n['id'] = make_id(key, lang)
         ltype = svc_types[lang]
         n['layerType'] = remapped_types.get(ltype, ltype)
-        if 'service_type' in json_request[lang] and json_request[lang]['service_type'] != svc_types[lang]:
+        if 'service_type' in json_request[lang] and json_request[lang]['service_type'] != svc_types[lang] \
+           and json_request[lang]['service_type'] != "esriMapServer":
             msg = 'Mismatched service type in {0} object, endpoint identified as {1} but provided as {2}' \
                   .format(lang, svc_types[lang], json_request[lang]['service_type'])
             raise ServiceEndpointException(msg)
-        n['url'] = json_request[lang]['service_url']
+        if json_request[lang]['service_type'] == 'esriMapServer' and \
+           re.match('.*?(\/[0-9]*)$', json_request[lang]['service_url']):
+            n['layerType'] = 'esriDynamic'
+            layerid = re.sub('.*?(\/[0-9]*)$', r'\1', json_request[lang]['service_url']).replace('/', '')
+            n['url'] = json_request[lang]['service_url']
+            n['layerEntries'] = [{'index': int(layerid)}]
+        else:
+            n['url'] = json_request[lang]['service_url']
         m_url, c_url = metadata.get_url(json_request[lang], config)
         if n['url'].endswith("FeatureServer"):
             msg = 'FeatureServer registration must specify a feature layer'
@@ -137,4 +145,6 @@ def make_node(key, json_request, config):
             v1[lang] = ogc.make_v1_wms_node(json_request[lang], n)
         elif ltype == ServiceTypes.FEATURE:
             v1[lang] = esri.make_v1_feature_node(json_request[lang], n)
+            if n['layerType'] == 'esriDynamic':
+                n['url'] = n['url'].rstrip('/0123456789')
     return node, v1
