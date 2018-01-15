@@ -54,8 +54,7 @@ def get_endpoint_type(endpoint, type_hint=None):
         r = requests.get(endpoint)
         print r.status_code
         print r.headers
-        ct = r.headers['content-type']
-        if (xml_regex.search(ct)):
+        if ('content-type' in r.headers and xml_regex.search(r.headers['content-type'])):
             # XML response means WMS or WMTS (latter is not implemented)
             # FIXME type detection should be much more robust, add proper XML parsing, ...
             return ServiceTypes.WMS
@@ -144,6 +143,7 @@ def make_node(key, json_request, config):
         if ltype == ServiceTypes.WMS:
             v1[lang] = ogc.make_v1_wms_node(json_request[lang], n)
         elif ltype == ServiceTypes.FEATURE:
+            # not sure if we still want to support v1 for feature layers
             v1[lang] = esri.make_v1_feature_node(json_request[lang], n)
             if n['layerType'] == 'esriDynamic':
                 n['url'] = n['url'].rstrip('/0123456789')
