@@ -90,7 +90,7 @@ def get_legend_mapping(feature_url, layer_id):
     :param layer_id: The id of the layer to create the mapping for.
     :returns: dict -- a mapping of 'label' => 'data URI encoded image'
     """
-    # NOTE: this will cause an error because feature layers does not have legend?f=json
+    # NOTE: this will cause an error because feature layers do not have legend?f=json
     legend_json = requests.get(get_legend_url(feature_url), proxies=flask.g.proxies).json()
     for layer in legend_json['layers']:
         if layer['layerId'] == layer_id:
