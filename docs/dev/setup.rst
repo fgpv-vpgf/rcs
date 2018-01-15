@@ -29,7 +29,7 @@ Configure Python Environment
 Set up Development Environment and run RCS using Vagrant
 -------------------------------------------
 #. Install Vagrant (https://www.vagrantup.com/downloads.html)
-#. Clone the repo ``git clone https://github.com/fgpv-vpgf/rcs.git``
+#. Clone RCS repo ``git clone https://github.com/fgpv-vpgf/rcs.git``
 #. Activate Vagrant ``vagrant up`` (Note: Please ensure a Vagrant file exits)
 #. Establish a connection ``vagrant ssh``n
 #. Change to the Vagrant folder ``cd /vagrant``
