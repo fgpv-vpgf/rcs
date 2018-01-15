@@ -25,3 +25,15 @@ Configure Python Environment
 #. Make any path changes necessary to ``config.py`` (if you followed the above there should be none)
 #. Test the installation ``python rcs.py`` (this will run a test server on localhost)
 #. Seed the database ``python seed_qa_keys.py``
+
+Set up Development Environment and run RCS using Vagrant
+-------------------------------------------
+#. Install Vagrant (https://www.vagrantup.com/downloads.html)
+#. Clone the repo ``git clone https://github.com/fgpv-vpgf/rcs.git``
+#. Activate Vagrant ``vagrant up`` (Note: Please ensure a Vagrant file exits)
+#. Establish a connection ``vagrant ssh``n
+#. Change to the Vagrant folder ``cd /vagrant``
+#. Activate the programmes required ``. bin/activate``
+#. If vagrant failed at any point, run ``vagrant destroy`` then repeat the previous steps again
+#. Run RCS ``python run.py --listen-all``
+#. Go to http://localhost:6101/static/test.html for testing (Note: The port number might be different)
