@@ -200,7 +200,9 @@ def make_v1_feature_node(json_request, v2_node):
     node['maxScale'] = svc_data.get('maxScale', 0)
     node['datagrid'] = make_data_grid(svc_data)
     node['layerExtent'] = make_extent(svc_data)
-    node['symbology'] = make_symbology(svc_data, v2_node['url'])
+    # NOTE: the fellowing line was commented out to supress the error when registering v1 nodes because feautre
+    # layers do not have legend?f=json.  See functions make_symbology and get_legend_mapping for more details.
+    # node['symbology'] = make_symbology(svc_data, v2_node['url'])
     node['aliasMap'] = make_alias_mapping(svc_data['fields'])
     if 'max_allowable_offset' in json_request:
         node['maxAllowableOffset'] = json_request['max_allowable_offset']
