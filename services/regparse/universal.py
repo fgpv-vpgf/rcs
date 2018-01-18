@@ -143,7 +143,6 @@ def make_node(key, json_request, config):
         if ltype == ServiceTypes.WMS:
             v1[lang] = ogc.make_v1_wms_node(json_request[lang], n)
         elif ltype == ServiceTypes.FEATURE:
-            # not sure if we still want to support v1 for feature layers
             v1[lang] = esri.make_v1_feature_node(json_request[lang], n)
             if n['layerType'] == 'esriDynamic':
                 n['url'] = n['url'].rstrip('/0123456789')

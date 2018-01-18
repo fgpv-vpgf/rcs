@@ -90,7 +90,6 @@ def get_legend_mapping(feature_url, layer_id):
     :param layer_id: The id of the layer to create the mapping for.
     :returns: dict -- a mapping of 'label' => 'data URI encoded image'
     """
-    # NOTE: this will cause an error because feature layers do not have legend?f=json
     legend_json = requests.get(get_legend_url(feature_url), proxies=flask.g.proxies).json()
     for layer in legend_json['layers']:
         if layer['layerId'] == layer_id:
@@ -201,7 +200,8 @@ def make_v1_feature_node(json_request, v2_node):
     node['maxScale'] = svc_data.get('maxScale', 0)
     node['datagrid'] = make_data_grid(svc_data)
     node['layerExtent'] = make_extent(svc_data)
-    # comment it out to remove v1 feature layer retrieval
+    # NOTE: the fellowing line was commented out to supress the error when registering v1 nodes because feautre
+    # layers do not have legend?f=json.  See functions make_symbology and get_legend_mapping for more details.
     # node['symbology'] = make_symbology(svc_data, v2_node['url'])
     node['aliasMap'] = make_alias_mapping(svc_data['fields'])
     if 'max_allowable_offset' in json_request:
