@@ -1,0 +1,425 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Services &#8212; RAMP Configuration Service 2.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Administrator’s Guide" href="../admin/index.html" />
+    <link rel="prev" title="Module and Package Docs" href="api.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="services">
+<h1>Services<a class="headerlink" href="#services" title="Permalink to this headline">¶</a></h1>
+<p>The <cite>services</cite> package.</p>
+<span class="target" id="module-services.retrieval"></span><dl class="class">
+<dt id="services.retrieval.Doc">
+<em class="property">class </em><code class="descclassname">services.retrieval.</code><code class="descname">Doc</code><a class="reference internal" href="../_modules/services/retrieval.html#Doc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.Doc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container class for all web requests for single documents</p>
+<dl class="attribute">
+<dt id="services.retrieval.Doc.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.retrieval'</em><a class="headerlink" href="#services.retrieval.Doc.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="services.retrieval.Doc.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/retrieval.html#Doc.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.Doc.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for fetching a single document from the doc store.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lang</strong> – A two letter language code for the response</li>
+<li><strong>smallkey</strong> (<em>str</em>) – A short key which uniquely identifies the dataset</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Response – a JSON response object; None with a 404 code if the key was not matched</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.Doc.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#services.retrieval.Doc.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="services.retrieval.DocV1">
+<em class="property">class </em><code class="descclassname">services.retrieval.</code><code class="descname">DocV1</code><a class="reference internal" href="../_modules/services/retrieval.html#DocV1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.DocV1" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="services.retrieval.DocV1.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/retrieval.html#DocV1.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.DocV1.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.DocV1.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.retrieval'</em><a class="headerlink" href="#services.retrieval.DocV1.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.DocV1.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#services.retrieval.DocV1.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="services.retrieval.DocV2">
+<em class="property">class </em><code class="descclassname">services.retrieval.</code><code class="descname">DocV2</code><a class="reference internal" href="../_modules/services/retrieval.html#DocV2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.DocV2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="services.retrieval.DocV2.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/retrieval.html#DocV2.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.DocV2.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.DocV2.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.retrieval'</em><a class="headerlink" href="#services.retrieval.DocV2.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.DocV2.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#services.retrieval.DocV2.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="services.retrieval.Docs">
+<em class="property">class </em><code class="descclassname">services.retrieval.</code><code class="descname">Docs</code><a class="reference internal" href="../_modules/services/retrieval.html#Docs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.Docs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container class for all web requests for sets of documents</p>
+<dl class="attribute">
+<dt id="services.retrieval.Docs.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.retrieval'</em><a class="headerlink" href="#services.retrieval.Docs.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="services.retrieval.Docs.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/retrieval.html#Docs.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.Docs.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for fetching a single document from the doc store.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lang</strong> (<em>str</em>) – A two letter language code for the response</li>
+<li><strong>smallkeylist</strong> (<em>str</em>) – A comma separated string of short keys each of which identifies a single dataset</li>
+<li><strong>sortargs</strong> (<em>str</em>) – ‘sort’ if returned list should be sorted based on geometry</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list – an array of JSON configuration fragments</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>(empty error objects are added where keys do not match)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.Docs.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#services.retrieval.Docs.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="services.retrieval.DocsV1">
+<em class="property">class </em><code class="descclassname">services.retrieval.</code><code class="descname">DocsV1</code><a class="reference internal" href="../_modules/services/retrieval.html#DocsV1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.DocsV1" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="services.retrieval.DocsV1.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/retrieval.html#DocsV1.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.DocsV1.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.DocsV1.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.retrieval'</em><a class="headerlink" href="#services.retrieval.DocsV1.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.DocsV1.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#services.retrieval.DocsV1.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="services.retrieval.DocsV2">
+<em class="property">class </em><code class="descclassname">services.retrieval.</code><code class="descname">DocsV2</code><a class="reference internal" href="../_modules/services/retrieval.html#DocsV2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.DocsV2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="services.retrieval.DocsV2.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/retrieval.html#DocsV2.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.DocsV2.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.DocsV2.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.retrieval'</em><a class="headerlink" href="#services.retrieval.DocsV2.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.DocsV2.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#services.retrieval.DocsV2.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="services.retrieval.Version">
+<em class="property">class </em><code class="descclassname">services.retrieval.</code><code class="descname">Version</code><a class="reference internal" href="../_modules/services/retrieval.html#Version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.Version" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="services.retrieval.Version.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.retrieval'</em><a class="headerlink" href="#services.retrieval.Version.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="services.retrieval.Version.get">
+<code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/retrieval.html#Version.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.retrieval.Version.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.retrieval.Version.methods">
+<code class="descname">methods</code><em class="property"> = ['GET']</em><a class="headerlink" href="#services.retrieval.Version.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-services.update"></span><dl class="class">
+<dt id="services.update.Update">
+<em class="property">class </em><code class="descclassname">services.update.</code><code class="descname">Update</code><a class="reference internal" href="../_modules/services/update.html#Update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.update.Update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a specific element of an existing registration</p>
+<dl class="attribute">
+<dt id="services.update.Update.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.update'</em><a class="headerlink" href="#services.update.Update.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.update.Update.methods">
+<code class="descname">methods</code><em class="property"> = ['PUT']</em><a class="headerlink" href="#services.update.Update.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="services.update.Update.put">
+<code class="descname">put</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/update.html#Update.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.update.Update.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for updating one or more nodes of an existing request.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) – A unique identifier for the dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">JSON Response – 200 on success; 4xx if problems are encountered</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-services.upgrade"></span><dl class="class">
+<dt id="services.upgrade.Upgrade">
+<em class="property">class </em><code class="descclassname">services.upgrade.</code><code class="descname">Upgrade</code><a class="reference internal" href="../_modules/services/upgrade.html#Upgrade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.upgrade.Upgrade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles upgrading of entries from v1 to v2</p>
+<dl class="attribute">
+<dt id="services.upgrade.Upgrade.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.upgrade'</em><a class="headerlink" href="#services.upgrade.Upgrade.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.upgrade.Upgrade.methods">
+<code class="descname">methods</code><em class="property"> = ['POST']</em><a class="headerlink" href="#services.upgrade.Upgrade.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="services.upgrade.Upgrade.post">
+<code class="descname">post</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/upgrade.html#Upgrade.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.upgrade.Upgrade.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for upgrading a previous registration from v1 to v2.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) – A unique identifier for the dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">JSON Response – 200 on success; 4xx if problems are encountered</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="services.upgrade.feat_upgrade">
+<code class="descclassname">services.upgrade.</code><code class="descname">feat_upgrade</code><span class="sig-paren">(</span><em>v1_request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/upgrade.html#feat_upgrade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.upgrade.feat_upgrade" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="services.upgrade.wms_upgrade">
+<code class="descclassname">services.upgrade.</code><code class="descname">wms_upgrade</code><span class="sig-paren">(</span><em>v1_request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/upgrade.html#wms_upgrade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.upgrade.wms_upgrade" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-services.utils"></span><p>API utilities</p>
+<dl class="function">
+<dt id="services.utils.jsonp">
+<code class="descclassname">services.utils.</code><code class="descname">jsonp</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/utils.html#jsonp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.utils.jsonp" title="Permalink to this definition">¶</a></dt>
+<dd><p>A decorator function that wraps JSONified output for JSONP requests.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="services.utils.log_exception">
+<code class="descclassname">services.utils.</code><code class="descname">log_exception</code><span class="sig-paren">(</span><em>sender</em>, <em>exception</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/utils.html#log_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.utils.log_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detailed error logging function.  Designed to attach to Flask exception
+events and logs a bit of extra infomration about the request that triggered
+the exception.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sender</strong> – The sender for the exception (we don’t use this and log everyhing against app right now)</li>
+<li><strong>exception</strong> (<em>Exception</em>) – The exception that was triggered</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-services.v1"></span><dl class="class">
+<dt id="services.v1.Simplification">
+<em class="property">class </em><code class="descclassname">services.v1.</code><code class="descname">Simplification</code><a class="reference internal" href="../_modules/services/v1.html#Simplification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.v1.Simplification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles updates to simplification factor of a feature layer</p>
+<dl class="attribute">
+<dt id="services.v1.Simplification.__module__">
+<code class="descname">__module__</code><em class="property"> = 'services.v1'</em><a class="headerlink" href="#services.v1.Simplification.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="services.v1.Simplification.methods">
+<code class="descname">methods</code><em class="property"> = ['PUT']</em><a class="headerlink" href="#services.v1.Simplification.methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="services.v1.Simplification.put">
+<code class="descname">put</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/v1.html#Simplification.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.v1.Simplification.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>A REST endpoint for updating a simplification factor on a registered feature service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>smallkey</strong> (<em>str</em>) – A unique identifier for the dataset (can be any unique string, but preferably should be short)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">JSON Response – 200 on success; 400 with JSON payload of an errors array on failure</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="services.v1.make_blueprint">
+<code class="descclassname">services.v1.</code><code class="descname">make_blueprint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/v1.html#make_blueprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.v1.make_blueprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a v1 Flask Blueprint</p>
+</dd></dl>
+
+<span class="target" id="module-services.v2"></span><dl class="function">
+<dt id="services.v2.make_blueprint">
+<code class="descclassname">services.v2.</code><code class="descname">make_blueprint</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/services/v2.html#make_blueprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#services.v2.make_blueprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a v2 Flask Blueprint</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Developer Docs</a><ul>
+  <li><a href="api.html">Module and Package Docs</a><ul>
+      <li>Previous: <a href="api.html" title="previous chapter">Module and Package Docs</a></li>
+      <li>Next: <a href="../admin/index.html" title="next chapter">Administrator’s Guide</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/dev/services.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Environment Canada.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/dev/services.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
