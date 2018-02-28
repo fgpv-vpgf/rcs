@@ -1,0 +1,188 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>services.retrieval &#8212; RAMP Configuration Service 2.3.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for services.retrieval</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">db</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">jsonp</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">flask.ext.restful</span> <span class="k">import</span> <span class="n">Resource</span>
+
+
+<div class="viewcode-block" id="Doc"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.Doc">[docs]</a><span class="k">class</span> <span class="nc">Doc</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Container class for all web requests for single documents</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Doc.get"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.Doc.get">[docs]</a>    <span class="nd">@jsonp</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">smallkey</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A REST endpoint for fetching a single document from the doc store.</span>
+
+<span class="sd">        :param lang: A two letter language code for the response</span>
+<span class="sd">        :param smallkey: A short key which uniquely identifies the dataset</span>
+<span class="sd">        :type smallkey: str</span>
+<span class="sd">        :returns: Response -- a JSON response object; None with a 404 code if the key was not matched</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_doc</span><span class="p">(</span><span class="n">smallkey</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">404</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">doc</span><span class="p">),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Docs"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.Docs">[docs]</a><span class="k">class</span> <span class="nc">Docs</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Container class for all web requests for sets of documents</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Docs.get"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.Docs.get">[docs]</a>    <span class="nd">@jsonp</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">smallkeylist</span><span class="p">,</span> <span class="n">sortarg</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A REST endpoint for fetching a single document from the doc store.</span>
+
+<span class="sd">        :param lang: A two letter language code for the response</span>
+<span class="sd">        :type lang: str</span>
+<span class="sd">        :param smallkeylist: A comma separated string of short keys each of which identifies a single dataset</span>
+<span class="sd">        :type smallkeylist: str</span>
+<span class="sd">        :param sortargs: &#39;sort&#39; if returned list should be sorted based on geometry</span>
+<span class="sd">        :type sortargs: str</span>
+<span class="sd">        :returns: list -- an array of JSON configuration fragments</span>
+<span class="sd">        (empty error objects are added where keys do not match)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">smallkeylist</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="n">unsorted_docs</span> <span class="o">=</span> <span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">get_doc</span><span class="p">(</span><span class="n">smallkey</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">)</span> <span class="k">for</span> <span class="n">smallkey</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">sortarg</span> <span class="o">==</span> <span class="s1">&#39;sort&#39;</span><span class="p">:</span>
+            <span class="c1"># used to retrieve geometryType</span>
+            <span class="n">dbdata</span> <span class="o">=</span> <span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">get_raw</span><span class="p">(</span><span class="n">smallkey</span><span class="p">)</span> <span class="k">for</span> <span class="n">smallkey</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">polys</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">rawdata</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dbdata</span><span class="p">,</span> <span class="n">unsorted_docs</span><span class="p">):</span>
+                <span class="c1"># Point</span>
+                <span class="k">if</span> <span class="n">rawdata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;en&quot;</span><span class="p">][</span><span class="s2">&quot;geometryType&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;esriGeometryPoint&quot;</span><span class="p">:</span>
+                    <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+                <span class="c1"># Polygon</span>
+                <span class="k">elif</span> <span class="n">rawdata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;en&quot;</span><span class="p">][</span><span class="s2">&quot;geometryType&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span><span class="p">:</span>
+                    <span class="n">polys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+                <span class="c1"># Line</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+            <span class="c1"># Concat lists (first in docs = bottom of layer list)</span>
+            <span class="n">docs</span> <span class="o">=</span> <span class="n">polys</span> <span class="o">+</span> <span class="n">lines</span> <span class="o">+</span> <span class="n">points</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">docs</span> <span class="o">=</span> <span class="n">unsorted_docs</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">docs</span><span class="p">),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DocV1"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.DocV1">[docs]</a><span class="k">class</span> <span class="nc">DocV1</span><span class="p">(</span><span class="n">Doc</span><span class="p">):</span>
+<div class="viewcode-block" id="DocV1.__init__"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.DocV1.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DocV1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span></div></div>
+
+
+<div class="viewcode-block" id="DocsV1"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.DocsV1">[docs]</a><span class="k">class</span> <span class="nc">DocsV1</span><span class="p">(</span><span class="n">Docs</span><span class="p">):</span>
+<div class="viewcode-block" id="DocsV1.__init__"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.DocsV1.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DocsV1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span></div></div>
+
+
+<div class="viewcode-block" id="DocV2"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.DocV2">[docs]</a><span class="k">class</span> <span class="nc">DocV2</span><span class="p">(</span><span class="n">Doc</span><span class="p">):</span>
+<div class="viewcode-block" id="DocV2.__init__"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.DocV2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DocV2</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;2&#39;</span></div></div>
+
+
+<div class="viewcode-block" id="DocsV2"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.DocsV2">[docs]</a><span class="k">class</span> <span class="nc">DocsV2</span><span class="p">(</span><span class="n">Docs</span><span class="p">):</span>
+<div class="viewcode-block" id="DocsV2.__init__"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.DocsV2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DocsV2</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;2&#39;</span></div></div>
+
+
+<div class="viewcode-block" id="Version"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.Version">[docs]</a><span class="k">class</span> <span class="nc">Version</span><span class="p">(</span><span class="n">Doc</span><span class="p">):</span>
+<div class="viewcode-block" id="Version.get"><a class="viewcode-back" href="../../dev/services.html#services.retrieval.Version.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;setup.py&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;version&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">version_no</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;\d+\.\d+.\d+&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">version_no</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Environment Canada.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
