@@ -17,5 +17,4 @@ Python with a fairly minimal store and retrieve API.
 RCS is developed by Environment and Climate Change Canada as part of the RAMP project and the Federal Geospatial Platform and is licensed
 under the MIT license.
 
-**Environment setup docs**
-http://fgpv-vpgf.github.io/rcs/v2.3.0/dev/setup.html
+**RAMP Configuration Service Docs:** http://fgpv-vpgf.github.io/rcs/v2.3.1/
