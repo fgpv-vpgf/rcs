@@ -1,5 +1,6 @@
-import regparse, db, json
+import json
 
+from . import regparse, db
 from flask import Response, current_app
 from flask.ext.restful import Resource
 
@@ -49,7 +50,7 @@ class Upgrade(Resource):
             v1_request = dbdata['data']['request']
             upgrade_method = wms_upgrade if v1_request['payload_type'] == 'wms' else feat_upgrade
             v2_request = {lang: upgrade_method(v1_request[lang]) for lang in current_app.config['LANGS']}
-            print v2_request
+            print(v2_request)
             v2_node, v1_node = regparse.make_node(key, v2_request, current_app.config)
             db.put_doc(key, v2_node.values()[0]['layerType'], v2_request, layer_config=v2_node, v1_config=v1_node)
         except Exception as e:
