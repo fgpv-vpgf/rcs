@@ -5,7 +5,6 @@ for RCS and this should eventually end up in separate modules or packages.
 from __future__ import division, print_function, unicode_literals
 
 import json, jsonschema, config, os, sys, logging, flask
-from importlib import reload
 from services import db, v1, v2, utils
 
 from logging.handlers import RotatingFileHandler
