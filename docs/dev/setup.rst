@@ -27,7 +27,7 @@ Configure Python Environment
 #. Seed the database ``python seed_qa_keys.py``
 
 Set up Development Environment and run RCS locally
---------------------------------------------------------
+--------------------------------------------------
 #. Install Vagrant (https://www.vagrantup.com/downloads.html)
 #. Clone RCS repo ``git clone https://github.com/fgpv-vpgf/rcs.git``
 #. Activate Vagrant ``vagrant up`` (Note: Please ensure a Vagrant file exits)

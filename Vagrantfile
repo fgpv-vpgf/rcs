@@ -47,15 +47,16 @@ Vagrant.configure(2) do |config|
     sudo apt-get update
     sudo apt-get install -y couchdb python-virtualenv
     echo 'CouchDB installed'
+    pip install --upgrade virtualenv
     netstat -antp
     sleep 5
     curl -X PUT http://127.0.0.1:5984/rcs_cache
     curl -X PUT http://127.0.0.1:5984/rcs_auth
     cd /vagrant
-    virtualenv --always-copy -p python2 .
+    virtualenv --always-copy -p python3 .
     . bin/activate
     pip install -r requirements.txt
     pip install -r requirements-dev.txt
-    python seed_qa_keys.py
+    python3 seed_qa_keys.py
   SHELL
 end

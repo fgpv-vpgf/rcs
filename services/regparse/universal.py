@@ -1,4 +1,5 @@
-import metadata, requests, ogc, esri, re, flask
+import requests, re, flask
+from . import metadata, ogc, esri
 
 
 remapped_types = {'esriMapServer': 'esriDynamic', 'esriFeatureServer': 'esriDynamic'}
@@ -52,8 +53,8 @@ def get_endpoint_type(endpoint, type_hint=None):
             # probably isn't an ESRI endpoint so try GetCapabilities
             endpoint += '?VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=wms'
         r = requests.get(endpoint)
-        print r.status_code
-        print r.headers
+        print(r.status_code)
+        print(r.headers)
         if ('content-type' in r.headers and xml_regex.search(r.headers['content-type'])):
             # XML response means WMS or WMTS (latter is not implemented)
             # FIXME type detection should be much more robust, add proper XML parsing, ...
