@@ -23,11 +23,10 @@ def sign(key, *parts):
     :type key: str
     :returns: str -- a URL safe base64 encoded signature
     """
-    u8parts = [p.encode('utf8') for p in parts]
-    msg = str('').join(u8parts)
+    msg = str('').join(parts)
     logging.debug(msg)
-    h = hmac.new(str(key), msg, digestmod=hashlib.sha256)
-    return base64.urlsafe_b64encode(h.digest()).replace('=', '')
+    h = hmac.new(bytes(key,'utf-8'), bytes(msg,'utf-8'), digestmod=hashlib.sha256)
+    return str(base64.urlsafe_b64encode(h.digest())).replace('=', '')
 
 
 def test_request(request):
@@ -50,12 +49,12 @@ def test_request(request):
         logger.warning('Missing data from headers, sig check failed')
         return False
     rqpath = request.path
-    rqbody = request.data
+    rqbody = request.data.decode("utf-8")
     psk = services.db.auth.get_key(cid)
     if psk and flask.current_app.config.get('PROD') and cid in ['jstest', 'ecdmpdev']:
         raise Exception('Production mode should never be enabled while connected to a database containing test keys')
 
-    ref_sig = sign(psk, rqpath, cid, dt, rqbody)
+    ref_sig = sign(psk, rqpath, cid, dt, str(rqbody))
     logger.info('Signature received: {0}  ##  Signature generated: {1}'.format(msg_sig, ref_sig))
     return ref_sig is not None and ref_sig == msg_sig
 
