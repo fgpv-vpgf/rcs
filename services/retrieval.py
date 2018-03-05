@@ -1,6 +1,7 @@
-import db, json, re
+import json, re
 
-from utils import jsonp
+from . import db
+from .utils import jsonp
 from flask import Response
 from flask.ext.restful import Resource
 

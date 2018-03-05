@@ -1,7 +1,7 @@
 import json, numbers
 
-import regparse, db, registration
-from retrieval import DocV1, DocsV1
+from . import regparse, db, registration
+from .retrieval import DocV1, DocsV1
 from flask import Blueprint, Response, current_app
 from flask.ext.restful import request, Api, Resource
 

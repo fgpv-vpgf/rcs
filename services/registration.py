@@ -1,4 +1,5 @@
-import regparse, db, json, flask, pycouchdb
+import json, flask, pycouchdb
+from . import regparse, db
 
 from flask import Response, current_app
 from flask.ext.restful import request, abort, Resource
