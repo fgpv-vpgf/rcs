@@ -25,7 +25,7 @@ def sign(key, *parts):
     """
     msg = str('').join(parts)
     logging.debug(msg)
-    h = hmac.new(bytes(key,'utf-8'), bytes(msg,'utf-8'), digestmod=hashlib.sha256)
+    h = hmac.new(bytes(key, 'utf-8'), bytes(msg, 'utf-8'), digestmod=hashlib.sha256)
     return str(base64.urlsafe_b64encode(h.digest())).replace('=', '')
 
 
@@ -102,7 +102,7 @@ def check_time(request):
     logger = get_logger()
     sent = request.headers.get('TimeStamp')
     dt = iso8601.parse_date(sent)
-    now = datetime.datetime.now(iso8601.iso8601.Utc())
+    now = datetime.datetime.now(iso8601.UTC)
     two_min = datetime.timedelta(minutes=2)
     logger.info('Header date: {0}  ##  Current timestamp: {1}'.format(sent, now))
     return -two_min < now-dt < two_min
