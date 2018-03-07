@@ -8,7 +8,7 @@
 Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "bento/ubuntu-17.10"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -45,7 +45,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
-    sudo apt-get install -y couchdb python-virtualenv
+    sudo apt-get install -y couchdb python3-virtualenv
     echo 'CouchDB installed'
     pip install --upgrade virtualenv
     netstat -antp
@@ -53,10 +53,10 @@ Vagrant.configure(2) do |config|
     curl -X PUT http://127.0.0.1:5984/rcs_cache
     curl -X PUT http://127.0.0.1:5984/rcs_auth
     cd /vagrant
-    virtualenv --always-copy -p python3 .
+    virtualenv --always-copy -p python3.6 .
     . bin/activate
     pip install -r requirements.txt
     pip install -r requirements-dev.txt
-    python3 seed_qa_keys.py
+    python3.6 seed_qa_keys.py
   SHELL
 end

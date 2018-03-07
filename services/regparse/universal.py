@@ -108,7 +108,7 @@ def make_node(key, json_request, config):
                  for lang in langs}
     if len(set(svc_types.values())) > 1:
         raise ServiceEndpointException('Mismatched service types across languages {0}'.format(svc_types.values()))
-    if svc_types.values()[0] in [ServiceTypes.WMS, ServiceTypes.FEATURE]:
+    if list(svc_types.values())[0] in [ServiceTypes.WMS, ServiceTypes.FEATURE]:
         v1 = {lang: {} for lang in langs}
     for lang in langs:
         n = node[lang]
