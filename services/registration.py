@@ -49,7 +49,7 @@ def refresh_records(day_limit, limit, config):
         req = r['value']['request']
         try:
             v2_node, v1_node = regparse.make_node(key, req, config)
-            db.put_doc(key, v2_node.values()[0]['layerType'], req, layer_config=v2_node, v1_config=v1_node)
+            db.put_doc(key, list(v2_node.values())[0]['layerType'], req, layer_config=v2_node, v1_config=v1_node)
             valid.append(key)
         except Exception as e:
             current_app.logger.warning('Error in refresh', exc_info=e)
@@ -74,9 +74,9 @@ class Register(Resource):
         :returns: JSON Response -- 201 on success; 400 with JSON payload of an errors array on failure
         """
         try:
-            req = json.loads(request.data)
+            req = json.loads(request.data.decode("utf-8"))
         except Exception as e:
-            current_app.logger.error(e.message)
+            current_app.logger.error(e)
             return '{"errors":["Unparsable json"]}', 400
         errors = get_registration_errors(req)
         if errors:
@@ -95,7 +95,7 @@ class Register(Resource):
 
         current_app.logger.debug(v2_node)
         current_app.logger.debug(v1_node)
-        db.put_doc(key, v2_node.values()[0]['layerType'], req, layer_config=v2_node, v1_config=v1_node)
+        db.put_doc(key, list(v2_node.values())[0]['layerType'], req, layer_config=v2_node, v1_config=v1_node)
         current_app.logger.info('added a key %s' % key)
         return Response(json.dumps(dict(key=key)), mimetype='application/json', status=201)
 
