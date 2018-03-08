@@ -14,7 +14,7 @@ If addtional dependencies are not required a source distribution will likely be 
 #. Initialize the virtual environment ``scripts\activate``
 #. Edit ``setup.py`` if version or packaged dependencies have changed
 #. Edit ``MANIFEST.in`` if any other dependencies (e.g. docs, static test files) have changed
-#. Execute ``python setup.py sdist --formats=bztar,zip``
+#. Execute ``python3.6 setup.py sdist --formats=bztar,zip``
 #. A distributable source package should be available in the ``dist`` folder
 
 Packaging RCS and Dependencies
