@@ -138,7 +138,7 @@ class Refresh(Resource):
 
         try:
             day_limit = int(arg)
-        except:
+        except Exception:
             pass
         if day_limit is None and arg != 'all' or day_limit is not None and day_limit < 1:
             return '{"error":"argument should be either \'all\' or a positive integer"}', 400
@@ -146,7 +146,7 @@ class Refresh(Resource):
         if limit is not None:
             try:
                 rec_limit = int(limit)
-            except:
+            except Exception:
                 return '{"error":"limit must be positive integer if specified"}', 400
         return Response(json.dumps(refresh_records(day_limit, rec_limit, current_app.config)),
                         mimetype='application/json')
