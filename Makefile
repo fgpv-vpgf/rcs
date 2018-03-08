@@ -2,7 +2,7 @@ check:
 	flake8 && py.test
 
 build:
-	python setup.py sdist --formats=bztar,zip
+	python3.6 setup.py sdist --formats=bztar,zip
 
 serve:
-	python run.py --listen-all
+	python3.6 run.py --listen-all
