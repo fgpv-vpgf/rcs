@@ -44,17 +44,17 @@ Vagrant.configure(2) do |config|
   # end
 
   config.vm.provision "shell", inline: <<-SHELL
-    sudo add-apt-repository ppa:deadsnakes/ppa
     sudo apt-get update
-    sudo apt-get install -y python3.6 couchdb python-virtualenv
-    sudo pip install --upgrade pip virtualenv
+    sudo apt-get install -y python3.6 couchdb python3.6-venv
     netstat -antp
     sleep 5
+    curl -X DELETE http://localhost:5984/rcs_cache
+    curl -X DELETE http://localhost:5984/rcs_auth
     curl -X PUT http://127.0.0.1:5984/rcs_cache
     curl -X PUT http://127.0.0.1:5984/rcs_auth
     cd /vagrant
-    virtualenv --always-copy -p python3.6 .
-    . bin/activate
+    python3.6 -m venv rcs-venv
+    . rcs-venv/bin/activate
     pip install -r requirements.txt
     pip install -r requirements-dev.txt
     python3.6 seed_qa_keys.py
