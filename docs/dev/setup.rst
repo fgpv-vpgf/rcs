@@ -33,7 +33,7 @@ Set up Development Environment and run RCS locally
 #. Activate Vagrant ``vagrant up`` (Note: Please ensure a Vagrant file exits)
 #. Establish a connection ``vagrant ssh``
 #. Change to the Vagrant folder ``cd /vagrant``
-#. Activate the programmes required ``. rcs-venv/bin/activate``
+#. Activate the programmes required ``. bin/activate``
 #. If vagrant failed at any point, run ``vagrant destroy`` then repeat the previous steps again
 #. Run RCS ``python3.6 run.py --listen-all``
 #. Go to http://localhost:6101/static/test.html for testing (Note: The port number might be different)
