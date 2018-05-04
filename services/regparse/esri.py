@@ -170,7 +170,7 @@ def test_small_layer(svc_url, svc_data):
             r = requests.get(get_base_url(svc_url) + id_query, proxies=flask.g.proxies)
             if 'objectIds' in r.json():
                 return len(r.json()['objectIds']) <= 2000
-    except:
+    except Exception:
         pass
     return False
 

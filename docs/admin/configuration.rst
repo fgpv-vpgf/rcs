@@ -6,7 +6,7 @@ RCS Configuration Options
 LOG_FILE
     Name of the log file
 LOG_LEVEL
-    Follows `Python log levels <https://docs.python.org/2/library/logging.html#levels>`_
+    Follows `Python log levels <https://docs.python.org/3/library/logging.html#logging-levels>`_
 LOG_BACKUPS
     Number of backups (rotated log files) to keep
 LOG_ROTATE_BYTES
