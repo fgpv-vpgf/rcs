@@ -1,6 +1,7 @@
+import json
 from flask import current_app, Response
 from flask.ext.restful import Resource
-import db, json
+from . import db
 
 
 class FetchFile(Resource):

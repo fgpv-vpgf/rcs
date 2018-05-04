@@ -36,7 +36,7 @@ Install `CouchDB <http://couchdb.apache.org/>`_
 Configure Python Environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#. Ensure python is a 2.7.x release
+#. Ensure python is a 3.6.x release
 #. Get an RCS release package ``rcs-X.Y.Z.zip``
 #. Extract the release package, it should be somewhere IIS can be configured to read from ``c:\inetpub\rcs``
 #. [Optional] Get prepackaged dependencies (should be a directory full of ``.whl`` files)
@@ -68,8 +68,8 @@ Configure Python Environment
     * **HTTP_PROXY**
     * **URL_PREFIX** A general prefix for the application, useful if you want to have side by side installs of RCS
 
-#. Test the installation ``python run.py`` (this will run a test server on localhost)
-#. Seed the database ``python seed_qa_keys.py`` (**change these values before running on Production!**)
+#. Test the installation ``python3.6 run.py`` (this will run a test server on localhost)
+#. Seed the database ``python3.6 seed_qa_keys.py`` (**change these values before running on Production!**)
 
 IIS Integration
 ^^^^^^^^^^^^^^^
@@ -133,7 +133,7 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
     * **HTTP_PROXY**
     * **URL_PREFIX** A general prefix for the application, useful if you want to have side by side installs of RCS
 
-#. Test the installation ``python rcs.py`` (this will run a test server on localhost)
+#. Test the installation ``python3.6 rcs.py`` (this will run a test server on localhost)
 #. Follow any other version specific upgrade notes in this section.
 #. Update IIS's FastCGI Environment variables collection: change WSGI_HANDLER's value from ``rcs.app`` to ``run.app``.
 
