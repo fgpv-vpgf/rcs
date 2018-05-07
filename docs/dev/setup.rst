@@ -14,7 +14,7 @@ Install `CouchDB <http://couchdb.apache.org/>`_
 
 Configure Python Environment
 ----------------------------
-#. Ensure python is a 2.7.x release
+#. Ensure python is a 3.6.x release
 #. Install pip (https://pip.pypa.io/en/latest/installing.html)
 #. Install virtualenv ``pip install virtualenv``
 #. Clone the repo ``git clone git@github.com:RAMP-PCAR/RCS.git rcs``
@@ -23,11 +23,11 @@ Configure Python Environment
 #. Activate the virtualenv ``scripts\activate``
 #. Install the project dependencies ``pip install -r requirements.txt``
 #. Make any path changes necessary to ``config.py`` (if you followed the above there should be none)
-#. Test the installation ``python rcs.py`` (this will run a test server on localhost)
-#. Seed the database ``python seed_qa_keys.py``
+#. Test the installation ``python3.6 rcs.py`` (this will run a test server on localhost)
+#. Seed the database ``python3.6 seed_qa_keys.py``
 
 Set up Development Environment and run RCS locally
---------------------------------------------------------
+--------------------------------------------------
 #. Install Vagrant (https://www.vagrantup.com/downloads.html)
 #. Clone RCS repo ``git clone https://github.com/fgpv-vpgf/rcs.git``
 #. Activate Vagrant ``vagrant up`` (Note: Please ensure a Vagrant file exits)
@@ -35,5 +35,5 @@ Set up Development Environment and run RCS locally
 #. Change to the Vagrant folder ``cd /vagrant``
 #. Activate the programmes required ``. bin/activate``
 #. If vagrant failed at any point, run ``vagrant destroy`` then repeat the previous steps again
-#. Run RCS ``python run.py --listen-all``
+#. Run RCS ``python3.6 run.py --listen-all``
 #. Go to http://localhost:6101/static/test.html for testing (Note: The port number might be different)
