@@ -1,0 +1,153 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Development Setup &#8212; RAMP Configuration Service 3.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RCS Architecture" href="architecture.html" />
+    <link rel="prev" title="Developer Docs" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="development-setup">
+<h1>Development Setup<a class="headerlink" href="#development-setup" title="Permalink to this headline">¶</a></h1>
+<p>For development we will be using the built in Flask server, no separate web server
+required.  CouchDB will also be installed in admin party mode (every connection
+has admin rights).</p>
+<div class="section" id="install-couchdb">
+<h2>Install <a class="reference external" href="http://couchdb.apache.org/">CouchDB</a><a class="headerlink" href="#install-couchdb" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Run the installer</li>
+<li>Open a web browser and navigate to <a class="reference external" href="http://127.0.0.1:5984/_utils">http://127.0.0.1:5984/_utils</a></li>
+<li>Create a database <code class="docutils literal"><span class="pre">rcs_cache</span></code> (navigate to Overview | Create Database)</li>
+<li>Create a second database <code class="docutils literal"><span class="pre">rcs_auth</span></code></li>
+</ol>
+</div>
+<div class="section" id="configure-python-environment">
+<h2>Configure Python Environment<a class="headerlink" href="#configure-python-environment" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Ensure python is a 3.6.x release</li>
+<li>Install pip (<a class="reference external" href="https://pip.pypa.io/en/latest/installing.html">https://pip.pypa.io/en/latest/installing.html</a>)</li>
+<li>Install virtualenv <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">virtualenv</span></code></li>
+<li>Clone the repo <code class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">git&#64;github.com:RAMP-PCAR/RCS.git</span> <span class="pre">rcs</span></code></li>
+<li>Create python virtual environment <code class="docutils literal"><span class="pre">virtualenv</span> <span class="pre">rcs</span></code></li>
+<li>Switch to the project directory <code class="docutils literal"><span class="pre">cd</span> <span class="pre">rcs</span></code></li>
+<li>Activate the virtualenv <code class="docutils literal"><span class="pre">scripts\activate</span></code></li>
+<li>Install the project dependencies <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code></li>
+<li>Make any path changes necessary to <code class="docutils literal"><span class="pre">config.py</span></code> (if you followed the above there should be none)</li>
+<li>Test the installation <code class="docutils literal"><span class="pre">python3.6</span> <span class="pre">rcs.py</span></code> (this will run a test server on localhost)</li>
+<li>Seed the database <code class="docutils literal"><span class="pre">python3.6</span> <span class="pre">seed_qa_keys.py</span></code></li>
+</ol>
+</div>
+<div class="section" id="set-up-development-environment-and-run-rcs-locally">
+<h2>Set up Development Environment and run RCS locally<a class="headerlink" href="#set-up-development-environment-and-run-rcs-locally" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Install Vagrant (<a class="reference external" href="https://www.vagrantup.com/downloads.html">https://www.vagrantup.com/downloads.html</a>)</li>
+<li>Clone RCS repo <code class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/fgpv-vpgf/rcs.git</span></code></li>
+<li>Activate Vagrant <code class="docutils literal"><span class="pre">vagrant</span> <span class="pre">up</span></code> (Note: Please ensure a Vagrant file exits)</li>
+<li>Establish a connection <code class="docutils literal"><span class="pre">vagrant</span> <span class="pre">ssh</span></code></li>
+<li>Change to the Vagrant folder <code class="docutils literal"><span class="pre">cd</span> <span class="pre">/vagrant</span></code></li>
+<li>Activate the programmes required <code class="docutils literal"><span class="pre">.</span> <span class="pre">bin/activate</span></code></li>
+<li>If vagrant failed at any point, run <code class="docutils literal"><span class="pre">vagrant</span> <span class="pre">destroy</span></code> then repeat the previous steps again</li>
+<li>Run RCS <code class="docutils literal"><span class="pre">python3.6</span> <span class="pre">run.py</span> <span class="pre">--listen-all</span></code></li>
+<li>Go to <a class="reference external" href="http://localhost:6101/static/test.html">http://localhost:6101/static/test.html</a> for testing (Note: The port number might be different)</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Development Setup</a><ul>
+<li><a class="reference internal" href="#install-couchdb">Install CouchDB</a></li>
+<li><a class="reference internal" href="#configure-python-environment">Configure Python Environment</a></li>
+<li><a class="reference internal" href="#set-up-development-environment-and-run-rcs-locally">Set up Development Environment and run RCS locally</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Developer Docs</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Developer Docs</a></li>
+      <li>Next: <a href="architecture.html" title="next chapter">RCS Architecture</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/dev/setup.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Environment Canada.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/dev/setup.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

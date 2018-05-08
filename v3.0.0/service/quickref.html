@@ -1,0 +1,167 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Service Quick Reference &#8212; RAMP Configuration Service 3.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RCS v2 Service Contract" href="contract.html" />
+    <link rel="prev" title="Using RCS Endpoints" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="service-quick-reference">
+<h1>Service Quick Reference<a class="headerlink" href="#service-quick-reference" title="Permalink to this headline">¶</a></h1>
+<p>RCS currently exposes 7 REST endpoints.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Endpoint</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET /doc/[lang]/[key]</td>
+<td>Retrieves a single configuration fragment</td>
+</tr>
+<tr class="row-odd"><td>GET /docs/[lang]/[key]{,[key]}{/[sortarg]}</td>
+<td>Retrieves multiple configuration fragments, sorted by geometry type if sortarg = sort</td>
+</tr>
+<tr class="row-even"><td>PUT /register/[key]</td>
+<td>Stores a configuration fragment</td>
+</tr>
+<tr class="row-odd"><td>DELETE /register/[key]</td>
+<td>Deletes a configuration fragment</td>
+</tr>
+<tr class="row-even"><td>PUT /register/refresh/[key]</td>
+<td>Stores a configuration fragment</td>
+</tr>
+<tr class="row-odd"><td>POST /refresh/[args]</td>
+<td>Refreshes existing records, use “all” or an integer specifying minimum age</td>
+</tr>
+<tr class="row-even"><td>POST /upgrade/[key]</td>
+<td>Upgrades a registered v1 key to a v2 record</td>
+</tr>
+</tbody>
+</table>
+<p>RCS also has 3 debug endpoints. These are enabled by setting the DEBUG_ENDPOINTS variable to True in config.py.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Endpoint</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET /accesslog/[index]</td>
+<td>Retrieves the RCS access logs. [index] specifies the index of the log file if multiple exist</td>
+</tr>
+<tr class="row-odd"><td>GET /log/[index]</td>
+<td>Retrieves the error log for the RCS</td>
+</tr>
+<tr class="row-even"><td>GET /all_keys/[lang]</td>
+<td>Displays a list of registered keys and their related service, by language</td>
+</tr>
+</tbody>
+</table>
+<p><em>NOTE: deprecated endpoints are not included in the summary</em></p>
+<p>The RAMP client is intended to call the GET driven endpoints for dynamically
+loading layers.  These functions are intended to be extensible and also allow
+for the retrieval of generic configuration as well.</p>
+<p>The data catalogue is intended to call the PUT, POST and DELETE endpoints for storing
+data.  Currently registration will accept ESRI feature service endpoints and WMS
+endpoints.</p>
+<p>More details are available on the <a class="reference internal" href="contract.html#contract"><span class="std std-ref">RCS v2 Service Contract</span></a> page.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Using RCS Endpoints</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Using RCS Endpoints</a></li>
+      <li>Next: <a href="contract.html" title="next chapter">RCS v2 Service Contract</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/service/quickref.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Environment Canada.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/service/quickref.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
