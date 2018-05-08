@@ -12,7 +12,7 @@ notifications:
     urls:
     - https://webhooks.gitter.im/e/7bd6d69bcfa59bddf1e2
 python:
-- '2.7'
+- '3.6.4'
 script:
 - make check
 - source docs/docdeploy.sh

@@ -10,7 +10,7 @@ LOG_FILE = 'rcs.log'
 ACCESS_LOG = 'access.log'
 LOG_ROTATE_BYTES = 200000
 LOG_BACKUPS = 10
-# https://docs.python.org/2/library/logging.html#levels
+# https://docs.python.org/3/library/logging.html#logging-levels
 # common options DEBUG 10; ERROR 40
 LOG_LEVEL = 10
 

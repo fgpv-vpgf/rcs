@@ -14,8 +14,6 @@ from flask.ext.restful import request
 # FIXME clean this up
 app = Flask(__name__)
 
-reload(sys)
-sys.setdefaultencoding('utf8')
 app.config.from_object(config)
 if os.environ.get('RCS_CONFIG'):
     app.config.from_envvar('RCS_CONFIG')
@@ -63,6 +61,7 @@ if not os.path.exists(schema_path):
 def before_request():
     flask.g.get_validator = lambda: jsonschema.validators.Draft4Validator(json.load(open(schema_path)))
     flask.g.proxies = {'http': app.config['HTTP_PROXY'], 'https': app.config['HTTP_PROXY']}
+
 
 if app.config.get('DEBUG_ENDPOINTS'):
     @app.after_request

@@ -1,8 +1,8 @@
-from registration import Register, Refresh
-from upgrade import Upgrade
-from update import Update
-from retrieval import DocV2, DocsV2, Version
-from debug import AccessLog, Log, AllKeys
+from .registration import Register, Refresh
+from .upgrade import Upgrade
+from .update import Update
+from .retrieval import DocV2, DocsV2, Version
+from .debug import AccessLog, Log, AllKeys
 
 
 from flask import Blueprint
