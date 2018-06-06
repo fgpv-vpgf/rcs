@@ -5,6 +5,11 @@ from flask import Response, current_app
 from flask.ext.restful import request, Resource
 
 
+class Payload:
+    PARAMS = (['service_url', 'service_type', 'service_name', 'metadata', 'display_field',
+              'scrape_only', 'recursive', 'legend_format', 'feature_info_format'])
+
+
 class Update(Resource):
     """
     Updates a specific element of an existing registration
@@ -39,15 +44,9 @@ class Update(Resource):
             for lang in langs:
                 request_seg = dbdata['request'][lang]
                 payload_seg = payload[lang]
-                replace_if_set(['service_url', 'service_name', 'metadata'])
-                if payload_seg['service_type'] in ['esriFeature', 'esriImage', 'esriTile']:
-                    replace_if_set(['display_field'])
-                elif payload_seg['service_type'] == 'esriMapServer':
-                    replace_if_set(['scrape_only', 'recursive'])
-                elif payload_seg['service_type'] == 'ogcWms':
-                    replace_if_set(['scrape_only', 'recursive', 'legend_format', 'feature_info_format'])
+                replace_if_set(Payload.PARAMS)
                 v2_node, v1_node = regparse.make_node(key, dbdata["request"], current_app.config)
-                db.put_doc(key, payload[lang]["service_type"], dbdata["request"],
+                db.put_doc(key, request_seg["service_type"], dbdata["request"],
                            layer_config=v2_node, v1_config=v1_node)
         except Exception as e:
             msg = {'msg': 'Error: {0}'.format(e.message)}
