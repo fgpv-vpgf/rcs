@@ -278,12 +278,11 @@ POST ``/v2/update/[key]``
 
 Success Code: 200
 
-Request Body: Empty
+Request Body: JSON Object
 
 Request Headers: Implement the :ref:`signing` protocol
 
 Request Params: Only the fields that require updating on a pre-registered entry.
-"service_type" is a mandatory field, if trying to change this, please re-register entirely.
 
 Response Body: ``{ "success": ["key", …], "errors": {"key": "message", …} }``
 
