@@ -83,7 +83,13 @@ def make_wms_node(req):
     Parse WMS specific content from a given request
     """
     result = {}
-    query_service = requests.get(req['service_url'] + '?SERVICE=WMS&REQUEST=GetCapabilities').content
+    endpoint = req['service_url']
+    if '?' in endpoint:
+        # the provided service url contains a query string
+        endpoint += '&SERVICE=WMS&REQUEST=GetCapabilities'
+    else:
+        endpoint += '?SERVICE=WMS&REQUEST=GetCapabilities'
+    query_service = requests.get(endpoint).content
     layer_params = parseCapabilities(query_service)
     if 'feature_info_format' in req:
         result['featureInfoMimeType'] = req['feature_info_format']
