@@ -76,7 +76,7 @@ def parseCapabilities(capabilties_xml_string):
         if id is not None:
             id = id.text
             title = layer.find(namespace + 'Title').text
-            queryable = (layer.attrib)['queryable']
+            queryable = str2bool((layer.attrib)['queryable'])
             ret[id] = dict(id=id, title=title, queryable=queryable)
     return ret
 
