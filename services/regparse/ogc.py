@@ -57,7 +57,10 @@ def make_v1_wms_node(req, v2_node, config=None):
 
 
 def str2bool(v):
-    return v.lower() in ("yes", "true", "t", "1")
+    """
+    Convert str to bool.  Return False if v is None.
+    """
+    return v is not None and v.lower() in ("yes", "true", "t", "1")
 
 
 def parseCapabilities(capabilties_xml_string):
@@ -76,7 +79,7 @@ def parseCapabilities(capabilties_xml_string):
         if id is not None:
             id = id.text
             title = layer.find(namespace + 'Title').text
-            queryable = str2bool((layer.attrib)['queryable'])
+            queryable = str2bool(layer.attrib.get('queryable'))
             ret[id] = dict(id=id, title=title, queryable=queryable)
     return ret
 
