@@ -1,5 +1,5 @@
 import requests
-from xml.dom import minidom
+import xml.etree.ElementTree as ETree
 
 """
 A WMS "parser" (barely does any parsing at the moment).
@@ -57,7 +57,10 @@ def make_v1_wms_node(req, v2_node, config=None):
 
 
 def str2bool(v):
-    return v.lower() in ("yes", "true", "t", "1")
+    """
+    Convert str to bool.  Return False if v is None.
+    """
+    return v is not None and v.lower() in ("yes", "true", "t", "1")
 
 
 def parseCapabilities(capabilties_xml_string):
@@ -69,12 +72,15 @@ def parseCapabilities(capabilties_xml_string):
     :returns: dict -- the Name, Title, and Queryable values of all layers in the service.
     """
     ret = {}
-    xmldoc = minidom.parseString(capabilties_xml_string)
-    for layer in xmldoc.getElementsByTagName('Layer'):
-        id = layer.getElementsByTagName('Name')[0].firstChild.data
-        title = layer.getElementsByTagName('Title')[0].firstChild.data
-        queryable = str2bool(layer.getAttribute('queryable'))
-        ret[id] = dict(id=id, title=title, queryable=queryable)
+    xmldoc = ETree.fromstring(capabilties_xml_string)
+    namespace = xmldoc.tag[0:(xmldoc.tag.index('}') + 1)]
+    for layer in xmldoc.iter(namespace + 'Layer'):
+        id = layer.find(namespace + 'Name')
+        if id is not None:
+            id = id.text
+            title = layer.find(namespace + 'Title').text
+            queryable = str2bool(layer.attrib.get('queryable'))
+            ret[id] = dict(id=id, title=title, queryable=queryable)
     return ret
 
 
@@ -83,7 +89,13 @@ def make_wms_node(req):
     Parse WMS specific content from a given request
     """
     result = {}
-    query_service = requests.get(req['service_url'] + '?SERVICE=WMS&REQUEST=GetCapabilities').content
+    endpoint = req['service_url']
+    if '?' in endpoint:
+        # the provided service url contains a query string
+        endpoint += '&SERVICE=WMS&REQUEST=GetCapabilities'
+    else:
+        endpoint += '?SERVICE=WMS&REQUEST=GetCapabilities'
+    query_service = requests.get(endpoint).content
     layer_params = parseCapabilities(query_service)
     if 'feature_info_format' in req:
         result['featureInfoMimeType'] = req['feature_info_format']
