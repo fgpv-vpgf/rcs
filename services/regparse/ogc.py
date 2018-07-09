@@ -1,5 +1,5 @@
 import requests
-from xml.dom import minidom
+import xml.etree.ElementTree as ETree
 
 """
 A WMS "parser" (barely does any parsing at the moment).
@@ -69,12 +69,15 @@ def parseCapabilities(capabilties_xml_string):
     :returns: dict -- the Name, Title, and Queryable values of all layers in the service.
     """
     ret = {}
-    xmldoc = minidom.parseString(capabilties_xml_string)
-    for layer in xmldoc.getElementsByTagName('Layer'):
-        id = layer.getElementsByTagName('Name')[0].firstChild.data
-        title = layer.getElementsByTagName('Title')[0].firstChild.data
-        queryable = str2bool(layer.getAttribute('queryable'))
-        ret[id] = dict(id=id, title=title, queryable=queryable)
+    xmldoc = ETree.fromstring(capabilties_xml_string)
+    namespace = xmldoc.tag[0:(xmldoc.tag.index('}') + 1)]
+    for layer in xmldoc.iter(namespace + 'Layer'):
+        id = layer.find(namespace + 'Name')
+        if id != None:
+            id = id.text
+            title = layer.find(namespace + 'Title').text
+            queryable = (layer.attrib)['queryable']
+            ret[id] = dict(id=id, title=title, queryable=queryable)
     return ret
 
 
