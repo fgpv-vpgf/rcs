@@ -73,7 +73,7 @@ def parseCapabilities(capabilties_xml_string):
     namespace = xmldoc.tag[0:(xmldoc.tag.index('}') + 1)]
     for layer in xmldoc.iter(namespace + 'Layer'):
         id = layer.find(namespace + 'Name')
-        if id != None:
+        if id is not None:
             id = id.text
             title = layer.find(namespace + 'Title').text
             queryable = (layer.attrib)['queryable']
