@@ -1,4 +1,4 @@
-import requests
+import requests, re
 import xml.etree.ElementTree as ETree
 
 """
@@ -63,18 +63,19 @@ def str2bool(v):
     return v is not None and v.lower() in ("yes", "true", "t", "1")
 
 
-def parseCapabilities(capabilties_xml_string):
+def parseCapabilities(capabilities_xml_string):
     """
     Parses a Capabilities document for fields we need for registration.
 
-    :param capabilties_xml_string: The URL to the service's Capabilities document
-    :type capabilties_xml_string: str
+    :param capabilities_xml_string: The URL to the service's Capabilities document
+    :type capabilities_xml_string: str
     :returns: dict -- the Name, Title, and Queryable values of all layers in the service.
     """
     ret = {}
-    xmldoc = ETree.fromstring(capabilties_xml_string)
+    xmldoc = ETree.fromstring(capabilities_xml_string)
     # note: namespace looks like "{abc123}..."
-    namespace = xmldoc.tag[:(xmldoc.tag.index('}') + 1)]
+    match = re.match('{.+}', xmldoc.tag)
+    namespace = match[0] if match else ''
     for layer in xmldoc.iter(namespace + 'Layer'):
         id = layer.find(namespace + 'Name')
         if id is not None:
