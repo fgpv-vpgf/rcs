@@ -73,7 +73,8 @@ def parseCapabilities(capabilties_xml_string):
     """
     ret = {}
     xmldoc = ETree.fromstring(capabilties_xml_string)
-    namespace = xmldoc.tag[0:(xmldoc.tag.index('}') + 1)]
+    # note: namespace looks like "{abc123}..."
+    namespace = xmldoc.tag[:(xmldoc.tag.index('}') + 1)]
     for layer in xmldoc.iter(namespace + 'Layer'):
         id = layer.find(namespace + 'Name')
         if id is not None:
