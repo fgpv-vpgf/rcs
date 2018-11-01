@@ -103,9 +103,10 @@ def make_wms_node(req):
     if legend_format in ['image/png', 'image/gif', 'image/jpeg', 'image/svg', 'image/svg+xml']:
         result['legendMimeType'] = legend_format
     if 'scrape_only' in req:
+        # checked only for existence since scrape_only must have length > 1
         result['layerEntries'] = [{'id': id, 'queryable': layer_params[id]['queryable']}
                                   for id in req['scrape_only']]
-    elif 'recursive' in req:
+    elif 'recursive' in req and req['recursive']:
         result['layerEntries'] = [{
                                   'id': layer_params[i]['id'],
                                   'name': layer_params[i]['title'],
