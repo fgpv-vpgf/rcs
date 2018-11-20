@@ -1,5 +1,5 @@
-import requests
-from xml.dom import minidom
+import requests, re
+import xml.etree.ElementTree as ETree
 
 """
 A WMS "parser" (barely does any parsing at the moment).
@@ -57,24 +57,32 @@ def make_v1_wms_node(req, v2_node, config=None):
 
 
 def str2bool(v):
-    return v.lower() in ("yes", "true", "t", "1")
+    """
+    Convert str to bool.  Return False if v is None.
+    """
+    return v is not None and v.lower() in ("yes", "true", "t", "1")
 
 
-def parseCapabilities(capabilties_xml_string):
+def parseCapabilities(capabilities_xml_string):
     """
     Parses a Capabilities document for fields we need for registration.
 
-    :param capabilties_xml_string: The URL to the service's Capabilities document
-    :type capabilties_xml_string: str
+    :param capabilities_xml_string: The URL to the service's Capabilities document
+    :type capabilities_xml_string: str
     :returns: dict -- the Name, Title, and Queryable values of all layers in the service.
     """
     ret = {}
-    xmldoc = minidom.parseString(capabilties_xml_string)
-    for layer in xmldoc.getElementsByTagName('Layer'):
-        id = layer.getElementsByTagName('Name')[0].firstChild.data
-        title = layer.getElementsByTagName('Title')[0].firstChild.data
-        queryable = str2bool(layer.getAttribute('queryable'))
-        ret[id] = dict(id=id, title=title, queryable=queryable)
+    xmldoc = ETree.fromstring(capabilities_xml_string)
+    # note: namespace looks like "{abc123}..."
+    match = re.match('{.+}', xmldoc.tag)
+    namespace = match[0] if match else ''
+    for layer in xmldoc.iter(namespace + 'Layer'):
+        id = layer.find(namespace + 'Name')
+        if id is not None:
+            id = id.text
+            title = layer.find(namespace + 'Title').text
+            queryable = str2bool(layer.attrib.get('queryable'))
+            ret[id] = dict(id=id, title=title, queryable=queryable)
     return ret
 
 
@@ -97,9 +105,10 @@ def make_wms_node(req):
     if legend_format in ['image/png', 'image/gif', 'image/jpeg', 'image/svg', 'image/svg+xml']:
         result['legendMimeType'] = legend_format
     if 'scrape_only' in req:
+        # checked only for existence since scrape_only must have length > 1
         result['layerEntries'] = [{'id': id, 'queryable': layer_params[id]['queryable']}
                                   for id in req['scrape_only']]
-    elif 'recursive' in req:
+    elif 'recursive' in req and req['recursive']:
         result['layerEntries'] = [{
                                   'id': layer_params[i]['id'],
                                   'name': layer_params[i]['title'],

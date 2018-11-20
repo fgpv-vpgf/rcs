@@ -46,7 +46,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: <<-SHELL
     sudo add-apt-repository ppa:deadsnakes/ppa
     sudo apt-get update
-    sudo apt-get install -y python3.6 couchdb python3.6-venv
+    sudo apt-get install -y python3.6 couchdb python3.6-venv make
     netstat -antp
     sleep 5
     curl -X PUT http://127.0.0.1:5984/rcs_cache

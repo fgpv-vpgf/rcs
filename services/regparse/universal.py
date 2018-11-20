@@ -33,6 +33,7 @@ class ServiceEndpointException(Exception):
     """
     An exception encoding all problems with metadata parsing and retrival.
     """
+
     def __init__(self, msg, inner_exception=None):
         self.message = msg
         self.inner_exception = inner_exception
