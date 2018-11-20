@@ -17,7 +17,7 @@ Set up Development Environment and run RCS with Vagrant
 #. Activate the virtual environment ``. bin/activate``
 #. If vagrant failed at any point, run ``vagrant destroy`` then repeat the previous steps again
 #. Run RCS ``make serve``
-#. Go to http://localhost:6101/static/test.html for testing (Note: The port number might be different)
+#. Go to http://localhost:6101/static/test.html for testing
 
 Non-Vagrant setup:
 --------------------
