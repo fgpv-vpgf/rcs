@@ -38,14 +38,14 @@ Configure Python Environment
 
 #. Ensure python is a 3.6.x release
 #. Get an RCS release package ``rcs-X.Y.Z.zip``
-#. Extract the release package, it should be somewhere IIS can be configured to read from ``c:\inetpub\rcs``
+#. Extract the release package, it should be somewhere IIS can be configured to read from ``c:\inetpub\wwwroot\rcs``
 #. [Optional] Get prepackaged dependencies (should be a directory full of ``.whl`` files)
 #. Install pip (https://pip.pypa.io/en/latest/installing.html)
 #. Install virtualenv ``pip install virtualenv``
 #. Create python virtual environment in the release location and activate it
     .. code-block:: bat
 
-        cd c:\inetpub\rcs
+        cd c:\inetpub\wwwroot\rcs
         virtualenv .
         scripts\activate
 #. Install the project dependencies (perform only one of the following steps):
@@ -58,9 +58,9 @@ Configure Python Environment
    full description for all options, at a minimum update the following:
 
     * **DB_CONN** should match the account, password and host settings from the CouchDB installation
-    * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_reg_schema_v2_0_0.json``
+    * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\wwwroot\\rcs\\rcs_reg_schema_v2_0_0.json``
       -- use double backslashes to avoid string escape codes)
-    * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs.log``)
+    * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\wwwroot\\rcs\\rcs.log``)
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
     * **DEBUG_ENDPOINTS** should be set to False in Production, enables the /accesslog, /log, and /all_keys endpoints when True
@@ -81,7 +81,7 @@ IIS Integration
 
         Request Path: *
         Module: FastCgiModule
-        Executable: C:\inetpub\rcs-X.Y.Z\Scripts\python.exe|C:\inetpub\rcs-X.Y.Z\wfastcgi.py
+        Executable: C:\inetpub\wwwroot\rcs-X.Y.Z\Scripts\python.exe|C:\inetpub\wwwroot\rcs-X.Y.Z\wfastcgi.py
         Name: (name)
 #. If **URL_PREFIX** was set in the configuration it should be applied to the
    ``Request Path`` setting (e.g. ``/rcs1/*`` for a prefix of ``/rcs1``).
@@ -89,7 +89,7 @@ IIS Integration
 #. Select Environment variables and add the following:
     .. code-block:: yaml
 
-        PYTHONPATH: C:\inetpub\rcs\
+        PYTHONPATH: C:\inetpub\wwwroot\rcs\
         WSGI_HANDLER: run.app
 
 Upgrading from 1.8+ on Windows (IIS + FastCgi)
@@ -102,7 +102,7 @@ no need to reinstall or reconfigure CouchDB either.
 The following steps can be used in lieu of :ref:`pyvenvconfig` :
 
 #. Get an RCS release package ``rcs-X.Y.Z.zip``
-#. In the existing RCS directory (e.g. ``c:\inetpub\rcs``) remove all folders
+#. In the existing RCS directory (e.g. ``c:\inetpub\wwwroot\rcs``) remove all folders
    except ``Lib``, ``Scripts`` and ``Include``.  By keeping those folders the
    virtualenv will remain intact.  Remove all files except ``wfastcgi.py`` and
    ``config.py``.
@@ -114,7 +114,7 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
 #. Go into the RCS directory and activate the virtualenv:
     .. code-block:: bat
 
-        cd c:\inetpub\rcs
+        cd c:\inetpub\wwwroot\rcs
         scripts\activate
 #. Install any new dependencies (do either one of the following):
 
@@ -123,9 +123,9 @@ The following steps can be used in lieu of :ref:`pyvenvconfig` :
 #. Update the following in ``config.py`` or the file pointed to by the enviornment variable ``RCS_CONFIG``:
 
     * **DB_CONN** should match the account, password and host settings from the CouchDB installation
-    * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs_reg_schema_v2_0_0.json``
+    * **REG_SCHEMA** should point to an absolute path (e.g. ``c:\\inetpub\\wwwroot\\rcs\\rcs_reg_schema_v2_0_0.json``
       -- use double backslashes to avoid string escape codes)
-    * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\rcs\\rcs.log``)
+    * **LOG_FILE** should point to an absolute path (e.g. ``c:\\inetpub\\wwwroot\\rcs\\rcs.log`` or ``c:\\inetpub\\wwwroot\\rcs.log``)
       this file should be writable by IIS
     * **LOG_LEVEL** set the log level to something appropriate (e.g. 20 for QC, 30 for Prod)
     * **DEBUG_ENDPOINTS** should be set to False in Production, enables the /accesslog, /log, and /all_keys endpoints when True
@@ -145,7 +145,7 @@ This is a small test that can verify if all the major components have been insta
 #. RCS comes pre-packaged with a testing interface, where you can test the
    GET, PUT, REGISTER, and DELETE requests. The full service contract is
    available at :ref:`contract`
-#. In a browser, load up http://rcs.localhost/static/test.html (replacing the
+#. In a browser, load up http://localhost/static/test.html (replacing the
    hostname with the correct path to rcs)
 #. Enter a key value (e.g. “test”)
 #. Press the *Feature* button in the second row of buttons
